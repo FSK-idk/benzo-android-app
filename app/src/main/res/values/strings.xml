@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Benzo Mobile</string>
+    <string name="Error_occurred">Error occurred</string>
+    <string name="Retry">Retry</string>
+</resources>
