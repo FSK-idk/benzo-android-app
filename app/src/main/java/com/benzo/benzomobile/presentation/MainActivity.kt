@@ -4,7 +4,6 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.navigation.compose.rememberNavController
-import com.benzo.benzomobile.nav.AppNavHost
 import com.benzo.benzomobile.ui.theme.BenzoMobileTheme
 
 class MainActivity : ComponentActivity() {
@@ -14,7 +13,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             BenzoMobileTheme {
                 val navController = rememberNavController()
-                AppNavHost(navHostController = navController)
+                MainScreen(navController = navController)
             }
         }
     }

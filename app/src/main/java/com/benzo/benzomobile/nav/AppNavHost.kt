@@ -9,6 +9,7 @@ import com.benzo.benzomobile.presentation.example.ExampleScreenViewModel
 import com.benzo.benzomobile.presentation.example.ExampleScreenRoot
 import com.benzo.benzomobile.presentation.example_second.ExampleSecondScreenRoot
 import com.benzo.benzomobile.presentation.example_second.ExampleSecondScreenViewModel
+import com.benzo.benzomobile.presentation.profile.ProfileScreenRoot
 import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.koinInject
 
@@ -44,6 +45,9 @@ fun AppNavHost(
         composable<Destination.ExampleSecondScreen> {
             val viewModel = koinViewModel<ExampleSecondScreenViewModel>()
             ExampleSecondScreenRoot(viewModel = viewModel)
+        }
+        composable(route = Destination.ProfileScreen.route) {
+            ProfileScreenRoot(navController = navHostController)
         }
     }
 }
