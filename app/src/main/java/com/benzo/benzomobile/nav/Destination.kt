@@ -3,18 +3,54 @@
     import kotlinx.serialization.Serializable
 
     sealed interface Destination {
-        val route: String
-            get() = this::class.simpleName ?: error("Unnamed destination")
-        @Serializable
-        data object ExampleScreen: Destination
+        // root
 
         @Serializable
-        data object ExampleSecondScreen: Destination
+        data object LoginRoot: Destination
 
-        @kotlinx.serialization.Serializable
-        data object ProfileScreen : Destination
-        object ThemeScreen : Destination {
-            override val route: String = "theme_screen"
-        }
+        @Serializable
+        data object  AppRoot: Destination
 
+        // sub roots
+
+        @Serializable
+        data object ProfileRoot: Destination
+
+        @Serializable
+        data object StationsRoot: Destination
+
+        @Serializable
+        data object LoyaltyCardRoot: Destination
+
+        // login
+
+        @Serializable
+        data object WelcomeScreen: Destination
+
+        @Serializable
+        data object RegisterScreen: Destination
+
+        @Serializable
+        data object LoginScreen: Destination
+
+        // profile
+
+        @Serializable
+        data object ProfileScreen: Destination
+
+        @Serializable
+        data object SettingsScreen: Destination
+
+        @Serializable
+        data object EditProfileScreen: Destination
+
+        // loyalty card
+
+        @Serializable
+        data object LoyaltyCardScreen: Destination
+
+        // loyalty card
+
+        @Serializable
+        data object StationsScreen: Destination
     }

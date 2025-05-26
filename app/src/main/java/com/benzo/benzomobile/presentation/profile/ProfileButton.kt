@@ -1,4 +1,4 @@
-package com.benzo.benzomobile.presentation
+package com.benzo.benzomobile.presentation.profile
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -7,8 +7,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowForwardIos
 import androidx.compose.material3.Icon
-import androidx.compose.material.icons.filled.ArrowForwardIos
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -18,9 +18,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 
-
 @Composable
-fun SettingsButton(text: String, onClick: () -> Unit, modifier: Modifier = Modifier) {
+fun SettingsButton(
+    modifier: Modifier = Modifier,
+    text: String,
+    onClick: () -> Unit,
+) {
     Surface(
         shape = RoundedCornerShape(12.dp),
         color = Color(0xFF4C4F6A),
@@ -33,17 +36,17 @@ fun SettingsButton(text: String, onClick: () -> Unit, modifier: Modifier = Modif
             modifier = modifier
                 .padding(horizontal = 16.dp, vertical = 16.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.Companion.CenterVertically
         ) {
             Text(
                 text = text,
                 style = MaterialTheme.typography.bodyLarge,
-                color = Color.White
+                color = Color.Companion.White
             )
             Icon(
-                imageVector = Icons.Default.ArrowForwardIos,
+                imageVector = Icons.AutoMirrored.Filled.ArrowForwardIos,
                 contentDescription = "arrow",
-                tint = Color.White
+                tint = Color.Companion.White
             )
         }
     }

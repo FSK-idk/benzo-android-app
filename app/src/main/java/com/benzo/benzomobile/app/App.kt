@@ -3,7 +3,6 @@ package com.benzo.benzomobile.app
 import android.app.Application
 import com.benzo.benzomobile.di.dataModule
 import com.benzo.benzomobile.di.domainModule
-import com.benzo.benzomobile.di.navModule
 import com.benzo.benzomobile.di.presentationModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
@@ -21,7 +20,6 @@ class App : Application() {
                     presentationModule,
                     domainModule,
                     dataModule,
-                    navModule
                 )
             )
         }

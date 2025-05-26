@@ -11,12 +11,19 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.benzo.benzomobile.ui.theme.BenzoMobileTheme
 
 @Composable
-fun LoyaltyCardScreen(navController: NavController) {
+fun LoyaltyCardScreen(
+    cardNumber: String,
+    bonusesCount: Int,
+    name: String,
+    year: Int,
+) {
     Scaffold { padding ->
         Column(
             modifier = Modifier
@@ -52,36 +59,51 @@ fun LoyaltyCardScreen(navController: NavController) {
                         modifier = Modifier.align(Alignment.TopStart)
                     )
                     Text(
-                        text = "1234 5678 9012 3456",
+                        modifier = Modifier.align(Alignment.Center),
+                        text = cardNumber,
                         fontSize = 22.sp,
                         fontWeight = FontWeight.Medium,
                         color = Color.White,
-                        modifier = Modifier.align(Alignment.Center)
                     )
                     Column(
                         modifier = Modifier.align(Alignment.BottomStart)
                     ) {
                         Text(
-                            text = "Бонусов: 250",
+                            text = "Bonuses: $bonusesCount",
                             fontSize = 16.sp,
                             color = Color.White
                         )
                         Spacer(modifier = Modifier.height(4.dp))
                         Text(
-                            text = "Иванов Иван",
+                            text = name,
                             fontSize = 16.sp,
                             fontWeight = FontWeight.SemiBold,
                             color = Color.White
                         )
                     }
                     Text(
-                        text = "2025",
+                        text = "$year",
                         fontSize = 14.sp,
                         color = Color.White.copy(alpha = 0.8f),
                         modifier = Modifier.align(Alignment.BottomEnd)
                     )
                 }
             }
+        }
+    }
+}
+
+@Composable
+@Preview
+fun LoyaltyCardScreenPreview() {
+    BenzoMobileTheme {
+        Surface {
+            LoyaltyCardScreen(
+                cardNumber = "1234 5678 9012 3456",
+                bonusesCount = 250,
+                name = "Ivan Ivanov",
+                year = 2025,
+            )
         }
     }
 }

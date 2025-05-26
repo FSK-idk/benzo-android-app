@@ -2,52 +2,30 @@ package com.benzo.benzomobile.nav
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import com.benzo.benzomobile.presentation.example.ExampleScreenViewModel
-import com.benzo.benzomobile.presentation.example.ExampleScreenRoot
-import com.benzo.benzomobile.presentation.example_second.ExampleSecondScreenRoot
-import com.benzo.benzomobile.presentation.example_second.ExampleSecondScreenViewModel
-import com.benzo.benzomobile.presentation.profile.ProfileScreenRoot
-import org.koin.androidx.compose.koinViewModel
-import org.koin.compose.koinInject
+import androidx.navigation.compose.rememberNavController
 
 @Composable
 fun AppNavHost(
     modifier: Modifier = Modifier,
-    navHostController: NavHostController,
 ) {
-    val navigator = koinInject<Navigator>()
-
-    ObserveAsEvents(flow = navigator.navigationActions) { action ->
-        when (action) {
-            is NavigationAction.Navigate -> navHostController.navigate(
-                action.destination,
-            ) {
-                action.navOptions(this)
-            }
-
-            is NavigationAction.NavigateUp -> navHostController.navigateUp()
-        }
-    }
+    val rootNavController = rememberNavController()
 
     NavHost(
         modifier = modifier,
-        navController = navHostController,
-        startDestination = navigator.startDestination,
+        navController = rootNavController,
+        startDestination = Destination.LoginRoot,
     ) {
-        composable<Destination.ExampleScreen> {
-            val viewModel = koinViewModel<ExampleScreenViewModel>()
-            ExampleScreenRoot(viewModel = viewModel)
-        }
+        loginRoot(
+            onNavigateToAppRoot = {
+                rootNavController.navigate(Destination.AppRoot) {
+                    popUpTo(Destination.LoginRoot) {
+                        inclusive = true
+                    }
+                }
+            }
+        )
 
-        composable<Destination.ExampleSecondScreen> {
-            val viewModel = koinViewModel<ExampleSecondScreenViewModel>()
-            ExampleSecondScreenRoot(viewModel = viewModel)
-        }
-        composable(route = Destination.ProfileScreen.route) {
-            ProfileScreenRoot(navController = navHostController)
-        }
+        appRoot()
     }
 }
