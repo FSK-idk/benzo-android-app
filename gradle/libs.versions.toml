@@ -1,47 +1,40 @@
 [versions]
-agp = "8.9.2"
-kotlin = "2.1.10"
-coreKtx = "1.16.0"
-junit = "4.13.2"
-junitVersion = "1.2.1"
-espressoCore = "3.6.1"
-lifecycleRuntimeKtx = "2.8.7"
-activityCompose = "1.10.1"
-composeBom = "2025.04.01"
-navigationRuntimeAndroid = "2.9.0"
+
+
 
 [libraries]
-kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version = "1.8.1" }
-kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version = "0.6.2" }
+androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version = "1.16.0" }
+androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version = "2025.05.01" }
+androidx-activity-ktx = { group = "androidx.activity", name = "activity-ktx", version = "1.10.1" }
+androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version = "1.10.1" }
+androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version = "2.9.0" }
+androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version = "2.9.0" }
+androidx-navigation-runtime-android = { group = "androidx.navigation", name = "navigation-runtime-android", version = "2.9.0" }
 
-androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version = "2.8.9" }
-androidx-ui-text-google-fonts = { module = "androidx.compose.ui:ui-text-google-fonts" }
-
-android-material = { module = "com.google.android.material:material", version = "1.12.0" }
-androidx-material-icons-core = { module = " androidx.compose.material:material-icons-core", version = "1.7.8" }
-
-koin-android = { module = "io.insert-koin:koin-android", version = "4.0.4" }
-koin-core = { module = "io.insert-koin:koin-core", version = "4.0.4" }
-koin-androidx-compose = { module = "io.insert-koin:koin-androidx-compose", version = "4.0.4" }
-
-androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
-junit = { group = "junit", name = "junit", version.ref = "junit" }
-androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
-androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
-androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycleRuntimeKtx" }
-androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activityCompose" }
-androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }
-androidx-ui = { group = "androidx.compose.ui", name = "ui", version = "1.8.0" }
+androidx-ui = { group = "androidx.compose.ui", name = "ui" }
 androidx-ui-graphics = { group = "androidx.compose.ui", name = "ui-graphics" }
+androidx-ui-text-google-fonts = { group = "androidx.compose.ui", name = "ui-text-google-fonts" }
 androidx-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling" }
 androidx-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
-androidx-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
-androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
+
+android-material = { group = "com.google.android.material", name = "material", version = "1.12.0" }
 androidx-material3 = { group = "androidx.compose.material3", name = "material3" }
-androidx-navigation-runtime-android = { group = "androidx.navigation", name = "navigation-runtime-android", version.ref = "navigationRuntimeAndroid" }
+androidx-material-icons-core = { group = "androidx.compose.material", name = "material-icons-core" }
+androidx-material-icons-extended = { group = "androidx.compose.material", name = "material-icons-extended" }
+
+kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version = "1.8.1" }
+kotlinx-datetime = { group = "org.jetbrains.kotlinx", name = "kotlinx-datetime", version = "0.6.2" }
+
+io-koin-core = { group = "io.insert-koin", name = "koin-core", version = "4.0.4" }
+io-koin-android = { group = "io.insert-koin", name = "koin-android", version = "4.0.4" }
+io-koin-androidx-compose = { group = "io.insert-koin", name = "koin-androidx-compose", version = "4.0.4" }
+
+squareup-retrofit = { group = "com.squareup.retrofit2", name = "retrofit", version = "2.11.0" }
+squareup-converter-kotlinx-serialization = { group = "com.squareup.retrofit2", name = "converter-kotlinx-serialization", version = "2.11.0" }
+
 
 [plugins]
-android-application = { id = "com.android.application", version.ref = "agp" }
-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
-kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
-kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+android-application = { id = "com.android.application", version = "8.9.3" }
+kotlin-android = { id = "org.jetbrains.kotlin.android", version = "2.1.10" }
+kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version = "2.1.10" }
+kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version = "2.1.10" }
