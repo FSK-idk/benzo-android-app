@@ -9,7 +9,7 @@ androidx-activity-ktx = { group = "androidx.activity", name = "activity-ktx", ve
 androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version = "1.10.1" }
 androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version = "2.9.0" }
 androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version = "2.9.0" }
-androidx-navigation-runtime-android = { group = "androidx.navigation", name = "navigation-runtime-android", version = "2.9.0" }
+androidx-navigation-runtime-android = { group = "androidx.navigation", name = "navigation-runtime-ktx", version = "2.9.0" }
 
 androidx-ui = { group = "androidx.compose.ui", name = "ui" }
 androidx-ui-graphics = { group = "androidx.compose.ui", name = "ui-graphics" }

@@ -1,38 +1,64 @@
 package com.benzo.benzomobile.presentation.screen.edit_profile
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CalendarToday
 import androidx.compose.material.icons.filled.ChevronLeft
 import androidx.compose.material3.Button
+import androidx.compose.material3.DatePicker
+import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.Divider
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.RadioButton
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.OffsetMapping
+import androidx.compose.ui.text.input.TransformedText
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.benzo.benzomobile.ui.theme.BenzoMobileTheme
-import java.util.Calendar
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
+import java.time.Instant
 
+
+
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EditProfileScreen(
     modifier: Modifier = Modifier,
@@ -47,270 +73,244 @@ fun EditProfileScreen(
     birthDateValue: String,
     onBirthDateValueChange: (String) -> Unit,
     genderValue: String,
-    onGenderValueChange: () -> Unit,
+    onGenderValueChange: (String) -> Unit,
     showDatePicker: Boolean,
+    onShowDatePickerChange: (Boolean) -> Unit,
     onBackClick: () -> Unit,
     onSaveClick: () -> Unit,
+    emailError: String?,
+    phoneNumberError: String?,
+    lastNameError: String?,
+    firstNameError: String?,
+    carNumberValue: String,
+    onCarNumberValueChange: (String) -> Unit,
+    carNumberError: String? = null,
+    birthDateError: String?,
+    genderError: String?
 ) {
-
     if (showDatePicker) {
-        val calendar = Calendar.getInstance()
-        val year = calendar.get(Calendar.YEAR)
-        val month = calendar.get(Calendar.MONTH)
-        val day = calendar.get(Calendar.DAY_OF_MONTH)
-
-//        val context = LocalContext.current
-//        DatePickerDialog(
-//            context,
-//            { _, selectedYear, selectedMonth, selectedDay ->
-//                birthDate =
-//                    String.format("%02d.%02d.%d", selectedDay, selectedMonth + 1, selectedYear)
-//                showDatePicker = false
-//            },
-//            year,
-//            month,
-//            day,
-//        ).show()
+        val datePickerState = rememberDatePickerState()
+        DatePickerDialog(
+            onDismissRequest = { onShowDatePickerChange(false) },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        datePickerState.selectedDateMillis?.let { millis ->
+                            val date = Instant.ofEpochMilli(millis)
+                                .atZone(ZoneId.systemDefault())
+                                .toLocalDate()
+                            onBirthDateValueChange(date.format(DateTimeFormatter.ofPattern("dd.MM.yyyy")))
+                        }
+                        onShowDatePickerChange(false)
+                    }
+                ) {
+                    Text("OK")
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = { onShowDatePickerChange(false) }
+                ) {
+                    Text("Cancel")
+                }
+            }
+        ) {
+            DatePicker(state = datePickerState)
+        }
     }
 
     Scaffold(
         modifier = modifier,
         topBar = {
             Box(
-                modifier = Modifier.padding(10.dp)
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(56.dp)
             ) {
                 IconButton(
-                    modifier = Modifier.size(50.dp),
                     onClick = onBackClick,
+                    modifier = Modifier
+                        .align(Alignment.CenterStart)
+                        .padding(start = 8.dp)
                 ) {
-                    Icon(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .background(MaterialTheme.colorScheme.primary),
+                    Icon(modifier = Modifier
+                        .fillMaxSize()
+                        .background(MaterialTheme.colorScheme.primary),
                         imageVector = Icons.Default.ChevronLeft,
-                        tint = MaterialTheme.colorScheme.onPrimary,
-                        contentDescription = null,
+                        contentDescription = "Back",
+                        tint = MaterialTheme.colorScheme.onPrimary
                     )
                 }
+
+                Text(
+                    modifier = Modifier.align(Alignment.Center),
+                    text = "Edit Profile",
+                    style = MaterialTheme.typography.titleLarge,
+                    color = Color.Black
+                )
             }
         }
     ) { innerPadding ->
         Column(
             modifier = Modifier
                 .padding(innerPadding)
-                .padding(16.dp)
-                .fillMaxSize(),
-            verticalArrangement = Arrangement.spacedBy(10.dp),
+                .padding(horizontal = 16.dp, vertical = 8.dp)
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState()),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            Text(
-                modifier = Modifier.align(Alignment.CenterHorizontally),
-                text = "Edit profile",
-                style = MaterialTheme.typography.titleLarge,
-            )
-
-            TextField(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(80.dp),
+            OutlinedTextField(
+                modifier = Modifier.fillMaxWidth(),
                 value = phoneNumberValue,
                 onValueChange = onPhoneNumberValueChange,
-                isError = false,
-                label = {
-                    Text(
-                        text = "Phone number *"
-                    )
-                },
-                supportingText = {},
+                label = { Text("Phone number") },
                 singleLine = true,
+                visualTransformation = PhoneVisualTransformation(mask = "+7 (###) ###-##-##",
+                    maskNumber = '#'),
+                isError = phoneNumberError != null,
+                supportingText = {
+                    phoneNumberError?.let { Text(it, color = MaterialTheme.colorScheme.error) }
+                },
+                keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Phone)
+
             )
 
-            TextField(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(80.dp),
+            OutlinedTextField(
+                modifier = Modifier.fillMaxWidth(),
                 value = lastNameValue,
                 onValueChange = onLastNameValueChange,
-                isError = false,
-                label = {
-                    Text(
-                        text = "Last name *"
-                    )
-                },
-                supportingText = {},
+                label = { Text("Last name") },
                 singleLine = true,
+                isError = lastNameError != null,
+                supportingText = {
+                    lastNameError?.let { Text(it, color = MaterialTheme.colorScheme.error) }
+                }
             )
 
-            TextField(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(80.dp),
+            OutlinedTextField(
+                modifier = Modifier.fillMaxWidth(),
                 value = firstNameValue,
                 onValueChange = onFirstNameValueChange,
-                isError = false,
-                label = {
-                    Text(
-                        text = "First name *"
-                    )
-                },
-                supportingText = {},
+                label = { Text("First name") },
                 singleLine = true,
+                isError = firstNameError != null,
+                supportingText = {
+                    firstNameError?.let { Text(it, color = MaterialTheme.colorScheme.error) }
+                }
             )
 
-            TextField(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(80.dp),
+            OutlinedTextField(
+                modifier = Modifier.fillMaxWidth(),
                 value = emailValue,
                 onValueChange = onEmailValueChange,
-                isError = false,
-                label = {
-                    Text(
-                        text = "Email *"
-                    )
-                },
-                supportingText = {},
+                label = { Text("Email") },
                 singleLine = true,
-            )
-
-//
-//            UnderlinedTextFieldWithIcon(
-//                value = birthDateValue,
-//                onValueChange = onBirthDateValueChange,
-//                label = "Дата рождения *",
-//                icon = {
-//                    IconButton(onClick = { showDatePicker = true }) {
-//                        Icon(
-//                            imageVector = Icons.Default.CalendarToday,
-//                            contentDescription = "Выбрать дату"
-//                        )
-//                    }
-//                },
-//                readOnly = false
-//            )
-
-            Text(
-                text = "Sex *",
-                style = MaterialTheme.typography.titleMedium,
-            )
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(16.dp),
-            ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    RadioButton(
-                        selected = genderValue == "Male",
-                        onClick = onGenderValueChange,
-                    )
-                    Text("Male")
+                isError = emailError != null,
+                supportingText = {
+                    if (emailError != null) {
+                        Text(text = emailError, color = MaterialTheme.colorScheme.error)
+                    }
                 }
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    RadioButton(
-                        selected = genderValue == "Female",
-                        onClick = onGenderValueChange,
+            )
+
+            OutlinedTextField(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable { onShowDatePickerChange(true) },
+                value = birthDateValue,
+                onValueChange = {},
+                label = { Text("Birth date") },
+                singleLine = true,
+                isError = birthDateError != null,
+                supportingText = {
+                    birthDateError?.let { Text(it, color = MaterialTheme.colorScheme.error) }
+                },
+                readOnly = true,
+                trailingIcon = {
+                    Icon(
+                        modifier = Modifier.clickable { onShowDatePickerChange(true) },
+                        imageVector = Icons.Default.CalendarToday,
+                        contentDescription = "Select date"
                     )
-                    Text("Female")
+                }
+            )
+            OutlinedTextField(
+                modifier = Modifier.fillMaxWidth(),
+                value = carNumberValue,
+                onValueChange = { input ->
+                    val filtered = input
+                        .uppercase()
+                        .filter { it.isDigit() || it in 'А'..'Я' }
+                        .take(8)
+
+                    onCarNumberValueChange(filtered)
+                },
+                label = { Text("Car number") },
+                singleLine = true,
+                isError = carNumberError != null,
+                supportingText = {
+                    carNumberError?.let { Text(it, color = MaterialTheme.colorScheme.error) }
+                },
+                keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Text)
+            )
+
+            var expanded by remember { mutableStateOf(false) }
+            val genderOptions = listOf("Male", "Female")
+
+            ExposedDropdownMenuBox(
+                expanded = expanded,
+                onExpandedChange = { expanded = !expanded }
+            ) {
+                OutlinedTextField(
+                    modifier = Modifier
+                        .menuAnchor()
+                        .fillMaxWidth(),
+                    value = genderValue,
+                    onValueChange = {},
+                    readOnly = true,
+                    isError = genderError != null,
+                    supportingText = {
+                        genderError?.let { Text(it, color = MaterialTheme.colorScheme.error) }
+                    },
+                    label = { Text("Select gender") },
+                    trailingIcon = {
+                        ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
+                    },
+                )
+
+                ExposedDropdownMenu(
+                    expanded = expanded,
+                    onDismissRequest = { expanded = false }
+                ) {
+                    genderOptions.forEach { gender ->
+                        DropdownMenuItem(
+                            text = { Text(text = gender, color = if (gender == genderValue) MaterialTheme.colorScheme.primary else Color.Unspecified) },
+                            onClick = {
+                                onGenderValueChange(gender)
+                                expanded = false
+                            },
+                            contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding
+                        )
+                    }
                 }
             }
 
             Spacer(modifier = Modifier.weight(1f))
 
             Button(
-                onClick = onSaveClick,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(50.dp)
+                    .height(50.dp),
+                onClick = onSaveClick
             ) {
-                Text(
-                    text = "Save",
-                )
+                Text(text = "Save")
             }
         }
     }
 }
 
-// Do we need it?
-@Composable
-fun UnderlinedTextField(
-    modifier: Modifier = Modifier,
-    value: String,
-    onValueChange: (String) -> Unit,
-    label: String,
-) {
-    Column(
-        modifier = modifier
-    ) {
-        Text(
-            text = label,
-            style = MaterialTheme.typography.titleMedium
-        )
-        TextField(
-            value = value,
-            onValueChange = onValueChange,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 0.001.dp),
-            colors = TextFieldDefaults.colors(
-                focusedIndicatorColor = Color.Transparent,
-                unfocusedIndicatorColor = Color.Transparent,
-                disabledIndicatorColor = Color.Transparent,
-                focusedContainerColor = Color.Transparent,
-                unfocusedContainerColor = Color.Transparent,
-                disabledContainerColor = Color.Transparent,
-                cursorColor = MaterialTheme.colorScheme.primary,
-                focusedTextColor = MaterialTheme.colorScheme.onSurface,
-                unfocusedTextColor = MaterialTheme.colorScheme.onSurface
-            ),
-            singleLine = true,
-        )
-        Divider(thickness = 1.dp, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f))
-    }
-}
-
-// Do we need it?
-@Composable
-fun UnderlinedTextFieldWithIcon(
-    modifier: Modifier = Modifier,
-    value: String,
-    onValueChange: (String) -> Unit,
-    label: String,
-    icon: @Composable (() -> Unit)? = null,
-    readOnly: Boolean = false,
-) {
-    Column(modifier = modifier) {
-        Text(text = label, style = MaterialTheme.typography.titleMedium)
-        TextField(
-            value = value,
-            onValueChange = onValueChange,
-            modifier = Modifier.Companion
-                .fillMaxWidth()
-                .padding(bottom = 0.001.dp),
-            colors = TextFieldDefaults.colors(
-                focusedIndicatorColor = Color.Transparent,
-                unfocusedIndicatorColor = Color.Transparent,
-                disabledIndicatorColor = Color.Transparent,
-                focusedContainerColor = Color.Transparent,
-                unfocusedContainerColor = Color.Transparent,
-                disabledContainerColor = Color.Transparent,
-                cursorColor = MaterialTheme.colorScheme.primary,
-                focusedTextColor = MaterialTheme.colorScheme.onSurface,
-                unfocusedTextColor = MaterialTheme.colorScheme.onSurface
-            ),
-            trailingIcon = icon,
-            singleLine = true,
-            readOnly = readOnly
-        )
-        Divider(
-            thickness = 1.dp,
-            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
-        )
-    }
-}
-
-@Composable
 @Preview
+@Composable
 fun EditProfileScreenPreview() {
     BenzoMobileTheme {
         Surface {
@@ -323,14 +323,102 @@ fun EditProfileScreenPreview() {
                 onFirstNameValueChange = {},
                 emailValue = "",
                 onEmailValueChange = {},
-                birthDateValue = "",
+                birthDateValue = "01.01.2000",
                 onBirthDateValueChange = {},
-                genderValue = "",
+                genderValue = "Male",
                 onGenderValueChange = {},
                 showDatePicker = false,
                 onBackClick = {},
                 onSaveClick = {},
+                emailError = "",
+                phoneNumberError = "",
+                onShowDatePickerChange = {},
+                firstNameError = "",
+                lastNameError = "",
+                carNumberValue = "",
+                carNumberError = "",
+                onCarNumberValueChange = {},
+                birthDateError = "",
+                genderError = ""
             )
         }
     }
 }
+
+
+class PhoneVisualTransformation(
+    private val mask: String,
+    private val maskNumber: Char
+) : VisualTransformation {
+
+    private val maxLength = mask.count { it == maskNumber }
+
+    override fun filter(text: AnnotatedString): TransformedText {
+        val trimmed = text.text.take(maxLength)
+
+        val maskedText = buildAnnotatedString {
+            var textIndex = 0
+            for (maskChar in mask) {
+                if (maskChar == maskNumber) {
+                    if (textIndex < trimmed.length) {
+                        append(trimmed[textIndex])
+                        textIndex++
+                    } else {
+                        break
+                    }
+                } else {
+                    append(maskChar)
+                }
+            }
+        }
+
+        return TransformedText(maskedText, PhoneOffsetMapper(mask, maskNumber))
+    }
+
+    override fun equals(other: Any?): Boolean {
+        return other is PhoneVisualTransformation &&
+                other.mask == mask &&
+                other.maskNumber == maskNumber
+    }
+
+    override fun hashCode(): Int {
+        return mask.hashCode() * 31 + maskNumber.hashCode()
+    }
+}
+
+
+private class PhoneOffsetMapper(
+    val mask: String,
+    val numberChar: Char
+) : OffsetMapping {
+
+    private val firstInputPosition = mask.indexOf(numberChar)
+
+    override fun originalToTransformed(offset: Int): Int {
+        var digitsSeen = 0
+        var transformedOffset = 0
+
+        while (digitsSeen < offset && transformedOffset < mask.length) {
+            if (mask[transformedOffset] == numberChar) {
+                digitsSeen++
+            }
+            transformedOffset++
+        }
+
+        while (transformedOffset < mask.length && mask[transformedOffset] != numberChar) {
+            transformedOffset++
+        }
+
+        return transformedOffset.coerceAtLeast(firstInputPosition)
+    }
+
+    override fun transformedToOriginal(offset: Int): Int {
+        val digits = mask.take(offset).count { it == numberChar }
+        return digits
+    }
+}
+
+
+
+
+
