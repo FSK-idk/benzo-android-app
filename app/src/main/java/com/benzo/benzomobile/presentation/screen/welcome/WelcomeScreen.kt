@@ -4,10 +4,12 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.Surface
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -15,7 +17,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.benzo.benzomobile.ui.theme.BenzoMobileTheme
 
 @Composable
@@ -24,43 +25,45 @@ fun WelcomeScreen(
     onRegisterClick: () -> Unit,
     onLoginClick: () -> Unit,
 ) {
-    Column(
-        modifier = modifier.fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(
-            space = 10.dp,
-            alignment = Alignment.CenterVertically
-        ),
-    ) {
-        Spacer(modifier = Modifier.weight(1f))
-
-        Text(
-            text = "BENZO",
-            fontSize = 72.sp,
-            fontWeight = FontWeight.Bold,
-        )
-
-        Spacer(modifier = Modifier.weight(1.5f))
-
-        OutlinedButton(
-            modifier = Modifier.size(250.dp, 50.dp),
-            onClick = onRegisterClick,
+    Scaffold(
+        modifier = modifier,
+    ) { innerPadding ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(
+                space = 10.dp,
+                alignment = Alignment.CenterVertically,
+            ),
         ) {
-            Text(
-                text = "Register",
-            )
-        }
+            Spacer(modifier = Modifier.weight(1f))
 
-        Button(
-            modifier = Modifier.size(250.dp, 50.dp),
-            onClick = onLoginClick,
-        ) {
             Text(
-                text = "Login",
+                text = "BENZO",
+                fontWeight = FontWeight.Bold,
+                style = MaterialTheme.typography.displayLarge,
             )
-        }
 
-        Spacer(modifier = Modifier.weight(1f))
+            Spacer(modifier = Modifier.weight(1.5f))
+
+            OutlinedButton(
+                modifier = Modifier.width(250.dp),
+                onClick = onRegisterClick,
+            ) {
+                Text(text = "Register")
+            }
+
+            Button(
+                modifier = Modifier.width(250.dp),
+                onClick = onLoginClick,
+            ) {
+                Text(text = "Login")
+            }
+
+            Spacer(modifier = Modifier.weight(1f))
+        }
     }
 }
 
@@ -68,11 +71,9 @@ fun WelcomeScreen(
 @Preview
 fun WelcomeScreenPreview() {
     BenzoMobileTheme {
-        Surface {
-            WelcomeScreen(
-                onRegisterClick = {},
-                onLoginClick = {},
-            )
-        }
+        WelcomeScreen(
+            onRegisterClick = {},
+            onLoginClick = {},
+        )
     }
 }

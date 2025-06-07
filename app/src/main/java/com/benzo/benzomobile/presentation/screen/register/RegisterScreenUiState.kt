@@ -1,13 +1,14 @@
 package com.benzo.benzomobile.presentation.screen.register
 
+import androidx.compose.material3.SnackbarHostState
+
 data class RegisterScreenUiState(
     val login: String = "",
-    val isLoginValidationError: Boolean = false,
-    val loginValidationErrorMessage: String = "",
+    val loginError: String? = null,
     val password: String = "",
-    val isPasswordValidationError: Boolean = false,
-    val passwordValidationErrorMessage: String = "",
+    val passwordError: String? = null,
     val confirmPassword: String = "",
-    val isConfirmPasswordValidationError: Boolean = false,
-    val confirmPasswordValidationErrorMessage: String = "",
+    val confirmPasswordError: String? = null,
+    val isLoading: Boolean = false,
+    val snackbarHostState: SnackbarHostState = SnackbarHostState(),
 )

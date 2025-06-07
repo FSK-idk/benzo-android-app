@@ -31,13 +31,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.benzo.benzomobile.domain.model.ThemeOption
 import com.benzo.benzomobile.ui.theme.BenzoMobileTheme
 
 @Composable
 fun SettingsScreen(
     modifier: Modifier = Modifier,
-    selectedTheme: String,
-    onThemeSelected: (String) -> Unit,
+    themeOption: ThemeOption,
+    onThemeSelected: (ThemeOption) -> Unit,
     onBackClick: () -> Unit,
 ) {
     Scaffold(
@@ -84,31 +85,31 @@ fun SettingsScreen(
                 modifier = Modifier.fillMaxWidth()
             ) {
                 ThemeCircleOption(
-                    themeName = "Light",
-                    color = Color(0xFFF1F1F1),
-                    selectedTheme = selectedTheme,
-                    onSelected = onThemeSelected,
-                )
-
-                Spacer(
-                    modifier = Modifier.width(20.dp),
-                )
-
-                ThemeCircleOption(
-                    themeName = "Dark",
-                    color = Color(0xFF1C1C1C),
-                    selectedTheme = selectedTheme,
-                    onSelected = onThemeSelected,
-                )
-
-                Spacer(
-                    modifier = Modifier.width(20.dp),
-                )
-
-                ThemeCircleOption(
-                    themeName = "System",
+                    isSelected = themeOption == ThemeOption.SYSTEM,
                     color = Color(0xFF888888),
-                    selectedTheme = selectedTheme,
+                    themeOption = ThemeOption.SYSTEM,
+                    onSelected = onThemeSelected,
+                )
+
+                Spacer(
+                    modifier = Modifier.width(20.dp),
+                )
+
+                ThemeCircleOption(
+                    isSelected = themeOption == ThemeOption.LIGHT,
+                    color = Color(0xFFF1F1F1),
+                    themeOption = ThemeOption.LIGHT,
+                    onSelected = onThemeSelected,
+                )
+
+                Spacer(
+                    modifier = Modifier.width(20.dp),
+                )
+
+                ThemeCircleOption(
+                    isSelected = themeOption == ThemeOption.DARK,
+                    color = Color(0xFF1C1C1C),
+                    themeOption = ThemeOption.DARK,
                     onSelected = onThemeSelected,
                 )
             }
@@ -118,12 +119,11 @@ fun SettingsScreen(
 
 @Composable
 fun ThemeCircleOption(
-    themeName: String,
+    isSelected: Boolean,
     color: Color,
-    selectedTheme: String,
-    onSelected: (String) -> Unit
+    themeOption: ThemeOption,
+    onSelected: (ThemeOption) -> Unit
 ) {
-    val isSelected = selectedTheme == themeName
     val interactionSource = remember { MutableInteractionSource() }
 
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -138,7 +138,7 @@ fun ThemeCircleOption(
                     interactionSource = interactionSource,
                     indication = null
                 ) {
-                    onSelected(themeName)
+                    onSelected(themeOption)
                 },
             contentAlignment = Alignment.Center
         ) {
@@ -156,12 +156,18 @@ fun ThemeCircleOption(
         )
 
         Text(
-            text = themeName,
-            color = Color.Black,
+            text = getThemeName(themeOption),
             style = MaterialTheme.typography.bodyLarge
         )
     }
 }
+
+fun getThemeName(themeOption: ThemeOption): String =
+    when (themeOption) {
+        ThemeOption.SYSTEM -> "System"
+        ThemeOption.LIGHT -> "Light"
+        ThemeOption.DARK -> "Dark"
+    }
 
 @Composable
 @Preview
@@ -170,7 +176,7 @@ fun SettingsScreenPreview() {
         Surface {
             SettingsScreen(
                 onBackClick = {},
-                selectedTheme = "",
+                themeOption = ThemeOption.SYSTEM,
                 onThemeSelected = {},
             )
         }

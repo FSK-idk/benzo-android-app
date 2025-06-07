@@ -1,21 +1,19 @@
 package com.benzo.benzomobile.presentation.graph
 
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import com.benzo.benzomobile.presentation.Destination
 
 @Composable
 fun GraphRoot(
-    modifier: Modifier = Modifier,
+    isAuthenticated: Boolean,
 ) {
     val rootNavController = rememberNavController()
 
     NavHost(
-        modifier = modifier,
         navController = rootNavController,
-        startDestination = Destination.LoginGraphRoot,
+        startDestination = getDestination(isAuthenticated),
     ) {
         loginGraphRoot(
             onNavigateToAppGraphRoot = {
@@ -27,6 +25,20 @@ fun GraphRoot(
             }
         )
 
-        appGraphRoot()
+        appGraphRoot(
+            onNavigateToLoginGraphRoot = {
+                rootNavController.navigate(Destination.LoginGraphRoot) {
+                    popUpTo(Destination.AppGraphRoot) {
+                        inclusive = true
+                    }
+                }
+            }
+        )
     }
 }
+
+private fun getDestination(isAuthenticated: Boolean) : Destination =
+    when (isAuthenticated) {
+        true -> Destination.AppGraphRoot
+        false -> Destination.LoginGraphRoot
+    }

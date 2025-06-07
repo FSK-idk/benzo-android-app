@@ -1,24 +1,27 @@
 package com.benzo.benzomobile.presentation.screen.login
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ChevronLeft
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -32,22 +35,20 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.withLink
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.benzo.benzomobile.ui.theme.BenzoMobileTheme
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LoginScreen(
     modifier: Modifier = Modifier,
     login: String,
     onLoginChange: (String) -> Unit,
-    isLoginValidationError: Boolean,
-    loginValidationErrorMessage: String,
     password: String,
     onPasswordChange: (String) -> Unit,
-    isPasswordValidationError: Boolean,
-    passwordValidationErrorMessage: String,
     isPasswordShown: Boolean,
     onPasswordVisibilityClick: () -> Unit,
+    isLoading: Boolean,
+    snackbarHostState: SnackbarHostState,
     onBackClick: () -> Unit,
     onLoginClick: () -> Unit,
     onRegisterClick: () -> Unit,
@@ -55,24 +56,22 @@ fun LoginScreen(
     Scaffold(
         modifier = modifier,
         topBar = {
-            Box(
-                modifier = Modifier.padding(10.dp)
-            ) {
-                IconButton(
-                    modifier = Modifier.size(50.dp),
-                    onClick = onBackClick,
-                ) {
-                    Icon(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .background(MaterialTheme.colorScheme.primary),
-                        imageVector = Icons.Default.ChevronLeft,
-                        tint = MaterialTheme.colorScheme.onPrimary,
-                        contentDescription = null,
-                    )
+            TopAppBar(
+                title = { Text(text = "Login") },
+                navigationIcon = {
+                    IconButton(
+                        onClick = onBackClick,
+                    ) {
+                        Icon(
+                            modifier = Modifier.size(25.dp),
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = null,
+                        )
+                    }
                 }
-            }
-        }
+            )
+        },
+        snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
     ) { innerPadding ->
         Column(
             modifier = Modifier
@@ -84,86 +83,61 @@ fun LoginScreen(
                 alignment = Alignment.CenterVertically,
             ),
         ) {
-
             Text(
                 text = "Welcome back",
-                fontSize = 36.sp,
                 fontWeight = FontWeight.Bold,
+                style = MaterialTheme.typography.displaySmall,
             )
 
             OutlinedTextField(
-                modifier = Modifier
-                    .size(250.dp, 80.dp),
+                modifier = Modifier.width(250.dp),
                 value = login,
                 onValueChange = onLoginChange,
-                isError = isLoginValidationError,
-                label = {
-                    Text(
-                        text = "Login"
-                    )
-                },
-                supportingText = {
-                    if (isLoginValidationError) {
-                        Text(
-                            text = loginValidationErrorMessage,
-                        )
-                    }
-                },
+                label = { Text(text = "Login") },
                 singleLine = true,
             )
 
             OutlinedTextField(
-                modifier = Modifier.size(250.dp, 80.dp),
+                modifier = Modifier.width(250.dp),
                 value = password,
                 onValueChange = onPasswordChange,
-                isError = isPasswordValidationError,
-                label = {
-                    Text(
-                        text = "Password",
-                    )
-                },
+                label = { Text(text = "Password") },
+                singleLine = true,
                 visualTransformation = if (isPasswordShown) {
                     VisualTransformation.None
                 } else {
                     PasswordVisualTransformation()
                 },
-                supportingText = {
-                    if (isPasswordValidationError) {
-                        Text(
-                            text = passwordValidationErrorMessage,
-                        )
-                    }
-                },
                 trailingIcon = {
                     IconButton(
-                        modifier = Modifier.size(20.dp),
                         onClick = onPasswordVisibilityClick,
                     ) {
                         Icon(
-                            modifier = Modifier.fillMaxSize(),
+                            modifier = Modifier.size(20.dp),
                             imageVector = if (isPasswordShown) {
                                 Icons.Default.Visibility
                             } else {
                                 Icons.Default.VisibilityOff
                             },
-                            contentDescription = "",
+                            contentDescription = null,
                         )
                     }
                 },
-                singleLine = true,
             )
 
             Button(
-                modifier = Modifier.size(250.dp, 50.dp),
+                modifier = Modifier.width(250.dp),
                 onClick = onLoginClick,
+                enabled = !isLoading,
             ) {
-                Text(
-                    text = "Login",
-                )
+                if (isLoading) {
+                    CircularProgressIndicator(modifier = Modifier.size(25.dp))
+                } else {
+                    Text(text = "Login")
+                }
             }
 
             Text(
-                modifier = Modifier,
                 text = buildAnnotatedString {
                     append("Don't have an account? ")
                     withLink(
@@ -181,34 +155,28 @@ fun LoginScreen(
                         append("Register")
                     }
                 },
-                fontSize = 12.sp,
+                style = MaterialTheme.typography.bodySmall,
             )
         }
-
     }
-
 }
 
 @Composable
 @Preview
 fun LoginScreenPreview() {
     BenzoMobileTheme {
-        Surface {
-            LoginScreen(
-                login = "",
-                onLoginChange = {},
-                isLoginValidationError = false,
-                loginValidationErrorMessage = "",
-                password = "",
-                onPasswordChange = {},
-                isPasswordValidationError = false,
-                passwordValidationErrorMessage = "",
-                isPasswordShown = false,
-                onPasswordVisibilityClick = {},
-                onBackClick = {},
-                onLoginClick = {},
-                onRegisterClick = {},
-            )
-        }
+        LoginScreen(
+            login = "",
+            onLoginChange = {},
+            password = "",
+            onPasswordChange = {},
+            isPasswordShown = false,
+            onPasswordVisibilityClick = {},
+            isLoading = false,
+            snackbarHostState = SnackbarHostState(),
+            onBackClick = {},
+            onLoginClick = {},
+            onRegisterClick = {},
+        )
     }
 }

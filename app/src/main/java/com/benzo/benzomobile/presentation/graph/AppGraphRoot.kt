@@ -9,7 +9,9 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.benzo.benzomobile.presentation.Destination
 
-fun NavGraphBuilder.appGraphRoot() {
+fun NavGraphBuilder.appGraphRoot(
+    onNavigateToLoginGraphRoot: () -> Unit,
+) {
     composable<Destination.AppGraphRoot> {
         val navController = rememberNavController()
 
@@ -54,7 +56,9 @@ fun NavGraphBuilder.appGraphRoot() {
                 navController = navController,
                 startDestination = Destination.AppGraph.ProfileGraphRoot,
             ) {
-                profileGraphRoot()
+                profileGraphRoot(
+                    onNavigateToLoginGraphRoot = onNavigateToLoginGraphRoot,
+                )
 
                 stationsGraphRoot()
 

@@ -1,19 +1,33 @@
 package com.benzo.benzomobile.presentation.screen.settings
 
 import androidx.lifecycle.ViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
+import androidx.lifecycle.viewModelScope
+import com.benzo.benzomobile.domain.model.ThemeOption
+import com.benzo.benzomobile.domain.use_case.GetThemeOptionUseCase
+import com.benzo.benzomobile.domain.use_case.SetThemeConfigUseCase
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 
-class SettingsScreenViewModel() : ViewModel() {
-    private val _uiState = MutableStateFlow(SettingsScreenUiState())
-    val uiState = _uiState.asStateFlow()
-
-    fun onThemeSelected(theme: String) {
-        _uiState.update { currentState ->
-            currentState.copy(
-                selectedTheme = theme,
+class SettingsScreenViewModel(
+    private val getThemeOptionUseCase: GetThemeOptionUseCase,
+    private val setThemeConfigUseCase: SetThemeConfigUseCase,
+) : ViewModel() {
+    val uiState =
+        getThemeOptionUseCase().map {
+            SettingsScreenUiState(
+                themeOption = it
             )
+        }.stateIn(
+            scope = viewModelScope,
+            initialValue = SettingsScreenUiState(),
+            started = SharingStarted.WhileSubscribed(5000),
+        )
+
+    fun onThemeSelected(themeOption: ThemeOption) {
+        viewModelScope.launch {
+            setThemeConfigUseCase(themeOption = themeOption)
         }
     }
 }

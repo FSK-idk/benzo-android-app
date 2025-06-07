@@ -19,7 +19,7 @@ fun NavGraphBuilder.settingsScreen(
         Scaffold { innerPadding ->
             SettingsScreen(
                 modifier = Modifier.padding(innerPadding),
-                selectedTheme = uiState.value.selectedTheme,
+                themeOption = uiState.value.themeOption,
                 onThemeSelected = viewModel::onThemeSelected,
                 onBackClick = onNavigateBack,
             )

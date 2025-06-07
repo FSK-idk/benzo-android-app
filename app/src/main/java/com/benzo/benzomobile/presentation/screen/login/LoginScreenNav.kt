@@ -1,8 +1,5 @@
 package com.benzo.benzomobile.presentation.screen.login
 
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
-import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
@@ -18,23 +15,18 @@ fun NavGraphBuilder.loginScreen(
         val viewModel = koinViewModel<LoginScreenViewModel>()
         val uiState = viewModel.uiState.collectAsStateWithLifecycle()
 
-        Scaffold { innerPadding ->
-            LoginScreen(
-                modifier = Modifier.padding(innerPadding),
-                login = uiState.value.login,
-                onLoginChange = viewModel::onLoginChange,
-                isLoginValidationError = uiState.value.isLoginValidationError,
-                loginValidationErrorMessage = uiState.value.loginValidationErrorMessage,
-                password = uiState.value.password,
-                onPasswordChange = viewModel::onPasswordChange,
-                isPasswordValidationError = uiState.value.isPasswordValidationError,
-                passwordValidationErrorMessage = uiState.value.passwordValidationErrorMessage,
-                isPasswordShown = uiState.value.isPasswordShown,
-                onPasswordVisibilityClick = viewModel::onPasswordVisibilityClick,
-                onBackClick = onNavigateBack,
-                onLoginClick = onNavigateToAppGraphRoot,
-                onRegisterClick = onNavigateToRegisterScreen,
-            )
-        }
+        LoginScreen(
+            login = uiState.value.login,
+            onLoginChange = viewModel::onLoginChange,
+            password = uiState.value.password,
+            onPasswordChange = viewModel::onPasswordChange,
+            isPasswordShown = uiState.value.isPasswordShown,
+            onPasswordVisibilityClick = viewModel::onPasswordVisibilityClick,
+            isLoading = uiState.value.isLoading,
+            snackbarHostState = uiState.value.snackbarHostState,
+            onBackClick = onNavigateBack,
+            onLoginClick = { viewModel.onLoginClicked(onNavigateToAppGraphRoot) },
+            onRegisterClick = onNavigateToRegisterScreen,
+        )
     }
 }

@@ -40,12 +40,17 @@ android {
 
 dependencies {
     implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.core.splashscreen)
     implementation(platform(libs.androidx.compose.bom))
+    implementation(libs.androidx.compose.runtime)
     implementation(libs.androidx.activity.ktx)
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.navigation.compose)
-    implementation(libs.androidx.navigation.runtime.android)
+    implementation(libs.androidx.navigation.runtime.ktx)
+
+    implementation(libs.androidx.datastore.preferences.core)
+    implementation(libs.androidx.datastore.preferences)
 
     implementation(libs.androidx.ui)
     implementation(libs.androidx.ui.graphics)
@@ -61,10 +66,14 @@ dependencies {
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.kotlinx.datetime)
 
+    implementation(platform(libs.io.koin.bom))
     implementation(libs.io.koin.core)
     implementation(libs.io.koin.android)
     implementation(libs.io.koin.androidx.compose)
+    implementation(libs.io.koin.androidx.compose.navigation)
+    implementation(libs.io.koin.compose.viewmodel)
 
+    implementation(libs.squareup.okhttp)
     implementation(libs.squareup.retrofit)
     implementation(libs.squareup.converter.kotlinx.serialization)
 }

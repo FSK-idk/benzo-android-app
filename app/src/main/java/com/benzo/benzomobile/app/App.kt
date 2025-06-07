@@ -1,9 +1,7 @@
 package com.benzo.benzomobile.app
 
 import android.app.Application
-import com.benzo.benzomobile.di.dataModule
-import com.benzo.benzomobile.di.domainModule
-import com.benzo.benzomobile.di.presentationModule
+import com.benzo.benzomobile.di.appModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.GlobalContext.startKoin
@@ -13,15 +11,9 @@ class App : Application() {
         super.onCreate()
 
         startKoin {
-            androidContext(this@App)
             androidLogger()
-            modules(
-                listOf(
-                    presentationModule,
-                    domainModule,
-                    dataModule,
-                )
-            )
+            androidContext(this@App)
+            modules(appModule)
         }
     }
 }

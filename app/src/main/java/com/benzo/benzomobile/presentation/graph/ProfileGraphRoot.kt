@@ -9,7 +9,9 @@ import com.benzo.benzomobile.presentation.screen.edit_profile.editProfileScreen
 import com.benzo.benzomobile.presentation.screen.profile.profileScreen
 import com.benzo.benzomobile.presentation.screen.settings.settingsScreen
 
-fun NavGraphBuilder.profileGraphRoot() {
+fun NavGraphBuilder.profileGraphRoot(
+    onNavigateToLoginGraphRoot: () -> Unit,
+) {
     composable<Destination.AppGraph.ProfileGraphRoot> {
         val navController = rememberNavController()
 
@@ -24,6 +26,7 @@ fun NavGraphBuilder.profileGraphRoot() {
                 onNavigateToEditProfileScreen = {
                     navController.navigate(Destination.AppGraph.ProfileGraph.EditProfileScreen)
                 },
+                onNavigateToLoginGraphRoot = onNavigateToLoginGraphRoot,
             )
 
             settingsScreen(

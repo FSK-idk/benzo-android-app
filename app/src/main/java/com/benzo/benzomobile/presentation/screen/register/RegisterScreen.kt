@@ -1,22 +1,25 @@
 package com.benzo.benzomobile.presentation.screen.register
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ChevronLeft
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -29,24 +32,23 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.withLink
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.benzo.benzomobile.ui.theme.BenzoMobileTheme
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RegisterScreen(
     modifier: Modifier = Modifier,
     login: String,
     onLoginChange: (String) -> Unit,
-    isLoginValidationError: Boolean,
-    loginValidationErrorMessage: String,
+    loginError: String?,
     password: String,
     onPasswordChange: (String) -> Unit,
-    isPasswordValidationError: Boolean,
-    passwordValidationErrorMessage: String,
+    passwordError: String?,
     confirmPassword: String,
     onConfirmPasswordChange: (String) -> Unit,
-    isConfirmPasswordValidationError: Boolean,
-    confirmPasswordValidationErrorMessage: String,
+    confirmPasswordError: String?,
+    isLoading: Boolean,
+    snackbarHostState: SnackbarHostState,
     onBackClick: () -> Unit,
     onRegisterClick: () -> Unit,
     onLoginClick: () -> Unit,
@@ -54,24 +56,22 @@ fun RegisterScreen(
     Scaffold(
         modifier = modifier,
         topBar = {
-            Box(
-                modifier = Modifier.padding(10.dp)
-            ) {
-                IconButton(
-                    modifier = Modifier.size(50.dp),
-                    onClick = onBackClick,
-                ) {
-                    Icon(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .background(MaterialTheme.colorScheme.primary),
-                        imageVector = Icons.Default.ChevronLeft,
-                        tint = MaterialTheme.colorScheme.onPrimary,
-                        contentDescription = null,
-                    )
+            TopAppBar(
+                title = { Text(text = "Registration") },
+                navigationIcon = {
+                    IconButton(
+                        onClick = onBackClick,
+                    ) {
+                        Icon(
+                            modifier = Modifier.size(25.dp),
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = null,
+                        )
+                    }
                 }
-            }
-        }
+            )
+        },
+        snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
     ) { innerPadding ->
         Column(
             modifier = Modifier
@@ -80,92 +80,81 @@ fun RegisterScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(
                 space = 10.dp,
-                alignment = Alignment.CenterVertically
+                alignment = Alignment.CenterVertically,
             ),
         ) {
-
             Text(
                 text = "New account",
-                fontSize = 36.sp,
                 fontWeight = FontWeight.Bold,
+                style = MaterialTheme.typography.displaySmall,
             )
 
             OutlinedTextField(
-                modifier = Modifier
-                    .size(250.dp, 80.dp),
+                modifier = Modifier.width(250.dp),
                 value = login,
                 onValueChange = onLoginChange,
-                isError = isLoginValidationError,
-                label = {
-                    Text(
-                        text = "Login"
-                    )
-                },
+                label = { Text(text = "Login") },
+                singleLine = true,
+                isError = loginError != null,
                 supportingText = {
-                    if (isLoginValidationError) {
+                    loginError?.let {
                         Text(
-                            text = loginValidationErrorMessage,
+                            text = it,
+                            color = MaterialTheme.colorScheme.error,
                         )
                     }
                 },
-                singleLine = true,
             )
 
             OutlinedTextField(
-                modifier = Modifier
-                    .size(250.dp, 80.dp),
+                modifier = Modifier.width(250.dp),
                 value = password,
                 onValueChange = onPasswordChange,
-                isError = isPasswordValidationError,
-                label = {
-                    Text(
-                        text = "Password"
-                    )
-                },
+                label = { Text(text = "Password") },
+                singleLine = true,
                 visualTransformation = PasswordVisualTransformation(),
+                isError = passwordError != null,
                 supportingText = {
-                    if (isPasswordValidationError) {
+                    passwordError?.let {
                         Text(
-                            text = passwordValidationErrorMessage,
+                            text = it,
+                            color = MaterialTheme.colorScheme.error,
                         )
                     }
                 },
-                singleLine = true,
             )
 
             OutlinedTextField(
-                modifier = Modifier
-                    .size(250.dp, 80.dp),
+                modifier = Modifier.width(250.dp),
                 value = confirmPassword,
                 onValueChange = onConfirmPasswordChange,
-                isError = isConfirmPasswordValidationError,
-                label = {
-                    Text(
-                        text = "Confirm password"
-                    )
-                },
+                label = { Text(text = "Confirm password") },
+                singleLine = true,
                 visualTransformation = PasswordVisualTransformation(),
+                isError = confirmPasswordError != null,
                 supportingText = {
-                    if (isConfirmPasswordValidationError) {
+                    confirmPasswordError?.let {
                         Text(
-                            text = confirmPasswordValidationErrorMessage,
+                            text = it,
+                            color = MaterialTheme.colorScheme.error,
                         )
                     }
                 },
-                singleLine = true,
             )
 
             Button(
-                modifier = Modifier.size(250.dp, 50.dp),
+                modifier = Modifier.width(250.dp),
                 onClick = onRegisterClick,
+                enabled = !isLoading,
             ) {
-                Text(
-                    text = "Register",
-                )
+                if (isLoading) {
+                    CircularProgressIndicator(modifier = Modifier.size(25.dp))
+                } else {
+                    Text(text = "Register")
+                }
             }
 
             Text(
-                modifier = Modifier,
                 text = buildAnnotatedString {
                     append("Already have an account? ")
                     withLink(
@@ -183,7 +172,7 @@ fun RegisterScreen(
                         append("Login")
                     }
                 },
-                fontSize = 12.sp,
+                style = MaterialTheme.typography.bodySmall,
             )
         }
     }
@@ -193,24 +182,21 @@ fun RegisterScreen(
 @Preview
 fun RegisterScreenPreview() {
     BenzoMobileTheme {
-        Surface {
-            RegisterScreen(
-                login = "",
-                onLoginChange = {},
-                isLoginValidationError = false,
-                loginValidationErrorMessage = "",
-                password = "",
-                onPasswordChange = {},
-                isPasswordValidationError = false,
-                passwordValidationErrorMessage = "",
-                confirmPassword = "",
-                onConfirmPasswordChange = {},
-                isConfirmPasswordValidationError = false,
-                confirmPasswordValidationErrorMessage = "",
-                onBackClick = {},
-                onRegisterClick = {},
-                onLoginClick = {},
-            )
-        }
+        RegisterScreen(
+            login = "",
+            onLoginChange = {},
+            loginError = null,
+            password = "",
+            onPasswordChange = {},
+            passwordError = null,
+            confirmPassword = "",
+            onConfirmPasswordChange = {},
+            confirmPasswordError = null,
+            isLoading = false,
+            snackbarHostState = SnackbarHostState(),
+            onBackClick = {},
+            onRegisterClick = {},
+            onLoginClick = {},
+        )
     }
 }
