@@ -2,17 +2,18 @@ package com.benzo.benzomobile.presentation.screen.login
 
 import android.util.Log
 import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHostState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.benzo.benzomobile.app.TAG
-import com.benzo.benzomobile.domain.use_case.LoginUserUseCase
+import com.benzo.benzomobile.domain.use_case.LoginUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class LoginScreenViewModel(
-    private val loginUserUseCase: LoginUserUseCase,
+    private val loginUseCase: LoginUseCase,
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(LoginScreenUiState())
     val uiState = _uiState.asStateFlow()
@@ -31,7 +32,7 @@ class LoginScreenViewModel(
         viewModelScope.launch {
             try {
                 _uiState.update { it.copy(isLoading = true) }
-                loginUserUseCase(
+                loginUseCase(
                     login = _uiState.value.login,
                     password = _uiState.value.password,
                 )
@@ -47,3 +48,11 @@ class LoginScreenViewModel(
             }
         }
 }
+
+data class LoginScreenUiState(
+    val login: String = "",
+    val password: String = "",
+    val isPasswordShown: Boolean = false,
+    val isLoading: Boolean = false,
+    val snackbarHostState: SnackbarHostState = SnackbarHostState(),
+)

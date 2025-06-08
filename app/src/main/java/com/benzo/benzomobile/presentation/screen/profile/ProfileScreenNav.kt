@@ -14,12 +14,16 @@ fun NavGraphBuilder.profileScreen(
 ) {
     composable<Destination.AppGraph.ProfileGraph.ProfileScreen> {
         val viewModel = koinViewModel<ProfileScreenViewModel>()
+        val loadState = viewModel.loadState.collectAsStateWithLifecycle()
         val uiState = viewModel.uiState.collectAsStateWithLifecycle()
 
         ProfileScreen(
-            id = uiState.value.id,
+            isLoading = loadState.value.isLoading,
+            isRefreshing = loadState.value.isRefreshing,
             name = uiState.value.name,
-            snackbarHostState = uiState.value.snackbarHostState,
+            login = uiState.value.login,
+            snackbarHostState = loadState.value.snackbarHostState,
+            onRefresh = viewModel::onRefresh,
             onHistoryClick = onNavigateToHistoryScreen,
             onEditProfileClick = onNavigateToEditProfileScreen,
             onSettingsClick = onNavigateToSettingsScreen,

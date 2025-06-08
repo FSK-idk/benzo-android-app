@@ -1,6 +1,7 @@
 package com.benzo.benzomobile.presentation.screen.edit_profile
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -9,17 +10,21 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -40,6 +45,7 @@ import java.time.format.DateTimeFormatter
 @Composable
 fun EditProfileScreen(
     modifier: Modifier = Modifier,
+    isLoading: Boolean,
     name: String,
     onNameChange: (String) -> Unit,
     nameError: String?,
@@ -60,6 +66,8 @@ fun EditProfileScreen(
     genderError: String?,
     showDatePicker: Boolean,
     onShowDatePickerChange: (Boolean) -> Unit,
+    snackbarHostState: SnackbarHostState,
+    isSaveAvailable: Boolean,
     onBackClick: () -> Unit,
     onSaveClick: () -> Unit,
 ) {
@@ -74,7 +82,7 @@ fun EditProfileScreen(
                             val date = Instant.ofEpochMilli(millis)
                                 .atZone(ZoneId.systemDefault())
                                 .toLocalDate()
-                            onBirthDateChange(date.format(DateTimeFormatter.ofPattern("dd.MM.yyyy")))
+                            onBirthDateChange(date.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
                         }
                         onShowDatePickerChange(false)
                     }
@@ -106,70 +114,83 @@ fun EditProfileScreen(
                 ),
             )
         },
+        snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
     ) { innerPadding ->
-        Column(
-            modifier = Modifier
-                .padding(innerPadding)
-                .padding(10.dp)
-                .fillMaxSize()
-                .verticalScroll(rememberScrollState()),
-            verticalArrangement = Arrangement.spacedBy(10.dp),
-        ) {
-            PhoneNumberSimpleOutlinedTextField(
-                modifier = Modifier.fillMaxWidth(),
-                phoneNumber = phoneNumber,
-                onPhoneNumberChange = onPhoneNumberChange,
-                phoneNumberError = phoneNumberError,
-                title = "Phone number",
-            )
-
-            SimpleOutlinedTextField(
-                modifier = Modifier.fillMaxWidth(),
-                value = name,
-                onValueChange = onNameChange,
-                valueError = nameError,
-                title = "Name",
-            )
-
-            SimpleOutlinedTextField(
-                modifier = Modifier.fillMaxWidth(),
-                value = email,
-                onValueChange = onEmailChange,
-                valueError = emailError,
-                title = "Email",
-            )
-
-            DateSimpleOutlinedTextField(
-                modifier = Modifier.fillMaxWidth(),
-                date = birthDate,
-                onDateClick = { onShowDatePickerChange(true) },
-                dateError = birthDateError,
-                title = "Birth date",
-            )
-
-            CarNumberSimpleOutlinedTextField(
-                modifier = Modifier.fillMaxWidth(),
-                carNumber = carNumber,
-                onCarNumberChange = onCarNumberChange,
-                carNumberError = carNumberError,
-                title = "Car number",
-            )
-
-            GenderSimpleOutlinedTextFiled(
-                modifier = Modifier.fillMaxWidth(),
-                gender = gender,
-                onGenderChange = onGenderChange,
-                genderError = genderError,
-                title = "Gender",
-            )
-
-            Spacer(modifier = Modifier.weight(1f))
-
-            Button(
-                modifier = Modifier.fillMaxWidth(),
-                onClick = onSaveClick
+        if (isLoading) {
+            Box(
+                modifier = Modifier
+                    .padding(innerPadding)
+                    .fillMaxSize(),
+                contentAlignment = Alignment.Center,
             ) {
-                Text(text = "Save")
+                CircularProgressIndicator()
+            }
+        } else {
+            Column(
+                modifier = Modifier
+                    .padding(innerPadding)
+                    .padding(10.dp)
+                    .fillMaxSize()
+                    .verticalScroll(rememberScrollState()),
+                verticalArrangement = Arrangement.spacedBy(10.dp),
+            ) {
+                SimpleOutlinedTextField(
+                    modifier = Modifier.fillMaxWidth(),
+                    value = name,
+                    onValueChange = onNameChange,
+                    valueError = nameError,
+                    title = "Name",
+                )
+
+                CarNumberSimpleOutlinedTextField(
+                    modifier = Modifier.fillMaxWidth(),
+                    carNumber = carNumber,
+                    onCarNumberChange = onCarNumberChange,
+                    carNumberError = carNumberError,
+                    title = "Car number",
+                )
+
+                PhoneNumberSimpleOutlinedTextField(
+                    modifier = Modifier.fillMaxWidth(),
+                    phoneNumber = phoneNumber,
+                    onPhoneNumberChange = onPhoneNumberChange,
+                    phoneNumberError = phoneNumberError,
+                    title = "Phone number",
+                )
+
+                SimpleOutlinedTextField(
+                    modifier = Modifier.fillMaxWidth(),
+                    value = email,
+                    onValueChange = onEmailChange,
+                    valueError = emailError,
+                    title = "Email",
+                )
+
+                DateSimpleOutlinedTextField(
+                    modifier = Modifier.fillMaxWidth(),
+                    date = birthDate,
+                    onDateClick = { onShowDatePickerChange(true) },
+                    dateError = birthDateError,
+                    title = "Birth date",
+                )
+
+                GenderSimpleOutlinedTextFiled(
+                    modifier = Modifier.fillMaxWidth(),
+                    gender = gender,
+                    onGenderChange = onGenderChange,
+                    genderError = genderError,
+                    title = "Gender",
+                )
+
+                Spacer(modifier = Modifier.weight(1f))
+
+                Button(
+                    modifier = Modifier.fillMaxWidth(),
+                    onClick = onSaveClick,
+                    enabled = isSaveAvailable,
+                ) {
+                    Text(text = "Save")
+                }
             }
         }
     }
@@ -181,28 +202,31 @@ fun EditProfileScreenPreview() {
     BenzoMobileTheme {
         Surface {
             EditProfileScreen(
-                phoneNumber = "",
-                onPhoneNumberChange = {},
+                isLoading = false,
                 name = "",
                 onNameChange = {},
-                email = "",
-                onEmailChange = {},
-                birthDate = "01.01.2000",
-                onBirthDateChange = {},
-                gender = GenderOption.NONE,
-                onGenderChange = {},
-                showDatePicker = false,
-                onBackClick = {},
-                onSaveClick = {},
-                emailError = "",
-                phoneNumberError = "",
-                onShowDatePickerChange = {},
                 nameError = "",
                 carNumber = "",
                 carNumberError = "",
                 onCarNumberChange = {},
+                phoneNumber = "",
+                onPhoneNumberChange = {},
+                phoneNumberError = "",
+                email = "",
+                onEmailChange = {},
+                emailError = "",
+                birthDate = "2000-01-01",
+                onBirthDateChange = {},
                 birthDateError = "",
-                genderError = ""
+                gender = GenderOption.NONE,
+                onGenderChange = {},
+                genderError = "",
+                showDatePicker = false,
+                onShowDatePickerChange = {},
+                snackbarHostState = SnackbarHostState(),
+                isSaveAvailable = true,
+                onBackClick = {},
+                onSaveClick = {},
             )
         }
     }

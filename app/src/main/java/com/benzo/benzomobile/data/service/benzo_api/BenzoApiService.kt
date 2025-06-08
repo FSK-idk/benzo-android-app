@@ -1,7 +1,8 @@
 package com.benzo.benzomobile.data.service.benzo_api
 
-import com.benzo.benzomobile.data.storage.dto.TokenDto
-import com.benzo.benzomobile.data.storage.dto.UserDto
+import com.benzo.benzomobile.data.data_source.dto.LoyaltyCardDto
+import com.benzo.benzomobile.data.data_source.dto.TokenDto
+import com.benzo.benzomobile.data.data_source.dto.UserDto
 import retrofit2.Response
 import retrofit2.http.Field
 import retrofit2.http.FormUrlEncoded
@@ -29,4 +30,18 @@ interface BenzoApiService {
     suspend fun getUser(
         @Header("Authorization") token: String,
     ): Response<UserDto>
+
+    @FormUrlEncoded
+    @POST("user/data/")
+    suspend fun updateUser(
+        @Header("Authorization") token: String,
+        @Field("name") name: String? = null,
+        @Field("birth_date") birthDate: String? = null,
+        @Field("car_number") carNumber: String? = null,
+    ): Response<Unit>
+
+    @GET("loyalty-card/")
+    suspend fun getLoyaltyCard(
+        @Header("Authorization") token: String,
+    ): Response<LoyaltyCardDto>
 }

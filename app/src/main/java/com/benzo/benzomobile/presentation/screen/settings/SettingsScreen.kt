@@ -1,6 +1,7 @@
 package com.benzo.benzomobile.presentation.screen.settings
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -10,6 +11,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.material3.Card
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
@@ -24,7 +26,6 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.benzo.benzomobile.domain.model.ThemeOption
-import com.benzo.benzomobile.presentation.common.LoadingBox
 import com.benzo.benzomobile.presentation.common.SimpleTopAppBar
 import com.benzo.benzomobile.ui.theme.BenzoMobileTheme
 
@@ -52,12 +53,16 @@ fun SettingsScreen(
             )
         },
     ) { innerPadding ->
-        LoadingBox(
-            modifier = Modifier
-                .padding(innerPadding)
-                .fillMaxSize(),
-            isLoading = isLoading,
-        ) {
+        if (isLoading) {
+            Box(
+                modifier = Modifier
+                    .padding(innerPadding)
+                    .fillMaxSize(),
+                contentAlignment = Alignment.Center,
+            ) {
+                CircularProgressIndicator()
+            }
+        } else {
             Column(
                 modifier = Modifier
                     .padding(innerPadding)

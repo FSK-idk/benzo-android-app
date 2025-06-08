@@ -1,6 +1,6 @@
 package com.benzo.benzomobile.data.repository
 
-import com.benzo.benzomobile.data.storage.authentication.AuthenticationDataSource
+import com.benzo.benzomobile.data.data_source.authentication.AuthenticationDataSource
 import com.benzo.benzomobile.domain.repository.AuthenticationRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map

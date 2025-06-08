@@ -11,10 +11,11 @@ fun NavGraphBuilder.settingsScreen(
 ) {
     composable<Destination.AppGraph.ProfileGraph.SettingsScreen> {
         val viewModel = koinViewModel<SettingsScreenViewModel>()
+        val loadState = viewModel.loadState.collectAsStateWithLifecycle()
         val uiState = viewModel.uiState.collectAsStateWithLifecycle()
 
         SettingsScreen(
-            isLoading = uiState.value.isLoading,
+            isLoading = loadState.value.isLoading,
             selectedTheme = uiState.value.theme,
             onThemeClick = viewModel::onThemeSelected,
             onBackClick = onNavigateBack,

@@ -19,21 +19,23 @@ import androidx.compose.ui.unit.dp
 fun SimpleTopAppBar(
     modifier: Modifier = Modifier,
     title: String,
-    onBackClick: (() -> Unit) = { },
+    onBackClick: (() -> Unit)? = null,
     colors: TopAppBarColors = TopAppBarDefaults.topAppBarColors(),
 ) {
     TopAppBar(
         modifier = modifier,
         title = { Text(text = title) },
         navigationIcon = {
-            IconButton(
-                onClick = onBackClick,
-            ) {
-                Icon(
-                    modifier = Modifier.size(25.dp),
-                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                    contentDescription = null,
-                )
+            if (onBackClick != null) {
+                IconButton(
+                    onClick = onBackClick,
+                ) {
+                    Icon(
+                        modifier = Modifier.size(25.dp),
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = null,
+                    )
+                }
             }
         },
         colors = colors,

@@ -1,114 +1,148 @@
 package com.benzo.benzomobile.presentation.screen.edit_profile
 
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHostState
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.benzo.benzomobile.domain.model.GenderOption
+import com.benzo.benzomobile.domain.model.Result
+import com.benzo.benzomobile.domain.model.User
+import com.benzo.benzomobile.domain.model.UserUpdate
+import com.benzo.benzomobile.domain.use_case.FetchUserUseCase
+import com.benzo.benzomobile.domain.use_case.GetUserUseCase
+import com.benzo.benzomobile.domain.use_case.UpdateUserUseCase
+import com.benzo.benzomobile.domain.use_case.ValidateBirthDateUseCase
+import com.benzo.benzomobile.domain.use_case.ValidateCarNumberUseCase
+import com.benzo.benzomobile.domain.use_case.ValidateEmailUseCase
+import com.benzo.benzomobile.domain.use_case.ValidateGenderUseCase
+import com.benzo.benzomobile.domain.use_case.ValidateNameUseCase
+import com.benzo.benzomobile.domain.use_case.ValidatePhoneNumberUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.filterIsInstance
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 
-class EditProfileScreenViewModel() : ViewModel() {
+class EditProfileScreenViewModel(
+    private val validateNameUseCase: ValidateNameUseCase,
+    private val validateCarNumberUseCase: ValidateCarNumberUseCase,
+    private val validatePhoneNumberUseCase: ValidatePhoneNumberUseCase,
+    private val validateEmailUseCase: ValidateEmailUseCase,
+    private val validateBirthDateUseCase: ValidateBirthDateUseCase,
+    private val validateGenderUseCase: ValidateGenderUseCase,
+    private val getUserUseCase: GetUserUseCase,
+    private val fetchUserUseCase: FetchUserUseCase,
+    private val updateUserUseCase: UpdateUserUseCase,
+) : ViewModel() {
+    private val _loadState = MutableStateFlow(EditProfileScreenLoadState())
+    val loadState = _loadState.asStateFlow()
+
     private val _uiState = MutableStateFlow(EditProfileScreenUiState())
     val uiState = _uiState.asStateFlow()
-    companion object {
-        private const val CAR_NUMBER_REGEX = """^(([АВЕКМНОРСТУХ]\d{3}(?<!000)[АВЕКМНОРСТУХ]{1,2})(\d{2,3})|(\d{4}(?<!0000)[АВЕКМНОРСТУХ]{2})(\d{2})|(\d{3}(?<!000)(C?D|[ТНМВКЕ])\d{3}(?<!000))(\d{2}(?<!00))|([ТСК][АВЕКМНОРСТУХ]{2}\d{3}(?<!000))(\d{2})|([АВЕКМНОРСТУХ]{2}\d{3}(?<!000)[АВЕКМНОРСТУХ])(\d{2})|([АВЕКМНОРСТУХ]\d{4}(?<!0000))(\d{2})|(\d{3}(?<!000)[АВЕКМНОРСТУХ])(\d{2})|(\d{4}(?<!0000)[АВЕКМНОРСТУХ])(\d{2})|([АВЕКМНОРСТУХ]{2}\d{4}(?<!0000))(\d{2})|([АВЕКМНОРСТУХ]{2}\d{3}(?<!000))(\d{2,3})|(^Т[АВЕКМНОРСТУХ]{2}\d{3}(?<!000)\d{2,3}))$"""
+
+    init {
+        viewModelScope.launch {
+            fetchData()
+        }
+
+        viewModelScope.launch {
+            _uiState.value = getUserUseCase()
+                .filter {
+                    when (it) {
+                        is Result.Loading -> false
+                        is Result.Success -> true
+
+                        is Result.Error -> {
+                            _loadState.value.snackbarHostState.showSnackbar(
+                                message = it.message,
+                                withDismissAction = true,
+                                duration = SnackbarDuration.Short,
+                            )
+                            return@filter false
+                        }
+                    }
+                }
+                .filterIsInstance<Result.Success<User>>()
+                .map {
+                    _loadState.update { jt -> jt.copy(isLoading = false) }
+
+                    EditProfileScreenUiState(
+                        name = it.data.name,
+                        birthDate = it.data.birthDate ?: "",
+                        carNumber = it.data.carNumber ?: "",
+                    )
+                }
+                .first()
+        }
     }
+
+    private suspend fun fetchData() =
+        fetchUserUseCase()
+
+    fun onNameChange(value: String) =
+        _uiState.update {
+            it.copy(
+                name = value,
+                nameError = validateNameUseCase(value),
+            )
+        }
+
+    fun onCarNumberChange(value: String) =
+        _uiState.update {
+            it.copy(
+                carNumber = value,
+                carNumberError = validateCarNumberUseCase(value),
+            )
+        }
 
     fun onPhoneNumberChange(value: String) {
         val digitsOnly = value.filter { it.isDigit() }
-        val error = validatePhoneNumber(digitsOnly)
 
         _uiState.update {
-            it.copy(phoneNumber = digitsOnly, phoneNumberError = error)
+            it.copy(
+                phoneNumber = digitsOnly,
+                phoneNumberError = validatePhoneNumberUseCase(digitsOnly),
+            )
         }
     }
 
-    fun onNameChange(value: String) {
-        val error = validateName(value)
+    fun onEmailChange(value: String) =
         _uiState.update {
-            it.copy(name = value, nameError = error)
+            it.copy(
+                email = value,
+                emailError = validateEmailUseCase(value),
+            )
         }
-    }
 
-    fun onEmailChange(value: String) {
-        val error = validateEmail(value)
+    fun onBirthDateChange(value: String) =
         _uiState.update {
-            it.copy(email = value, emailError = error)
+            it.copy(
+                birthDate = value,
+                birthDateError = validateBirthDateUseCase(value),
+            )
         }
-    }
 
-    fun onBirthDateChange(value: String) {
-        val error = validateBirthDate(value)
+    fun onGenderChange(value: GenderOption) =
         _uiState.update {
-            it.copy(birthDate = value, birthDateError = error)
+            it.copy(
+                gender = value,
+                genderError = validateGenderUseCase(value),
+            )
         }
-    }
 
-    fun onGenderChange(value: GenderOption) {
-        val error = validateGender(value)
-        _uiState.update {
-            it.copy(gender = value, genderError = error)
-        }
-    }
-    fun onCarNumberChange(value: String) {
-
-        val error = validateCarNumber(value)
-        _uiState.update {
-            it.copy(carNumber = value, carNumberError = error)
-        }
-    }
-    fun setShowDatePicker(show: Boolean) {
+    fun setShowDatePicker(show: Boolean) =
         _uiState.update { it.copy(showDatePicker = show) }
-    }
-
-    private fun validatePhoneNumber(phone: String): String? {
-        if (phone.isBlank()) return "The field cannot be empty"
-        val digitsOnly = phone.filter { it.isDigit() }
-        val isValidChars = phone.all { it.isDigit() || it in "+-() " }
-
-        return when {
-            !isValidChars -> "Invalid characters"
-            digitsOnly.length < 10 -> "Incorrect number"
-            else -> null
-        }
-    }
-
-    private fun validateEmail(email: String): String? {
-        if (email.isBlank()) return "The field cannot be empty"
-        return if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) "Incorrect email" else null
-    }
-
-    private fun validateBirthDate(birthDate: String): String? {
-        return if (birthDate.isBlank()) "Select the date of birth" else null
-    }
-
-    private fun validateGender(gender: GenderOption): String? {
-        return if (gender == GenderOption.NONE) "Choose a gender" else null
-    }
-
-    private fun validateName(name: String): String? {
-        val regex = Regex("^[a-zA-Zа-яА-ЯёЁ\\-\\s']+$")
-        return when {
-            name.isBlank() -> "The field cannot be empty"
-            !regex.matches(name) -> "Only letters, spaces, hyphens, and apostrophes are allowed."
-            else -> null
-        }
-    }
-
-
-    private fun validateCarNumber(carNumber: String): String? {
-        if (carNumber.isBlank()) return "The field cannot be empty"
-        return if (!Regex(CAR_NUMBER_REGEX).matches(carNumber.uppercase())) {
-            "Incorrect car number"
-        } else null
-    }
 
     fun onSaveClick() {
-        val lastNameError = validateName(_uiState.value.name)
-        val phoneNumberError = validatePhoneNumber(_uiState.value.phoneNumber)
-        val emailError = validateEmail(_uiState.value.email)
-        val birthDateError = validateBirthDate(_uiState.value.birthDate)
-        val genderError = validateGender(_uiState.value.gender)
-        val carNumberError = validateCarNumber(_uiState.value.carNumber)
+        val lastNameError = validateNameUseCase(_uiState.value.name)
+        val phoneNumberError = validatePhoneNumberUseCase(_uiState.value.phoneNumber)
+        val emailError = validateEmailUseCase(_uiState.value.email)
+        val birthDateError = validateBirthDateUseCase(_uiState.value.birthDate)
+        val genderError = validateGenderUseCase(_uiState.value.gender)
+        val carNumberError = validateCarNumberUseCase(_uiState.value.carNumber)
 
         val hasErrors = listOf(
             lastNameError,
@@ -131,7 +165,61 @@ class EditProfileScreenViewModel() : ViewModel() {
         }
 
         if (!hasErrors) {
-            // TODO:
+            viewModelScope.launch {
+                _loadState.update { it.copy(isSaveAvailable = false) }
+
+                val result = updateUserUseCase(
+                    userUpdate = UserUpdate(
+                        name = _uiState.value.name,
+                        carNumber = _uiState.value.carNumber,
+                        birthDate = _uiState.value.birthDate,
+                    )
+                )
+
+                when (result) {
+                    is Result.Loading -> Unit
+
+                    is Result.Success -> {
+                        _loadState.value.snackbarHostState.showSnackbar(
+                            message = "Successful",
+                            withDismissAction = true,
+                            duration = SnackbarDuration.Short,
+                        )
+                    }
+
+                    is Result.Error -> {
+                        _loadState.value.snackbarHostState.showSnackbar(
+                            message = result.message,
+                            withDismissAction = true,
+                            duration = SnackbarDuration.Short,
+                        )
+                    }
+                }
+            }
+
+            _loadState.update { it.copy(isSaveAvailable = true) }
         }
     }
 }
+
+data class EditProfileScreenLoadState(
+    val isLoading: Boolean = true,
+    val snackbarHostState: SnackbarHostState = SnackbarHostState(),
+    val isSaveAvailable: Boolean = true,
+)
+
+data class EditProfileScreenUiState(
+    val phoneNumber: String = "",
+    val phoneNumberError: String? = null,
+    val name: String = "",
+    val nameError: String? = null,
+    val email: String = "",
+    val emailError: String? = null,
+    val birthDate: String = "",
+    val birthDateError: String? = null,
+    val gender: GenderOption = GenderOption.NONE,
+    val genderError: String? = null,
+    val showDatePicker: Boolean = false,
+    val carNumber: String = "",
+    val carNumberError: String? = null,
+)

@@ -14,34 +14,35 @@ fun NavGraphBuilder.editProfileScreen(
 ) {
     composable<Destination.AppGraph.ProfileGraph.EditProfileScreen> {
         val viewModel = koinViewModel<EditProfileScreenViewModel>()
+        val loadState = viewModel.loadState.collectAsStateWithLifecycle()
         val uiState = viewModel.uiState.collectAsStateWithLifecycle()
 
-        Scaffold { innerPadding ->
-            EditProfileScreen(
-                modifier = Modifier.padding(innerPadding),
-                phoneNumber = uiState.value.phoneNumber,
-                onPhoneNumberChange = viewModel::onPhoneNumberChange,
-                name = uiState.value.name,
-                onNameChange = viewModel::onNameChange,
-                email = uiState.value.email,
-                onEmailChange = viewModel::onEmailChange,
-                birthDate = uiState.value.birthDate,
-                onBirthDateChange = viewModel::onBirthDateChange,
-                gender = uiState.value.gender,
-                onGenderChange = viewModel::onGenderChange,
-                onBackClick = onNavigateBack,
-                onSaveClick = viewModel::onSaveClick,
-                emailError = uiState.value.emailError,
-                phoneNumberError = uiState.value.phoneNumberError,
-                showDatePicker = uiState.value.showDatePicker,
-                onShowDatePickerChange = viewModel::setShowDatePicker,
-                nameError = uiState.value.nameError,
-                carNumber = uiState.value.carNumber,
-                onCarNumberChange = viewModel::onCarNumberChange,
-                carNumberError = uiState.value.carNumberError,
-                birthDateError = uiState.value.birthDateError,
-                genderError = uiState.value.genderError
-            )
-        }
+        EditProfileScreen(
+            isLoading = loadState.value.isLoading,
+            name = uiState.value.name,
+            onNameChange = viewModel::onNameChange,
+            nameError = uiState.value.nameError,
+            carNumber = uiState.value.carNumber,
+            onCarNumberChange = viewModel::onCarNumberChange,
+            carNumberError = uiState.value.carNumberError,
+            phoneNumber = uiState.value.phoneNumber,
+            onPhoneNumberChange = viewModel::onPhoneNumberChange,
+            phoneNumberError = uiState.value.phoneNumberError,
+            email = uiState.value.email,
+            onEmailChange = viewModel::onEmailChange,
+            emailError = uiState.value.emailError,
+            birthDate = uiState.value.birthDate,
+            onBirthDateChange = viewModel::onBirthDateChange,
+            birthDateError = uiState.value.birthDateError,
+            gender = uiState.value.gender,
+            onGenderChange = viewModel::onGenderChange,
+            genderError = uiState.value.genderError,
+            showDatePicker = uiState.value.showDatePicker,
+            onShowDatePickerChange = viewModel::setShowDatePicker,
+            snackbarHostState = loadState.value.snackbarHostState,
+            isSaveAvailable = loadState.value.isSaveAvailable,
+            onBackClick = onNavigateBack,
+            onSaveClick = viewModel::onSaveClick,
+        )
     }
 }

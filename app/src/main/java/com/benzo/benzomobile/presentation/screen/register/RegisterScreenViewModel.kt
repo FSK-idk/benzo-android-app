@@ -2,10 +2,11 @@ package com.benzo.benzomobile.presentation.screen.register
 
 import android.util.Log
 import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHostState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.benzo.benzomobile.app.TAG
-import com.benzo.benzomobile.domain.use_case.RegisterUserUseCase
+import com.benzo.benzomobile.domain.use_case.RegisterUseCase
 import com.benzo.benzomobile.domain.use_case.ValidateConfirmPasswordUseCase
 import com.benzo.benzomobile.domain.use_case.ValidateLoginUseCase
 import com.benzo.benzomobile.domain.use_case.ValidatePasswordUseCase
@@ -18,7 +19,7 @@ class RegisterScreenViewModel(
     private val validateLoginUseCase: ValidateLoginUseCase,
     private val validatePasswordUseCase: ValidatePasswordUseCase,
     private val validateConfirmPasswordUseCase: ValidateConfirmPasswordUseCase,
-    private val registerUserUseCase: RegisterUserUseCase,
+    private val registerUseCase: RegisterUseCase,
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(RegisterScreenUiState())
     val uiState = _uiState.asStateFlow()
@@ -78,7 +79,7 @@ class RegisterScreenViewModel(
         viewModelScope.launch {
             try {
                 _uiState.update { it.copy(isLoading = true) }
-                registerUserUseCase(
+                registerUseCase(
                     login = _uiState.value.login,
                     password = _uiState.value.password,
                 )
@@ -95,3 +96,14 @@ class RegisterScreenViewModel(
         }
     }
 }
+
+data class RegisterScreenUiState(
+    val login: String = "",
+    val loginError: String? = null,
+    val password: String = "",
+    val passwordError: String? = null,
+    val confirmPassword: String = "",
+    val confirmPasswordError: String? = null,
+    val isLoading: Boolean = false,
+    val snackbarHostState: SnackbarHostState = SnackbarHostState(),
+)
