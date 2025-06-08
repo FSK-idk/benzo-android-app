@@ -17,13 +17,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.benzo.benzomobile.presentation.Destination
 
-data class NavigationItem(
-    val currentDestination: Destination.AppGraph,
-    val title: String,
-    val icon: ImageVector,
-    val onClick: (Destination.AppGraph) -> Unit,
-)
-
 @Composable
 fun BottomNavigationBar(
     onNavigateToProfileRoot: (Destination.AppGraph) -> Unit,
@@ -51,9 +44,7 @@ fun BottomNavigationBar(
         )
     )
 
-    val selectedNavigationIndex = rememberSaveable {
-        mutableIntStateOf(0)
-    }
+    val selectedNavigationIndex = rememberSaveable { mutableIntStateOf(0) }
 
     NavigationBar {
         navigationItems.forEachIndexed { index, item ->
@@ -69,21 +60,19 @@ fun BottomNavigationBar(
                         contentDescription = null
                     )
                 },
-                label = {
-                    Text(
-                        item.title,
-                        color = if (index == selectedNavigationIndex.intValue) {
-                            Color.Black
-                        } else {
-                            Color.Gray
-                        }
-                    )
-                },
+                label = { Text(text = item.title) },
                 colors = NavigationBarItemDefaults.colors(
                     selectedIconColor = MaterialTheme.colorScheme.surface,
-                    indicatorColor = MaterialTheme.colorScheme.primary
+                    indicatorColor = MaterialTheme.colorScheme.primary,
                 )
             )
         }
     }
 }
+
+data class NavigationItem(
+    val currentDestination: Destination.AppGraph,
+    val title: String,
+    val icon: ImageVector,
+    val onClick: (Destination.AppGraph) -> Unit,
+)

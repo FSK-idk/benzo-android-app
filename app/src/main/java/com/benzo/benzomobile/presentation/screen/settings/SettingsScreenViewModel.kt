@@ -3,21 +3,22 @@ package com.benzo.benzomobile.presentation.screen.settings
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.benzo.benzomobile.domain.model.ThemeOption
-import com.benzo.benzomobile.domain.use_case.GetThemeOptionUseCase
-import com.benzo.benzomobile.domain.use_case.SetThemeConfigUseCase
+import com.benzo.benzomobile.domain.use_case.GetThemeUseCase
+import com.benzo.benzomobile.domain.use_case.SetThemeUseCase
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 class SettingsScreenViewModel(
-    private val getThemeOptionUseCase: GetThemeOptionUseCase,
-    private val setThemeConfigUseCase: SetThemeConfigUseCase,
+    private val getThemeUseCase: GetThemeUseCase,
+    private val setThemeUseCase: SetThemeUseCase,
 ) : ViewModel() {
     val uiState =
-        getThemeOptionUseCase().map {
+        getThemeUseCase().map {
             SettingsScreenUiState(
-                themeOption = it
+                isLoading = false,
+                theme = it
             )
         }.stateIn(
             scope = viewModelScope,
@@ -25,9 +26,9 @@ class SettingsScreenViewModel(
             started = SharingStarted.WhileSubscribed(5000),
         )
 
-    fun onThemeSelected(themeOption: ThemeOption) {
+    fun onThemeSelected(theme: ThemeOption) {
         viewModelScope.launch {
-            setThemeConfigUseCase(themeOption = themeOption)
+            setThemeUseCase(theme = theme)
         }
     }
 }

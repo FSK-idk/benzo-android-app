@@ -15,7 +15,7 @@ class UserPreferencesDataSourceImpl(
         dataStore.updateData { it.copy(token = token) }
     }
 
-    override suspend fun setThemeOption(themeOption: ThemeOption) {
-        dataStore.updateData { it.copy(themeOption = themeOption) }
+    override suspend fun setTheme(theme: ThemeOption) {
+        dataStore.updateData { it.copy(theme = theme) }
     }
 }

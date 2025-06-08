@@ -3,7 +3,7 @@ package com.benzo.benzomobile.presentation
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.benzo.benzomobile.domain.use_case.GetIsAuthenticatedUseCase
-import com.benzo.benzomobile.domain.use_case.GetThemeOptionUseCase
+import com.benzo.benzomobile.domain.use_case.GetThemeUseCase
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
@@ -11,12 +11,12 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.stateIn
 
 class MainActivityViewModel(
-    getThemeOptionUseCase: GetThemeOptionUseCase,
+    getThemeUseCase: GetThemeUseCase,
     getIsAuthenticatedUseCase: GetIsAuthenticatedUseCase,
 ) : ViewModel() {
     val uiState: StateFlow<MainActivityUiState> =
         combine(
-            getThemeOptionUseCase(),
+            getThemeUseCase(),
             getIsAuthenticatedUseCase(),
         ) { themeConfig, isAuthenticated ->
             MainActivityUiState.Success(

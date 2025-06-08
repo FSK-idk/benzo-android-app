@@ -8,5 +8,5 @@ interface UserPreferencesDataSource {
     val userPreferences: Flow<UserPreferences>
 
     suspend fun setToken(token: String?)
-    suspend fun setThemeOption(themeOption: ThemeOption)
+    suspend fun setTheme(theme: ThemeOption)
 }

@@ -1,6 +1,7 @@
 package com.benzo.benzomobile.presentation.screen.edit_profile
 
 import androidx.lifecycle.ViewModel
+import com.benzo.benzomobile.domain.model.GenderOption
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -12,7 +13,6 @@ class EditProfileScreenViewModel() : ViewModel() {
         private const val CAR_NUMBER_REGEX = """^(([АВЕКМНОРСТУХ]\d{3}(?<!000)[АВЕКМНОРСТУХ]{1,2})(\d{2,3})|(\d{4}(?<!0000)[АВЕКМНОРСТУХ]{2})(\d{2})|(\d{3}(?<!000)(C?D|[ТНМВКЕ])\d{3}(?<!000))(\d{2}(?<!00))|([ТСК][АВЕКМНОРСТУХ]{2}\d{3}(?<!000))(\d{2})|([АВЕКМНОРСТУХ]{2}\d{3}(?<!000)[АВЕКМНОРСТУХ])(\d{2})|([АВЕКМНОРСТУХ]\d{4}(?<!0000))(\d{2})|(\d{3}(?<!000)[АВЕКМНОРСТУХ])(\d{2})|(\d{4}(?<!0000)[АВЕКМНОРСТУХ])(\d{2})|([АВЕКМНОРСТУХ]{2}\d{4}(?<!0000))(\d{2})|([АВЕКМНОРСТУХ]{2}\d{3}(?<!000))(\d{2,3})|(^Т[АВЕКМНОРСТУХ]{2}\d{3}(?<!000)\d{2,3}))$"""
     }
 
-
     fun onPhoneNumberChange(value: String) {
         val digitsOnly = value.filter { it.isDigit() }
         val error = validatePhoneNumber(digitsOnly)
@@ -22,17 +22,10 @@ class EditProfileScreenViewModel() : ViewModel() {
         }
     }
 
-    fun onLastNameChange(value: String) {
+    fun onNameChange(value: String) {
         val error = validateName(value)
         _uiState.update {
-            it.copy(lastName = value, lastNameError = error)
-        }
-    }
-
-    fun onFirstNameChange(value: String) {
-        val error = validateName(value)
-        _uiState.update {
-            it.copy(firstName = value, firstNameError = error)
+            it.copy(name = value, nameError = error)
         }
     }
 
@@ -50,7 +43,7 @@ class EditProfileScreenViewModel() : ViewModel() {
         }
     }
 
-    fun onGenderChange(value: String) {
+    fun onGenderChange(value: GenderOption) {
         val error = validateGender(value)
         _uiState.update {
             it.copy(gender = value, genderError = error)
@@ -88,8 +81,8 @@ class EditProfileScreenViewModel() : ViewModel() {
         return if (birthDate.isBlank()) "Select the date of birth" else null
     }
 
-    private fun validateGender(gender: String): String? {
-        return if (gender.isBlank()) "Choose a gender" else null
+    private fun validateGender(gender: GenderOption): String? {
+        return if (gender == GenderOption.NONE) "Choose a gender" else null
     }
 
     private fun validateName(name: String): String? {
@@ -110,8 +103,7 @@ class EditProfileScreenViewModel() : ViewModel() {
     }
 
     fun onSaveClick() {
-        val firstNameError = validateName(_uiState.value.firstName)
-        val lastNameError = validateName(_uiState.value.lastName)
+        val lastNameError = validateName(_uiState.value.name)
         val phoneNumberError = validatePhoneNumber(_uiState.value.phoneNumber)
         val emailError = validateEmail(_uiState.value.email)
         val birthDateError = validateBirthDate(_uiState.value.birthDate)
@@ -119,7 +111,6 @@ class EditProfileScreenViewModel() : ViewModel() {
         val carNumberError = validateCarNumber(_uiState.value.carNumber)
 
         val hasErrors = listOf(
-            firstNameError,
             lastNameError,
             phoneNumberError,
             emailError,
@@ -130,8 +121,7 @@ class EditProfileScreenViewModel() : ViewModel() {
 
         _uiState.update {
             it.copy(
-                firstNameError = firstNameError,
-                lastNameError = lastNameError,
+                nameError = lastNameError,
                 phoneNumberError = phoneNumberError,
                 emailError = emailError,
                 birthDateError = birthDateError,

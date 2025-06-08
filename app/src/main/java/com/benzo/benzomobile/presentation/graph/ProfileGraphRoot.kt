@@ -20,11 +20,14 @@ fun NavGraphBuilder.profileGraphRoot(
             startDestination = Destination.AppGraph.ProfileGraph.ProfileScreen,
         ) {
             profileScreen(
-                onNavigateToSettingsScreen = {
-                    navController.navigate(Destination.AppGraph.ProfileGraph.SettingsScreen)
+                onNavigateToHistoryScreen = {
+                    // TODO
                 },
                 onNavigateToEditProfileScreen = {
                     navController.navigate(Destination.AppGraph.ProfileGraph.EditProfileScreen)
+                },
+                onNavigateToSettingsScreen = {
+                    navController.navigate(Destination.AppGraph.ProfileGraph.SettingsScreen)
                 },
                 onNavigateToLoginGraphRoot = onNavigateToLoginGraphRoot,
             )

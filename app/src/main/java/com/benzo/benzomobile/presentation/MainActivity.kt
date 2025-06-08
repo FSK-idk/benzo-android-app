@@ -2,9 +2,7 @@ package com.benzo.benzomobile.presentation
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
-import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -17,7 +15,6 @@ import com.benzo.benzomobile.presentation.graph.GraphRoot
 import com.benzo.benzomobile.presentation.util.isSystemInDarkTheme
 import com.benzo.benzomobile.ui.theme.BenzoMobileTheme
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
@@ -49,19 +46,7 @@ class MainActivity : ComponentActivity() {
                 }
                     .onEach { themeSettings = it }
                     .map { it.darkTheme }
-                    .distinctUntilChanged()
-                    .collect { darkTheme ->
-                        enableEdgeToEdge(
-                            statusBarStyle = SystemBarStyle.auto(
-                                lightScrim = android.graphics.Color.TRANSPARENT,
-                                darkScrim = android.graphics.Color.TRANSPARENT,
-                            ) { darkTheme },
-                            navigationBarStyle = SystemBarStyle.auto(
-                                lightScrim = lightScrim,
-                                darkScrim = darkScrim,
-                            ) { darkTheme },
-                        )
-                    }
+                    .collect {}
             }
         }
 
@@ -83,10 +68,6 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-data class ThemeSettings(
+private data class ThemeSettings(
     val darkTheme: Boolean,
 )
-
-private val lightScrim = android.graphics.Color.argb(0xe6, 0xFF, 0xFF, 0xFF)
-private val darkScrim = android.graphics.Color.argb(0x80, 0x1b, 0x1b, 0x1b)
-

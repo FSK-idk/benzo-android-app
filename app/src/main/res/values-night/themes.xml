@@ -1,11 +1,10 @@
 <resources>
-
     <style name="Theme.BenzoMobileSplashScreen" parent="Theme.SplashScreen">
         <item name="postSplashScreenTheme">@style/Theme.BenzoMobile</item>
         <item name="windowSplashScreenAnimatedIcon">@drawable/ic_splash</item>
     </style>
 
-    <style name="Theme.BenzoMobile" parent="Theme.Material3.Light.NoActionBar">
+    <style name="Theme.BenzoMobile" parent="Theme.Material3.Dark.NoActionBar">
         <item name="colorPrimary">@color/md_theme_primary</item>
         <item name="colorOnPrimary">@color/md_theme_onPrimary</item>
         <item name="colorPrimaryContainer">@color/md_theme_primaryContainer</item>

@@ -13,7 +13,7 @@ class UserPreferencesSerializer : Serializer<UserPreferences> {
     override val defaultValue
         get() = UserPreferences(
             token = null,
-            themeOption = ThemeOption.SYSTEM,
+            theme = ThemeOption.SYSTEM,
         )
 
     override suspend fun readFrom(input: InputStream): UserPreferences =
