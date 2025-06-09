@@ -6,6 +6,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.benzo.benzomobile.presentation.Destination
 import com.benzo.benzomobile.presentation.screen.edit_profile.editProfileScreen
+import com.benzo.benzomobile.presentation.screen.payment_history.paymentHistoryScreen
 import com.benzo.benzomobile.presentation.screen.profile.profileScreen
 import com.benzo.benzomobile.presentation.screen.settings.settingsScreen
 
@@ -21,7 +22,7 @@ fun NavGraphBuilder.profileGraphRoot(
         ) {
             profileScreen(
                 onNavigateToHistoryScreen = {
-                    // TODO
+                    navController.navigate(Destination.AppGraph.ProfileGraph.PaymentHistoryScreen)
                 },
                 onNavigateToEditProfileScreen = {
                     navController.navigate(Destination.AppGraph.ProfileGraph.EditProfileScreen)
@@ -39,6 +40,11 @@ fun NavGraphBuilder.profileGraphRoot(
             )
 
             editProfileScreen(
+                onNavigateBack = {
+                    navController.navigateUp()
+                },
+            )
+            paymentHistoryScreen(
                 onNavigateBack = {
                     navController.navigateUp()
                 },

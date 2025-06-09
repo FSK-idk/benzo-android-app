@@ -33,6 +33,9 @@ sealed interface Destination {
 
             @Serializable
             data object EditProfileScreen : ProfileGraph
+
+            @Serializable
+            data object PaymentHistoryScreen : ProfileGraph
         }
 
         @Serializable
