@@ -23,7 +23,7 @@ fun CarNumberSimpleOutlinedTextField(
             val filtered = input
                 .uppercase()
                 .filter { it.isDigit() || it in 'А'..'Я' }
-                .take(8)
+                .take(9)
             onCarNumberChange(filtered)
         },
         label = { Text(text = title) },
