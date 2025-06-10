@@ -40,7 +40,12 @@ fun GenderSimpleOutlinedTextFiled(
             readOnly = true,
             isError = genderError != null,
             supportingText = {
-                genderError?.let { Text(it, color = MaterialTheme.colorScheme.error) }
+                genderError?.let {
+                    Text(
+                        text = it,
+                        color = MaterialTheme.colorScheme.error
+                    )
+                }
             },
             label = { Text(text = title) },
             trailingIcon = {
@@ -56,7 +61,7 @@ fun GenderSimpleOutlinedTextFiled(
                 DropdownMenuItem(
                     text = {
                         Text(
-                            text = it.name,
+                            text = getGenderName(it),
                             color = if (it == gender) MaterialTheme.colorScheme.primary else Color.Unspecified
                         )
                     },
@@ -74,6 +79,6 @@ fun GenderSimpleOutlinedTextFiled(
 private fun getGenderName(gender: GenderOption) =
     when (gender) {
         GenderOption.NONE -> ""
-        GenderOption.MALE -> "Male"
-        GenderOption.FEMALE -> "Female"
+        GenderOption.MALE -> "Мужской"
+        GenderOption.FEMALE -> "Женский"
     }

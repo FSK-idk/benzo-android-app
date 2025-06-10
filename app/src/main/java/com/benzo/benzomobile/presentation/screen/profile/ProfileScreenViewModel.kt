@@ -87,7 +87,7 @@ class ProfileScreenViewModel(
             } catch (e: Exception) {
                 Log.e(TAG, "$e")
                 _loadState.value.snackbarHostState.showSnackbar(
-                    message = "Network error",
+                    message = "Ошибка сети",
                     withDismissAction = true,
                     duration = SnackbarDuration.Short,
                 )

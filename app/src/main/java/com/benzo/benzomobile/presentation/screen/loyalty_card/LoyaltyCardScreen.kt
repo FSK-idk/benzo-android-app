@@ -45,7 +45,7 @@ fun LoyaltyCardScreen(
 ) {
     Scaffold(
         modifier = modifier,
-        topBar = { SimpleTopAppBar(title = "Loyalty card") },
+        topBar = { SimpleTopAppBar(title = "Карта лояльности") },
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
     ) { innerPadding ->
         PullToRefreshBox(
@@ -124,7 +124,7 @@ fun LoyaltyCardView(
                 modifier = Modifier.align(Alignment.BottomStart)
             ) {
                 Text(
-                    text = "Bonuses: ${"%.2f".format(loyaltyCard.balance / 100.0f)}",
+                    text = "Бонусы: ${"%.2f".format(loyaltyCard.balance / 100.0f)}",
                     fontSize = 16.sp,
                     color = Color.White
                 )

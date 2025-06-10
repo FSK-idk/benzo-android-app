@@ -22,6 +22,9 @@ class UserRepositoryImpl(
                         name = it.data.name,
                         birthDate = it.data.birthDate,
                         carNumber = it.data.carNumber,
+                        phoneNumber = it.data.phoneNumber,
+                        email = it.data.email,
+                        gender = it.data.gender,
                         penalty = it.data.penalty,
                     )
                 )
@@ -39,6 +42,9 @@ class UserRepositoryImpl(
                 name = userUpdate.name,
                 birthDate = userUpdate.birthDate,
                 carNumber = userUpdate.carNumber,
+                phoneNumber = userUpdate.phoneNumber,
+                email = userUpdate.email,
+                gender = userUpdate.gender,
             )
         )
 }

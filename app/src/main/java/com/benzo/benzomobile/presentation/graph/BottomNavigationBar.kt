@@ -25,19 +25,19 @@ fun BottomNavigationBar(
     val navigationItems = listOf(
         NavigationItem(
             currentDestination = Destination.AppGraph.ProfileGraphRoot,
-            title = "Profile",
+            title = "Профиль",
             icon = Icons.Default.Person,
             onClick = onNavigateToProfileRoot,
         ),
         NavigationItem(
             currentDestination = Destination.AppGraph.StationsGraphRoot,
-            title = "Stations",
+            title = "АЗС",
             icon = Icons.Default.LocalGasStation,
             onClick = onNavigateToStationsRoot,
         ),
         NavigationItem(
             currentDestination = Destination.AppGraph.LoyaltyCardGraphRoot,
-            title = "Loyalty card",
+            title = "Карта",
             icon = Icons.Default.CardMembership,
             onClick = onNavigateToLoyaltyCardRoot,
         )

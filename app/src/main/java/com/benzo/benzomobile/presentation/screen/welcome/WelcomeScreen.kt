@@ -52,14 +52,14 @@ fun WelcomeScreen(
                 modifier = Modifier.width(250.dp),
                 onClick = onRegisterClick,
             ) {
-                Text(text = "Register")
+                Text(text = "Регистрация")
             }
 
             Button(
                 modifier = Modifier.width(250.dp),
                 onClick = onLoginClick,
             ) {
-                Text(text = "Login")
+                Text(text = "Войти")
             }
 
             Spacer(modifier = Modifier.weight(1f))

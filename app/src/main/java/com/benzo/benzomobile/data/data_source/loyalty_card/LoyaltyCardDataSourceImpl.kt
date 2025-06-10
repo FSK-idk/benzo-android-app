@@ -22,7 +22,7 @@ class LoyaltyCardDataSourceImpl(
 
         if (token == null) {
             Log.e(TAG, "Token not found")
-            _loyaltyCardData.value = Result.Error(message = "Error loading user data")
+            _loyaltyCardData.value = Result.Error(message = "Ошибка загрузки данных")
             return
         }
 
@@ -32,13 +32,13 @@ class LoyaltyCardDataSourceImpl(
             )
         } catch (e: Exception) {
             Log.e(TAG, "$e")
-            _loyaltyCardData.value = Result.Error(message = "Error loading user data")
+            _loyaltyCardData.value = Result.Error(message = "Ошибка загрузки данных")
             return
         }
 
         if (!getLoyaltyCardResponse.isSuccessful) {
             Log.e(TAG, "Response is not successful")
-            _loyaltyCardData.value = Result.Error(message = "Error loading user data")
+            _loyaltyCardData.value = Result.Error(message = "Ошибка загрузки данных")
             return
         }
 

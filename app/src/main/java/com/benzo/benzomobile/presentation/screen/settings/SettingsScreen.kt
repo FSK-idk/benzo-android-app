@@ -44,7 +44,7 @@ fun SettingsScreen(
         modifier = modifier,
         topBar = {
             SimpleTopAppBar(
-                title = "Settings",
+                title = "Настройки",
                 onBackClick = onBackClick,
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = MaterialTheme.colorScheme.surfaceVariant,
@@ -76,7 +76,7 @@ fun SettingsScreen(
                         verticalArrangement = Arrangement.spacedBy(10.dp),
                     ) {
                         Text(
-                            text = "Theme",
+                            text = "Тема",
                             style = MaterialTheme.typography.titleMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
@@ -119,9 +119,9 @@ fun SettingsScreen(
 
 private fun getThemeName(theme: ThemeOption) =
     when (theme) {
-        ThemeOption.SYSTEM -> "System"
-        ThemeOption.LIGHT -> "Light"
-        ThemeOption.DARK -> "Dark"
+        ThemeOption.SYSTEM -> "Системная"
+        ThemeOption.LIGHT -> "Светлая"
+        ThemeOption.DARK -> "Тёмная"
     }
 
 @Composable

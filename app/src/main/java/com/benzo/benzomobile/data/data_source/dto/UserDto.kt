@@ -17,6 +17,15 @@ data class UserDto(
     @SerialName("car_number")
     val carNumber: String?,
 
+    @SerialName("phone_number")
+    val phoneNumber: String?,
+
+    @SerialName("email")
+    val email: String?,
+
+    @SerialName("gender")
+    val gender: String?,
+
     @SerialName("penalty")
     val penalty: Int,
 )

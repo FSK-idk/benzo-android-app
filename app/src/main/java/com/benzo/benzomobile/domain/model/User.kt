@@ -5,5 +5,8 @@ class User(
     val name: String,
     val birthDate: String?,
     val carNumber: String?,
+    val phoneNumber: String?,
+    val email: String?,
+    val gender: GenderOption?,
     val penalty: Int,
 )

@@ -44,6 +44,7 @@ fun NavGraphBuilder.profileGraphRoot(
                     navController.navigateUp()
                 },
             )
+
             paymentHistoryScreen(
                 onNavigateBack = {
                     navController.navigateUp()

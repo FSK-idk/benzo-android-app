@@ -57,7 +57,7 @@ fun RegisterScreen(
         modifier = modifier,
         topBar = {
             TopAppBar(
-                title = { Text(text = "Registration") },
+                title = { Text(text = "Регистрация") },
                 navigationIcon = {
                     IconButton(
                         onClick = onBackClick,
@@ -84,7 +84,7 @@ fun RegisterScreen(
             ),
         ) {
             Text(
-                text = "New account",
+                text = "Новый аккаунт",
                 fontWeight = FontWeight.Bold,
                 style = MaterialTheme.typography.displaySmall,
             )
@@ -93,7 +93,7 @@ fun RegisterScreen(
                 modifier = Modifier.width(250.dp),
                 value = login,
                 onValueChange = onLoginChange,
-                label = { Text(text = "Login") },
+                label = { Text(text = "Логин") },
                 singleLine = true,
                 isError = loginError != null,
                 supportingText = {
@@ -110,7 +110,7 @@ fun RegisterScreen(
                 modifier = Modifier.width(250.dp),
                 value = password,
                 onValueChange = onPasswordChange,
-                label = { Text(text = "Password") },
+                label = { Text(text = "Пароль") },
                 singleLine = true,
                 visualTransformation = PasswordVisualTransformation(),
                 isError = passwordError != null,
@@ -128,7 +128,7 @@ fun RegisterScreen(
                 modifier = Modifier.width(250.dp),
                 value = confirmPassword,
                 onValueChange = onConfirmPasswordChange,
-                label = { Text(text = "Confirm password") },
+                label = { Text(text = "Повторите пароль") },
                 singleLine = true,
                 visualTransformation = PasswordVisualTransformation(),
                 isError = confirmPasswordError != null,
@@ -150,13 +150,13 @@ fun RegisterScreen(
                 if (isLoading) {
                     CircularProgressIndicator(modifier = Modifier.size(25.dp))
                 } else {
-                    Text(text = "Register")
+                    Text(text = "Регистрация")
                 }
             }
 
             Text(
                 text = buildAnnotatedString {
-                    append("Already have an account? ")
+                    append("Уже имеете аккаунт? ")
                     withLink(
                         LinkAnnotation.Clickable(
                             tag = "",
@@ -169,7 +169,7 @@ fun RegisterScreen(
                             linkInteractionListener = { onLoginClick() },
                         )
                     ) {
-                        append("Login")
+                        append("Войти")
                     }
                 },
                 style = MaterialTheme.typography.bodySmall,

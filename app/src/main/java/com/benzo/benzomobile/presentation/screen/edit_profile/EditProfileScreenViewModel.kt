@@ -46,9 +46,7 @@ class EditProfileScreenViewModel(
     init {
         viewModelScope.launch {
             fetchData()
-        }
 
-        viewModelScope.launch {
             _uiState.value = getUserUseCase()
                 .filter {
                     when (it) {
@@ -73,6 +71,9 @@ class EditProfileScreenViewModel(
                         name = it.data.name,
                         birthDate = it.data.birthDate ?: "",
                         carNumber = it.data.carNumber ?: "",
+                        phoneNumber = it.data.phoneNumber ?: "",
+                        email = it.data.email ?: "",
+                        gender = it.data.gender ?: GenderOption.NONE,
                     )
                 }
                 .first()
@@ -173,6 +174,9 @@ class EditProfileScreenViewModel(
                         name = _uiState.value.name,
                         carNumber = _uiState.value.carNumber,
                         birthDate = _uiState.value.birthDate,
+                        phoneNumber = _uiState.value.phoneNumber,
+                        email = _uiState.value.email,
+                        gender = _uiState.value.gender,
                     )
                 )
 
@@ -181,7 +185,7 @@ class EditProfileScreenViewModel(
 
                     is Result.Success -> {
                         _loadState.value.snackbarHostState.showSnackbar(
-                            message = "Successful",
+                            message = "Успешно сохранено",
                             withDismissAction = true,
                             duration = SnackbarDuration.Short,
                         )

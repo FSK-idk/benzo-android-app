@@ -41,7 +41,7 @@ class LoginScreenViewModel(
                 Log.e(TAG, "$e")
                 _uiState.update { it.copy(isLoading = false) }
                 _uiState.value.snackbarHostState.showSnackbar(
-                    message = "Network error",
+                    message = "Ошибка сети",
                     withDismissAction = true,
                     duration = SnackbarDuration.Short,
                 )

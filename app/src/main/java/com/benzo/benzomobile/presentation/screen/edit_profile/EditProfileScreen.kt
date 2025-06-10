@@ -87,14 +87,14 @@ fun EditProfileScreen(
                         onShowDatePickerChange(false)
                     }
                 ) {
-                    Text(text = "OK")
+                    Text(text = "ОК")
                 }
             },
             dismissButton = {
                 TextButton(
                     onClick = { onShowDatePickerChange(false) }
                 ) {
-                    Text(text = "Cancel")
+                    Text(text = "Отмена")
                 }
             }
         ) {
@@ -106,7 +106,7 @@ fun EditProfileScreen(
         modifier = modifier,
         topBar = {
             SimpleTopAppBar(
-                title = "Edit Profile",
+                title = "Редактирование профиля",
                 onBackClick = onBackClick,
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = MaterialTheme.colorScheme.surfaceVariant,
@@ -139,7 +139,7 @@ fun EditProfileScreen(
                     value = name,
                     onValueChange = onNameChange,
                     valueError = nameError,
-                    title = "Name",
+                    title = "Имя",
                 )
 
                 CarNumberSimpleOutlinedTextField(
@@ -147,7 +147,7 @@ fun EditProfileScreen(
                     carNumber = carNumber,
                     onCarNumberChange = onCarNumberChange,
                     carNumberError = carNumberError,
-                    title = "Car number",
+                    title = "Номер машины",
                 )
 
                 PhoneNumberSimpleOutlinedTextField(
@@ -155,7 +155,7 @@ fun EditProfileScreen(
                     phoneNumber = phoneNumber,
                     onPhoneNumberChange = onPhoneNumberChange,
                     phoneNumberError = phoneNumberError,
-                    title = "Phone number",
+                    title = "Номер телефона",
                 )
 
                 SimpleOutlinedTextField(
@@ -171,7 +171,7 @@ fun EditProfileScreen(
                     date = birthDate,
                     onDateClick = { onShowDatePickerChange(true) },
                     dateError = birthDateError,
-                    title = "Birth date",
+                    title = "Дата рождения",
                 )
 
                 GenderSimpleOutlinedTextFiled(
@@ -179,7 +179,7 @@ fun EditProfileScreen(
                     gender = gender,
                     onGenderChange = onGenderChange,
                     genderError = genderError,
-                    title = "Gender",
+                    title = "Пол",
                 )
 
                 Spacer(modifier = Modifier.weight(1f))
@@ -189,7 +189,7 @@ fun EditProfileScreen(
                     onClick = onSaveClick,
                     enabled = isSaveAvailable,
                 ) {
-                    Text(text = "Save")
+                    Text(text = "Сохранить")
                 }
             }
         }

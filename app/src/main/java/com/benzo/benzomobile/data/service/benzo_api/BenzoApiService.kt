@@ -35,9 +35,12 @@ interface BenzoApiService {
     @POST("user/data/")
     suspend fun updateUser(
         @Header("Authorization") token: String,
-        @Field("name") name: String? = null,
-        @Field("birth_date") birthDate: String? = null,
-        @Field("car_number") carNumber: String? = null,
+        @Field("name") name: String,
+        @Field("birth_date") birthDate: String,
+        @Field("car_number") carNumber: String,
+        @Field("phone_number") phoneNumber: String,
+        @Field("email") email: String,
+        @Field("gender") gender: String,
     ): Response<Unit>
 
     @GET("loyalty-card/")

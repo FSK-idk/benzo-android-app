@@ -52,7 +52,7 @@ fun ProfileScreen(
 ) {
     Scaffold(
         modifier = modifier,
-        topBar = { SimpleTopAppBar(title = "Profile") },
+        topBar = { SimpleTopAppBar(title = "Профиль") },
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
     ) { innerPadding ->
         PullToRefreshBox(
@@ -112,7 +112,7 @@ fun ProfileScreen(
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
                         ) {
-                            Text(text = "History")
+                            Text(text = "История")
 
                             Spacer(modifier = Modifier.weight(1.0f))
 
@@ -130,7 +130,7 @@ fun ProfileScreen(
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
                         ) {
-                            Text(text = "Edit profile")
+                            Text(text = "Редактирование профиля")
 
                             Spacer(modifier = Modifier.weight(1.0f))
 
@@ -150,7 +150,7 @@ fun ProfileScreen(
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
                         ) {
-                            Text(text = "Settings")
+                            Text(text = "Настройки")
 
                             Spacer(modifier = Modifier.weight(1.0f))
 
@@ -168,7 +168,7 @@ fun ProfileScreen(
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
                         ) {
-                            Text(text = "Exit")
+                            Text(text = "Выход")
 
                             Spacer(modifier = Modifier.weight(1.0f))
 

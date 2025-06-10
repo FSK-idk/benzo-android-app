@@ -57,7 +57,7 @@ fun LoginScreen(
         modifier = modifier,
         topBar = {
             TopAppBar(
-                title = { Text(text = "Login") },
+                title = { Text(text = "Вход") },
                 navigationIcon = {
                     IconButton(
                         onClick = onBackClick,
@@ -84,7 +84,7 @@ fun LoginScreen(
             ),
         ) {
             Text(
-                text = "Welcome back",
+                text = "С возвращением",
                 fontWeight = FontWeight.Bold,
                 style = MaterialTheme.typography.displaySmall,
             )
@@ -93,7 +93,7 @@ fun LoginScreen(
                 modifier = Modifier.width(250.dp),
                 value = login,
                 onValueChange = onLoginChange,
-                label = { Text(text = "Login") },
+                label = { Text(text = "Логин") },
                 singleLine = true,
             )
 
@@ -101,7 +101,7 @@ fun LoginScreen(
                 modifier = Modifier.width(250.dp),
                 value = password,
                 onValueChange = onPasswordChange,
-                label = { Text(text = "Password") },
+                label = { Text(text = "Пароль") },
                 singleLine = true,
                 visualTransformation = if (isPasswordShown) {
                     VisualTransformation.None
@@ -133,13 +133,13 @@ fun LoginScreen(
                 if (isLoading) {
                     CircularProgressIndicator(modifier = Modifier.size(25.dp))
                 } else {
-                    Text(text = "Login")
+                    Text(text = "Войти")
                 }
             }
 
             Text(
                 text = buildAnnotatedString {
-                    append("Don't have an account? ")
+                    append("Нет аккаунта? ")
                     withLink(
                         LinkAnnotation.Clickable(
                             tag = "",
@@ -152,7 +152,7 @@ fun LoginScreen(
                             linkInteractionListener = { onRegisterClick() },
                         )
                     ) {
-                        append("Register")
+                        append("Регистрация")
                     }
                 },
                 style = MaterialTheme.typography.bodySmall,
