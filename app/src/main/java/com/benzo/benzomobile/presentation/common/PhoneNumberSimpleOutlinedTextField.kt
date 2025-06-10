@@ -24,7 +24,12 @@ fun PhoneNumberSimpleOutlinedTextField(
     OutlinedTextField(
         modifier = modifier,
         value = phoneNumber,
-        onValueChange = onPhoneNumberChange,
+        onValueChange = {
+        val digits = it.filter { char -> char.isDigit() }
+        if (digits.length <= 10) {
+            onPhoneNumberChange(digits)
+        }
+    },
         label = { Text(text = title) },
         singleLine = true,
         visualTransformation = PhoneVisualTransformation(
