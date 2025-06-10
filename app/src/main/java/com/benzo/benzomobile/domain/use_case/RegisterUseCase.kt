@@ -6,8 +6,5 @@ class RegisterUseCase(
     private val authenticationRepository: AuthenticationRepository,
 ) {
     suspend operator fun invoke(login: String, password: String) =
-        authenticationRepository.register(
-            login = login,
-            password = password,
-        )
+        authenticationRepository.register(login = login, password = password)
 }

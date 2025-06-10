@@ -6,8 +6,5 @@ class LoginUseCase(
     private val authenticationRepository: AuthenticationRepository,
 ) {
     suspend operator fun invoke(login: String, password: String) =
-        authenticationRepository.login(
-            login = login,
-            password = password,
-        )
+        authenticationRepository.login(login = login, password = password)
 }

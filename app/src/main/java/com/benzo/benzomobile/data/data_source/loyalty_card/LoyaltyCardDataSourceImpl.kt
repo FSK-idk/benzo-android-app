@@ -2,52 +2,55 @@ package com.benzo.benzomobile.data.data_source.loyalty_card
 
 import android.util.Log
 import com.benzo.benzomobile.app.TAG
-import com.benzo.benzomobile.domain.model.Result
+import com.benzo.benzomobile.domain.model.Resource
 import com.benzo.benzomobile.data.service.benzo_api.BenzoApi
-import com.benzo.benzomobile.data.data_source.authentication.AuthenticationDataSource
+import com.benzo.benzomobile.data.data_source.user_preferences.UserPreferencesDataSource
+import com.benzo.benzomobile.domain.model.LoyaltyCard
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.first
 
 class LoyaltyCardDataSourceImpl(
     val benzoApi: BenzoApi,
-    val authenticationDataSource: AuthenticationDataSource,
+    val userPreferencesDataSource: UserPreferencesDataSource,
 ) : LoyaltyCardDataSource {
-    private val _loyaltyCardData = MutableStateFlow<Result<LoyaltyCardData>>(Result.Loading())
+    private val _loyaltyCard = MutableStateFlow<Resource<LoyaltyCard>>(Resource.Loading())
 
-    override fun getLoyaltyCardData(): Flow<Result<LoyaltyCardData>> = _loyaltyCardData
+    override fun getLoyaltyCard(): Flow<Resource<LoyaltyCard>> = _loyaltyCard
 
-    override suspend fun fetchLoyaltyCardData() {
-        val token = authenticationDataSource.authenticationData.first().token
+    override suspend fun fetchLoyaltyCard() {
+        val token = userPreferencesDataSource.userPreferences.first().token
 
         if (token == null) {
             Log.e(TAG, "Token not found")
-            _loyaltyCardData.value = Result.Error(message = "Ошибка загрузки данных")
-            return
+            throw Exception("Ошибка сети")
         }
 
-        val getLoyaltyCardResponse = try {
+        val response = try {
             benzoApi.retrofitService.getLoyaltyCard(
                 token = token
             )
         } catch (e: Exception) {
             Log.e(TAG, "$e")
-            _loyaltyCardData.value = Result.Error(message = "Ошибка загрузки данных")
-            return
+            throw Exception("Ошибка сети")
         }
 
-        if (!getLoyaltyCardResponse.isSuccessful) {
+        if (!response.isSuccessful) {
             Log.e(TAG, "Response is not successful")
-            _loyaltyCardData.value = Result.Error(message = "Ошибка загрузки данных")
-            return
+            throw Exception("Ошибка сети")
         }
 
-        val loyaltyCardDto = getLoyaltyCardResponse.body()!!
+        val body = response.body()
 
-        _loyaltyCardData.value = Result.Success(
-            data = LoyaltyCardData(
-                number = loyaltyCardDto.number,
-                balance = loyaltyCardDto.balance,
+        if (body == null) {
+            Log.e(TAG, "Body is empty")
+            throw Exception("Ошибка сети")
+        }
+
+        _loyaltyCard.value = Resource.Loaded(
+            data = LoyaltyCard(
+                number = body.number,
+                balance = body.balance,
             )
         )
     }

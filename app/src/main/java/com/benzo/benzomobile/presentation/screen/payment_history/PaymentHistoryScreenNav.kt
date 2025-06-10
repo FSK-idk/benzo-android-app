@@ -12,11 +12,16 @@ fun NavGraphBuilder.paymentHistoryScreen(
 ) {
     composable<Destination.AppGraph.ProfileGraph.PaymentHistoryScreen> {
         val viewModel = koinViewModel<PaymentHistoryViewModel>()
+        val loadState = viewModel.loadState.collectAsStateWithLifecycle()
         val uiState = viewModel.uiState.collectAsStateWithLifecycle()
 
         PaymentHistoryScreen(
-            payments = uiState.value.payments,
-            onBackClick = onNavigateBack
+            isLoading = loadState.value.isLoading,
+            isRefreshing = loadState.value.isRefreshing,
+            paymentHistory = uiState.value.paymentHistory,
+            snackbarHostState = loadState.value.snackbarHostState,
+            onRefresh = viewModel::onRefresh,
+            onBackClick = onNavigateBack,
         )
     }
 }

@@ -1,34 +1,92 @@
 package com.benzo.benzomobile.presentation.screen.payment_history
 
+import android.util.Log
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHostState
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.benzo.benzomobile.app.TAG
+import com.benzo.benzomobile.domain.model.Payment
+import com.benzo.benzomobile.domain.model.Resource
+import com.benzo.benzomobile.domain.use_case.FetchPaymentHistoryUseCase
+import com.benzo.benzomobile.domain.use_case.GetPaymentHistoryCardUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.filterIsInstance
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 
-class PaymentHistoryViewModel : ViewModel() {
+class PaymentHistoryViewModel(
+    private val getPaymentHistoryCardUseCase: GetPaymentHistoryCardUseCase,
+    private val fetchPaymentHistoryUseCase: FetchPaymentHistoryUseCase,
+) : ViewModel() {
+    private val _loadState = MutableStateFlow(PaymentHistoryScreenLoadState())
+    val loadState = _loadState.asStateFlow()
 
-    private val _uiState = MutableStateFlow(PaymentHistoryUiState())
-    val uiState = _uiState.asStateFlow()
+    val uiState =
+        getPaymentHistoryCardUseCase()
+            .catch { e ->
+                Log.e(TAG, "$e")
+                _loadState.value.snackbarHostState.showSnackbar(
+                    message = e.message ?: "Ошибка",
+                    withDismissAction = true,
+                    duration = SnackbarDuration.Short,
+                )
+            }
+            .filterIsInstance<Resource.Loaded<List<Payment>>>()
+            .map {
+                _loadState.update { jt -> jt.copy(isLoading = false) }
+
+                PaymentHistoryScreenUiState(
+                    paymentHistory = it.data
+                )
+            }
+            .stateIn(
+                scope = viewModelScope,
+                initialValue = PaymentHistoryScreenUiState(),
+                started = SharingStarted.WhileSubscribed(5000),
+            )
 
     init {
-        _uiState.value = PaymentHistoryUiState(
-            isLoading = false,
-            payments = listOf(
-                PaymentItem("08.06.2025", "АИ-95", "2000₽", "АЗС №1", "40 л"),
-                PaymentItem("05.06.2025", "ДТ", "1800₽", "АЗС №2", "35 л")
+        viewModelScope.launch {
+            fetchData()
+        }
+    }
+
+    private suspend fun fetchData() {
+        try {
+            fetchPaymentHistoryUseCase()
+        } catch (e: Exception) {
+            Log.e(TAG, "$e")
+            _loadState.value.snackbarHostState.showSnackbar(
+                message = e.message ?: "Ошибка",
+                withDismissAction = true,
+                duration = SnackbarDuration.Short,
             )
-        )
+        }
+    }
+
+    fun onRefresh() {
+        if (!_loadState.value.isRefreshing) {
+            viewModelScope.launch {
+                _loadState.update { it.copy(isRefreshing = true) }
+                fetchData()
+                _loadState.update { it.copy(isRefreshing = false) }
+            }
+        }
     }
 }
 
-data class PaymentItem(
-    val date: String,
-    val fuelType: String,
-    val price: String,
-    val station: String,
-    val volume: String
+data class PaymentHistoryScreenLoadState(
+    val isLoading: Boolean = true,
+    val isRefreshing: Boolean = false,
+    val snackbarHostState: SnackbarHostState = SnackbarHostState(),
 )
 
-data class PaymentHistoryUiState(
-    val isLoading: Boolean = false,
-    val payments: List<PaymentItem> = emptyList()
+data class PaymentHistoryScreenUiState(
+    val paymentHistory: List<Payment> = listOf(),
 )

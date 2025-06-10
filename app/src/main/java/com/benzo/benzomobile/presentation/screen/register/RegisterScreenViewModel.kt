@@ -21,6 +21,9 @@ class RegisterScreenViewModel(
     private val validateConfirmPasswordUseCase: ValidateConfirmPasswordUseCase,
     private val registerUseCase: RegisterUseCase,
 ) : ViewModel() {
+    private val _loadState = MutableStateFlow(RegisterScreenLoadState())
+    val loadState = _loadState.asStateFlow()
+
     private val _uiState = MutableStateFlow(RegisterScreenUiState())
     val uiState = _uiState.asStateFlow()
 
@@ -77,8 +80,9 @@ class RegisterScreenViewModel(
         }
 
         viewModelScope.launch {
+            _uiState.update { it.copy(isRegisterAvailable = true) }
+
             try {
-                _uiState.update { it.copy(isLoading = true) }
                 registerUseCase(
                     login = _uiState.value.login,
                     password = _uiState.value.password,
@@ -86,16 +90,21 @@ class RegisterScreenViewModel(
                 navigateNext()
             } catch (e: Exception) {
                 Log.e(TAG, "$e")
-                _uiState.update { it.copy(isLoading = false) }
-                _uiState.value.snackbarHostState.showSnackbar(
-                    message = "Ошибка сети",
+                _loadState.value.snackbarHostState.showSnackbar(
+                    message = e.message ?: "Ошибка",
                     withDismissAction = true,
                     duration = SnackbarDuration.Short,
                 )
             }
+
+            _uiState.update { it.copy(isRegisterAvailable = false) }
         }
     }
 }
+
+data class RegisterScreenLoadState(
+    val snackbarHostState: SnackbarHostState = SnackbarHostState(),
+)
 
 data class RegisterScreenUiState(
     val login: String = "",
@@ -104,6 +113,5 @@ data class RegisterScreenUiState(
     val passwordError: String? = null,
     val confirmPassword: String = "",
     val confirmPasswordError: String? = null,
-    val isLoading: Boolean = false,
-    val snackbarHostState: SnackbarHostState = SnackbarHostState(),
+    val isRegisterAvailable: Boolean = false,
 )

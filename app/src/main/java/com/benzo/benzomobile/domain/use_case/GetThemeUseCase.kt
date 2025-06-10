@@ -6,5 +6,5 @@ class GetThemeUseCase(
     private val themeRepository: ThemeRepository,
 ) {
     operator fun invoke() =
-        themeRepository.theme
+        themeRepository.getTheme()
 }

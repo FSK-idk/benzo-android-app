@@ -2,6 +2,7 @@ package com.benzo.benzomobile.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.benzo.benzomobile.domain.model.ThemeOption
 import com.benzo.benzomobile.domain.use_case.GetIsAuthenticatedUseCase
 import com.benzo.benzomobile.domain.use_case.GetThemeUseCase
 import kotlinx.coroutines.flow.SharingStarted
@@ -30,4 +31,24 @@ class MainActivityViewModel(
                 initialValue = MainActivityUiState.Loading,
                 started = SharingStarted.WhileSubscribed(5000),
             )
+}
+
+sealed interface MainActivityUiState {
+    data object Loading : MainActivityUiState
+
+    data class Success(
+        val themeOption: ThemeOption,
+        val isAuthenticated: Boolean,
+    ) : MainActivityUiState {
+        override fun shouldUseDarkTheme(isSystemDarkTheme: Boolean) =
+            when (themeOption) {
+                ThemeOption.SYSTEM -> isSystemDarkTheme
+                ThemeOption.LIGHT -> false
+                ThemeOption.DARK -> true
+            }
+    }
+
+    fun shouldKeepSplashScreen() = this is Loading
+
+    fun shouldUseDarkTheme(isSystemDarkTheme: Boolean) = isSystemDarkTheme
 }

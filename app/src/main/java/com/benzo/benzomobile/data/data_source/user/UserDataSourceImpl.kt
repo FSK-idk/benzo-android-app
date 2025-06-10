@@ -2,99 +2,99 @@ package com.benzo.benzomobile.data.data_source.user
 
 import android.util.Log
 import com.benzo.benzomobile.app.TAG
-import com.benzo.benzomobile.domain.model.Result
+import com.benzo.benzomobile.domain.model.Resource
 import com.benzo.benzomobile.data.service.benzo_api.BenzoApi
-import com.benzo.benzomobile.data.data_source.authentication.AuthenticationDataSource
+import com.benzo.benzomobile.data.data_source.user_preferences.UserPreferencesDataSource
 import com.benzo.benzomobile.domain.model.GenderOption
+import com.benzo.benzomobile.domain.model.User
+import com.benzo.benzomobile.domain.model.UserUpdateData
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.first
 
 class UserDataSourceImpl(
     val benzoApi: BenzoApi,
-    val authenticationDataSource: AuthenticationDataSource,
+    val userPreferencesDataSource: UserPreferencesDataSource,
 ) : UserDataSource {
-    private val _userData = MutableStateFlow<Result<UserData>>(Result.Loading())
+    private val _user = MutableStateFlow<Resource<User>>(Resource.Loading())
 
-    override fun getUserData(): Flow<Result<UserData>> = _userData
+    override fun getUser(): Flow<Resource<User>> = _user
 
-    override suspend fun fetchUserData() {
-        val token = authenticationDataSource.authenticationData.first().token
+    override suspend fun fetchUser() {
+        val token = userPreferencesDataSource.userPreferences.first().token
 
         if (token == null) {
             Log.e(TAG, "Token not found")
-            _userData.value = Result.Error(message = "Ошибка загрузки данных")
-            return
+            throw Exception("Ошибка сети")
         }
 
-        val getUserResponse = try {
+        val response = try {
             benzoApi.retrofitService.getUser(
                 token = token
             )
         } catch (e: Exception) {
             Log.e(TAG, "$e")
-            _userData.value = Result.Error(message = "Ошибка загрузки данных")
-            return
+            throw Exception("Ошибка сети")
         }
 
-        if (!getUserResponse.isSuccessful) {
+        if (!response.isSuccessful) {
             Log.e(TAG, "Response is not successful")
-            _userData.value = Result.Error(message = "Ошибка загрузки данных")
-            return
+            throw Exception("Ошибка сети")
         }
 
-        val userDto = getUserResponse.body()!!
+        val body = response.body()!!
 
-        _userData.value = Result.Success(
-            data = UserData(
-                login = userDto.login,
-                name = userDto.name,
-                birthDate = userDto.birthDate,
-                carNumber = userDto.carNumber,
-                phoneNumber = userDto.phoneNumber,
-                email = userDto.email,
-                gender = when (userDto.gender) {
+        _user.value = Resource.Loaded(
+            data = User(
+                login = body.login,
+                name = body.name,
+                birthDate = body.birthDate,
+                carNumber = body.carNumber,
+                phoneNumber = body.phoneNumber,
+                email = body.email,
+                gender = when (body.gender) {
                     "M" -> GenderOption.MALE
                     "F" -> GenderOption.FEMALE
                     else -> GenderOption.NONE
                 },
-                penalty = userDto.penalty,
+                penalty = body.penalty,
             )
         )
     }
 
-    override suspend fun updateUserData(userDataUpdate: UserDataUpdate): Result<Unit> {
-        val token = authenticationDataSource.authenticationData.first().token
+    override suspend fun updateUser(userUpdateData: UserUpdateData) {
+        val token = userPreferencesDataSource.userPreferences.first().token
 
         if (token == null) {
             Log.e(TAG, "Token not found")
-            return Result.Error(message = "Ошибка загрузки данных")
+            throw Exception("Ошибка сети")
         }
 
-        val updateUserResponse = try {
+        val response = try {
             benzoApi.retrofitService.updateUser(
                 token = token,
-                name = userDataUpdate.name,
-                birthDate = userDataUpdate.birthDate,
-                carNumber = userDataUpdate.carNumber,
-                phoneNumber = userDataUpdate.phoneNumber,
-                email = userDataUpdate.email,
-                gender = when (userDataUpdate.gender) {
+                name = userUpdateData.name,
+                birthDate = userUpdateData.birthDate,
+                carNumber = userUpdateData.carNumber,
+                phoneNumber = userUpdateData.phoneNumber,
+                email = userUpdateData.email,
+                gender = when (userUpdateData.gender) {
                     GenderOption.MALE -> "M"
                     GenderOption.FEMALE -> "F"
-                    else -> ""
+                    GenderOption.NONE -> {
+                        Log.e(TAG, "Gender is NONE")
+                        throw Exception("Ошибка сети")
+                    }
                 }
             )
         } catch (e: Exception) {
             Log.e(TAG, "$e")
-            return Result.Error(message = "Ошибка загрузки данных")
+            throw Exception("Ошибка сети")
         }
 
-        if (!updateUserResponse.isSuccessful) {
+        if (!response.isSuccessful) {
             Log.e(TAG, "Response is not successful")
-            return Result.Error(message = "Ошибка загрузки данных")
+            throw Exception("Ошибка сети")
         }
-
-        return Result.Success(data = Unit)
     }
 }

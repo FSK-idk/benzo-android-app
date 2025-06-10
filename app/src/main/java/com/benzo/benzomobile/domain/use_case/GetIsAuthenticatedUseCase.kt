@@ -6,5 +6,5 @@ class GetIsAuthenticatedUseCase(
     private val authenticationRepositoryImpl: AuthenticationRepositoryImpl,
 ) {
     operator fun invoke() =
-        authenticationRepositoryImpl.isAuthenticated
+        authenticationRepositoryImpl.getIsAuthenticated()
 }

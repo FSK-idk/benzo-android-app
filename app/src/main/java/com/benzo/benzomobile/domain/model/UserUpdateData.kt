@@ -1,6 +1,6 @@
 package com.benzo.benzomobile.domain.model
 
-data class UserUpdate(
+data class UserUpdateData(
     val name: String,
     val birthDate: String,
     val carNumber: String,

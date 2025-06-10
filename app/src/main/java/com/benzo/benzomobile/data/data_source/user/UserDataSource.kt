@@ -1,11 +1,13 @@
 package com.benzo.benzomobile.data.data_source.user
 
-import com.benzo.benzomobile.domain.model.Result
+import com.benzo.benzomobile.domain.model.Resource
+import com.benzo.benzomobile.domain.model.User
+import com.benzo.benzomobile.domain.model.UserUpdateData
 import kotlinx.coroutines.flow.Flow
 
 interface UserDataSource {
-    fun getUserData(): Flow<Result<UserData>>
+    fun getUser(): Flow<Resource<User>>
 
-    suspend fun fetchUserData()
-    suspend fun updateUserData(userDataUpdate: UserDataUpdate): Result<Unit>
+    suspend fun fetchUser()
+    suspend fun updateUser(userUpdateData: UserUpdateData)
 }

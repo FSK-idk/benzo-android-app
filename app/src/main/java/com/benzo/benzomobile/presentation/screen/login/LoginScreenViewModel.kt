@@ -15,6 +15,9 @@ import kotlinx.coroutines.launch
 class LoginScreenViewModel(
     private val loginUseCase: LoginUseCase,
 ) : ViewModel() {
+    private val _loadState = MutableStateFlow(LoginScreenLoadState())
+    val loadState = _loadState.asStateFlow()
+
     private val _uiState = MutableStateFlow(LoginScreenUiState())
     val uiState = _uiState.asStateFlow()
 
@@ -30,8 +33,9 @@ class LoginScreenViewModel(
 
     fun onLoginClicked(navigateNext: () -> Unit) =
         viewModelScope.launch {
+            _uiState.update { it.copy(isLoginAvailable = false) }
+
             try {
-                _uiState.update { it.copy(isLoading = true) }
                 loginUseCase(
                     login = _uiState.value.login,
                     password = _uiState.value.password,
@@ -39,20 +43,24 @@ class LoginScreenViewModel(
                 navigateNext()
             } catch (e: Exception) {
                 Log.e(TAG, "$e")
-                _uiState.update { it.copy(isLoading = false) }
-                _uiState.value.snackbarHostState.showSnackbar(
-                    message = "Ошибка сети",
+                _loadState.value.snackbarHostState.showSnackbar(
+                    message = e.message ?: "Ошибка",
                     withDismissAction = true,
                     duration = SnackbarDuration.Short,
                 )
             }
+
+            _uiState.update { it.copy(isLoginAvailable = true) }
         }
 }
+
+data class LoginScreenLoadState(
+    val snackbarHostState: SnackbarHostState = SnackbarHostState(),
+)
 
 data class LoginScreenUiState(
     val login: String = "",
     val password: String = "",
     val isPasswordShown: Boolean = false,
-    val isLoading: Boolean = false,
-    val snackbarHostState: SnackbarHostState = SnackbarHostState(),
+    val isLoginAvailable: Boolean = false,
 )

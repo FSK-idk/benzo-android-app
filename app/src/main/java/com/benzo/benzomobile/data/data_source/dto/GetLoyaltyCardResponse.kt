@@ -4,7 +4,10 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class TokenDto(
-    @SerialName("token")
-    val token: String
+data class GetLoyaltyCardResponse(
+    @SerialName("number")
+    val number: String,
+
+    @SerialName("balance")
+    val balance: Int,
 )

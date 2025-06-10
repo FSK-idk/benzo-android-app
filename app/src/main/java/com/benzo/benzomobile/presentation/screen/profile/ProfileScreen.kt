@@ -112,7 +112,7 @@ fun ProfileScreen(
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
                         ) {
-                            Text(text = "История")
+                            Text(text = "История платежей")
 
                             Spacer(modifier = Modifier.weight(1.0f))
 

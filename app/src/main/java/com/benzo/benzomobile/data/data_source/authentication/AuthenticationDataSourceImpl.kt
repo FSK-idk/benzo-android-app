@@ -4,59 +4,64 @@ import android.util.Log
 import com.benzo.benzomobile.app.TAG
 import com.benzo.benzomobile.data.service.benzo_api.BenzoApi
 import com.benzo.benzomobile.data.data_source.user_preferences.UserPreferencesDataSource
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
 
 class AuthenticationDataSourceImpl(
-    private val userPreferences: UserPreferencesDataSource,
+    private val userPreferencesDataSource: UserPreferencesDataSource,
     private val benzoApi: BenzoApi,
 ) : AuthenticationDataSource {
-    override val authenticationData: Flow<AuthenticationData> =
-        userPreferences.userPreferencesData.map { AuthenticationData(token = it.token) }
-
-    override suspend fun register(login: String, password: String) {
-        val registerUserResponse = try {
+    override suspend fun register(login: String, password: String){
+        val response = try {
             benzoApi.retrofitService.registerUser(
                 login = login,
                 password = password,
             )
         } catch (e: Exception) {
             Log.e(TAG, "$e")
-            throw Exception("Internal Error")
+            throw Exception("Ошибка сети")
         }
 
-        if (!registerUserResponse.isSuccessful) {
+        if (!response.isSuccessful) {
             Log.e(TAG, "Response is not successful")
-            throw Exception("Internal Error")
+            throw Exception("Ошибка сети")
         }
 
-        val tokenDto = registerUserResponse.body()!!
+        val body = response.body()
 
-        userPreferences.setToken("Token ${tokenDto.token}")
+        if (body == null) {
+            Log.e(TAG, "Body is empty")
+            throw Exception("Ошибка сети")
+        }
+
+        userPreferencesDataSource.setToken("Token ${body.token}")
     }
 
     override suspend fun login(login: String, password: String) {
-        val loginUserResponse = try {
+        val response = try {
             benzoApi.retrofitService.loginUser(
                 login = login,
                 password = password,
             )
         } catch (e: Exception) {
             Log.e(TAG, "$e")
-            throw Exception("Internal Error")
+            throw Exception("Ошибка сети")
         }
 
-        if (!loginUserResponse.isSuccessful) {
+        if (!response.isSuccessful) {
             Log.e(TAG, "Response is not successful")
-            throw Exception("Internal Error")
+            throw Exception("Ошибка сети")
         }
 
-        val tokenDto = loginUserResponse.body()!!
+        val body = response.body()
 
-        userPreferences.setToken("Token ${tokenDto.token}")
+        if (body == null) {
+            Log.e(TAG, "Body is empty")
+            throw Exception("Ошибка сети")
+        }
+
+        userPreferencesDataSource.setToken("Token ${body.token}")
     }
 
     override suspend fun logout() {
-        userPreferences.setToken(null)
+        userPreferencesDataSource.setToken(null)
     }
 }

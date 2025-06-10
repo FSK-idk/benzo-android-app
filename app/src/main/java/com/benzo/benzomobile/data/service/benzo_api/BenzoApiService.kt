@@ -1,8 +1,10 @@
 package com.benzo.benzomobile.data.service.benzo_api
 
-import com.benzo.benzomobile.data.data_source.dto.LoyaltyCardDto
-import com.benzo.benzomobile.data.data_source.dto.TokenDto
-import com.benzo.benzomobile.data.data_source.dto.UserDto
+import com.benzo.benzomobile.data.data_source.dto.GetLoyaltyCardResponse
+import com.benzo.benzomobile.data.data_source.dto.GetPaymentHistoryResponse
+import com.benzo.benzomobile.data.data_source.dto.RegisterResponse
+import com.benzo.benzomobile.data.data_source.dto.GetUserResponse
+import com.benzo.benzomobile.data.data_source.dto.LoginResponse
 import retrofit2.Response
 import retrofit2.http.Field
 import retrofit2.http.FormUrlEncoded
@@ -17,19 +19,19 @@ interface BenzoApiService {
     suspend fun registerUser(
         @Field("login") login: String,
         @Field("password") password: String,
-    ): Response<TokenDto>
+    ): Response<RegisterResponse>
 
     @FormUrlEncoded
     @POST("user/login/")
     suspend fun loginUser(
         @Field("login") login: String,
         @Field("password") password: String,
-    ): Response<TokenDto>
+    ): Response<LoginResponse>
 
     @GET("user/")
     suspend fun getUser(
         @Header("Authorization") token: String,
-    ): Response<UserDto>
+    ): Response<GetUserResponse>
 
     @FormUrlEncoded
     @POST("user/data/")
@@ -43,8 +45,14 @@ interface BenzoApiService {
         @Field("gender") gender: String,
     ): Response<Unit>
 
-    @GET("loyalty-card/")
+    @GET("user/loyalty-card/")
     suspend fun getLoyaltyCard(
         @Header("Authorization") token: String,
-    ): Response<LoyaltyCardDto>
+    ): Response<GetLoyaltyCardResponse>
+
+
+    @GET("user/payment-history/")
+    suspend fun getPaymentHistory(
+        @Header("Authorization") token: String,
+    ): Response<GetPaymentHistoryResponse>
 }

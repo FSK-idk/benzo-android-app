@@ -1,13 +1,15 @@
 package com.benzo.benzomobile.presentation.screen.edit_profile
 
+import android.util.Log
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHostState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.benzo.benzomobile.app.TAG
 import com.benzo.benzomobile.domain.model.GenderOption
-import com.benzo.benzomobile.domain.model.Result
+import com.benzo.benzomobile.domain.model.Resource
 import com.benzo.benzomobile.domain.model.User
-import com.benzo.benzomobile.domain.model.UserUpdate
+import com.benzo.benzomobile.domain.model.UserUpdateData
 import com.benzo.benzomobile.domain.use_case.FetchUserUseCase
 import com.benzo.benzomobile.domain.use_case.GetUserUseCase
 import com.benzo.benzomobile.domain.use_case.UpdateUserUseCase
@@ -19,6 +21,7 @@ import com.benzo.benzomobile.domain.use_case.ValidateNameUseCase
 import com.benzo.benzomobile.domain.use_case.ValidatePhoneNumberUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.first
@@ -48,27 +51,20 @@ class EditProfileScreenViewModel(
             fetchData()
 
             _uiState.value = getUserUseCase()
-                .filter {
-                    when (it) {
-                        is Result.Loading -> false
-                        is Result.Success -> true
-
-                        is Result.Error -> {
-                            _loadState.value.snackbarHostState.showSnackbar(
-                                message = it.message,
-                                withDismissAction = true,
-                                duration = SnackbarDuration.Short,
-                            )
-                            return@filter false
-                        }
-                    }
+                .catch { e ->
+                    Log.e(TAG, "$e")
+                    _loadState.value.snackbarHostState.showSnackbar(
+                        message = e.message ?: "Ошибка",
+                        withDismissAction = true,
+                        duration = SnackbarDuration.Short,
+                    )
                 }
-                .filterIsInstance<Result.Success<User>>()
+                .filterIsInstance<Resource.Loaded<User>>()
                 .map {
                     _loadState.update { jt -> jt.copy(isLoading = false) }
 
                     EditProfileScreenUiState(
-                        name = it.data.name,
+                        name = it.data.name ?: "",
                         birthDate = it.data.birthDate ?: "",
                         carNumber = it.data.carNumber ?: "",
                         phoneNumber = it.data.phoneNumber ?: "",
@@ -80,8 +76,18 @@ class EditProfileScreenViewModel(
         }
     }
 
-    private suspend fun fetchData() =
-        fetchUserUseCase()
+    private suspend fun fetchData() {
+        try {
+            fetchUserUseCase()
+        } catch (e: Exception) {
+            Log.e(TAG, "$e")
+            _loadState.value.snackbarHostState.showSnackbar(
+                message = e.message ?: "Ошибка",
+                withDismissAction = true,
+                duration = SnackbarDuration.Short,
+            )
+        }
+    }
 
     fun onNameChange(value: String) =
         _uiState.update {
@@ -169,40 +175,36 @@ class EditProfileScreenViewModel(
             viewModelScope.launch {
                 _loadState.update { it.copy(isSaveAvailable = false) }
 
-                val result = updateUserUseCase(
-                    userUpdate = UserUpdate(
-                        name = _uiState.value.name,
-                        carNumber = _uiState.value.carNumber,
-                        birthDate = _uiState.value.birthDate,
-                        phoneNumber = _uiState.value.phoneNumber,
-                        email = _uiState.value.email,
-                        gender = _uiState.value.gender,
+                try {
+                    updateUserUseCase(
+                        userUpdateData = UserUpdateData(
+                            name = _uiState.value.name,
+                            carNumber = _uiState.value.carNumber,
+                            birthDate = _uiState.value.birthDate,
+                            phoneNumber = _uiState.value.phoneNumber,
+                            email = _uiState.value.email,
+                            gender = _uiState.value.gender,
+                        )
                     )
-                )
 
-                when (result) {
-                    is Result.Loading -> Unit
-
-                    is Result.Success -> {
-                        _loadState.value.snackbarHostState.showSnackbar(
-                            message = "Успешно сохранено",
-                            withDismissAction = true,
-                            duration = SnackbarDuration.Short,
-                        )
-                    }
-
-                    is Result.Error -> {
-                        _loadState.value.snackbarHostState.showSnackbar(
-                            message = result.message,
-                            withDismissAction = true,
-                            duration = SnackbarDuration.Short,
-                        )
-                    }
+                    _loadState.value.snackbarHostState.showSnackbar(
+                        message = "Успешно сохранено",
+                        withDismissAction = true,
+                        duration = SnackbarDuration.Short,
+                    )
+                } catch (e: Exception) {
+                    Log.e(TAG, "$e")
+                    _loadState.value.snackbarHostState.showSnackbar(
+                        message = e.message ?: "Ошибка",
+                        withDismissAction = true,
+                        duration = SnackbarDuration.Short,
+                    )
                 }
-            }
 
-            _loadState.update { it.copy(isSaveAvailable = true) }
+                _loadState.update { it.copy(isSaveAvailable = true) }
+            }
         }
+
     }
 }
 

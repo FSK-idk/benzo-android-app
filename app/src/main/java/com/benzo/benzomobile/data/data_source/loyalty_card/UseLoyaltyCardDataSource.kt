@@ -1,10 +1,11 @@
 package com.benzo.benzomobile.data.data_source.loyalty_card
 
-import com.benzo.benzomobile.domain.model.Result
+import com.benzo.benzomobile.domain.model.LoyaltyCard
+import com.benzo.benzomobile.domain.model.Resource
 import kotlinx.coroutines.flow.Flow
 
 interface LoyaltyCardDataSource {
-    fun getLoyaltyCardData(): Flow<Result<LoyaltyCardData>>
+    fun getLoyaltyCard(): Flow<Resource<LoyaltyCard>>
 
-    suspend fun fetchLoyaltyCardData()
+    suspend fun fetchLoyaltyCard()
 }

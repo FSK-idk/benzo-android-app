@@ -13,6 +13,7 @@ fun NavGraphBuilder.loginScreen(
 ) {
     composable<Destination.LoginGraph.LoginScreen> {
         val viewModel = koinViewModel<LoginScreenViewModel>()
+        val loadState = viewModel.loadState.collectAsStateWithLifecycle()
         val uiState = viewModel.uiState.collectAsStateWithLifecycle()
 
         LoginScreen(
@@ -22,8 +23,8 @@ fun NavGraphBuilder.loginScreen(
             onPasswordChange = viewModel::onPasswordChange,
             isPasswordShown = uiState.value.isPasswordShown,
             onPasswordVisibilityClick = viewModel::onPasswordVisibilityClick,
-            isLoading = uiState.value.isLoading,
-            snackbarHostState = uiState.value.snackbarHostState,
+            isLoading = uiState.value.isLoginAvailable,
+            snackbarHostState = loadState.value.snackbarHostState,
             onBackClick = onNavigateBack,
             onLoginClick = { viewModel.onLoginClicked(onNavigateToAppGraphRoot) },
             onRegisterClick = onNavigateToRegisterScreen,

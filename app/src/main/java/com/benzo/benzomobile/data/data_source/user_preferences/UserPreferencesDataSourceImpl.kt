@@ -2,12 +2,13 @@ package com.benzo.benzomobile.data.data_source.user_preferences
 
 import androidx.datastore.core.DataStore
 import com.benzo.benzomobile.domain.model.ThemeOption
+import com.benzo.benzomobile.domain.model.UserPreferences
 import kotlinx.coroutines.flow.Flow
 
 class UserPreferencesDataSourceImpl(
-    private val dataStore: DataStore<UserPreferencesData>,
+    private val dataStore: DataStore<UserPreferences>,
 ) : UserPreferencesDataSource {
-    override val userPreferencesData: Flow<UserPreferencesData> =
+    override val userPreferences: Flow<UserPreferences> =
         dataStore.data
 
     override suspend fun setToken(token: String?) {

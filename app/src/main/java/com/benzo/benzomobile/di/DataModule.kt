@@ -13,13 +13,17 @@ import com.benzo.benzomobile.data.data_source.authentication.AuthenticationDataS
 import com.benzo.benzomobile.data.data_source.authentication.AuthenticationDataSourceImpl
 import com.benzo.benzomobile.data.data_source.loyalty_card.LoyaltyCardDataSource
 import com.benzo.benzomobile.data.data_source.loyalty_card.LoyaltyCardDataSourceImpl
-import com.benzo.benzomobile.data.data_source.user_preferences.UserPreferencesData
+import com.benzo.benzomobile.data.data_source.payment_history.PaymentHistoryDataSource
+import com.benzo.benzomobile.data.data_source.payment_history.PaymentHistoryDataSourceImpl
+import com.benzo.benzomobile.domain.model.UserPreferences
 import com.benzo.benzomobile.data.data_source.user_preferences.UserPreferencesDataSource
 import com.benzo.benzomobile.data.data_source.user_preferences.UserPreferencesDataSourceImpl
 import com.benzo.benzomobile.data.data_source.user_preferences.UserPreferencesSerializer
 import com.benzo.benzomobile.data.repository.LoyaltyCardRepositoryImpl
+import com.benzo.benzomobile.data.repository.PaymentHistoryRepositoryImpl
 import com.benzo.benzomobile.domain.repository.AuthenticationRepository
 import com.benzo.benzomobile.domain.repository.LoyaltyCardRepository
+import com.benzo.benzomobile.domain.repository.PaymentHistoryRepository
 import com.benzo.benzomobile.domain.repository.ThemeRepository
 import com.benzo.benzomobile.domain.repository.UserRepository
 import org.koin.android.ext.koin.androidContext
@@ -31,7 +35,7 @@ val dataModule = module {
     singleOf(::BenzoApi) { bind<BenzoApi>() }
 
     singleOf(::UserPreferencesSerializer) { bind<UserPreferencesSerializer>() }
-    single<DataStore<UserPreferencesData>> {
+    single<DataStore<UserPreferences>> {
         DataStoreFactory.create(
             serializer = get<UserPreferencesSerializer>()
         ) {
@@ -43,9 +47,11 @@ val dataModule = module {
     singleOf(::AuthenticationDataSourceImpl) { bind<AuthenticationDataSource>() }
     singleOf(::UserDataSourceImpl) { bind<UserDataSource>() }
     singleOf(::LoyaltyCardDataSourceImpl) { bind<LoyaltyCardDataSource>() }
+    singleOf(::PaymentHistoryDataSourceImpl) { bind<PaymentHistoryDataSource>() }
 
     singleOf(::ThemeRepositoryImpl) { bind<ThemeRepository>() }
     singleOf(::AuthenticationRepositoryImpl) { bind<AuthenticationRepository>() }
     singleOf(::UserRepositoryImpl) { bind<UserRepository>() }
     singleOf(::LoyaltyCardRepositoryImpl) { bind<LoyaltyCardRepository>() }
+    singleOf(::PaymentHistoryRepositoryImpl) { bind<PaymentHistoryRepository>() }
 }

@@ -4,21 +4,22 @@ import android.util.Log
 import androidx.datastore.core.Serializer
 import com.benzo.benzomobile.app.TAG
 import com.benzo.benzomobile.domain.model.ThemeOption
+import com.benzo.benzomobile.domain.model.UserPreferences
 import kotlinx.serialization.json.Json
 import java.io.InputStream
 import java.io.OutputStream
 
-class UserPreferencesSerializer : Serializer<UserPreferencesData> {
+class UserPreferencesSerializer : Serializer<UserPreferences> {
     override val defaultValue
-        get() = UserPreferencesData(
+        get() = UserPreferences(
             token = null,
             theme = ThemeOption.SYSTEM,
         )
 
-    override suspend fun readFrom(input: InputStream): UserPreferencesData =
+    override suspend fun readFrom(input: InputStream) =
         try {
             Json.decodeFromString(
-                deserializer = UserPreferencesData.serializer(),
+                deserializer = UserPreferences.serializer(),
                 string = input.readBytes().decodeToString(),
             )
         } catch (e: Exception) {
@@ -26,10 +27,10 @@ class UserPreferencesSerializer : Serializer<UserPreferencesData> {
             defaultValue
         }
 
-    override suspend fun writeTo(t: UserPreferencesData, output: OutputStream) =
+    override suspend fun writeTo(t: UserPreferences, output: OutputStream) =
         output.write(
             Json.encodeToString(
-                serializer = UserPreferencesData.serializer(),
+                serializer = UserPreferences.serializer(),
                 value = t,
             ).encodeToByteArray()
         )

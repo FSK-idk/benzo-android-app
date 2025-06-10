@@ -9,8 +9,8 @@ import kotlinx.coroutines.flow.map
 class ThemeRepositoryImpl(
     private val userPreferencesDataSource: UserPreferencesDataSource,
 ) : ThemeRepository {
-    override val theme: Flow<ThemeOption> =
-        userPreferencesDataSource.userPreferencesData.map { it.theme }
+    override fun getTheme() =
+        userPreferencesDataSource.userPreferences.map { it.theme }
 
     override suspend fun setTheme(theme: ThemeOption) =
         userPreferencesDataSource.setTheme(theme = theme)

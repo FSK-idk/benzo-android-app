@@ -8,6 +8,7 @@ import com.benzo.benzomobile.domain.use_case.SetThemeUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
@@ -21,15 +22,16 @@ class SettingsScreenViewModel(
     val loadState = _loadState.asStateFlow()
 
     val uiState =
-        getThemeUseCase().map {
-            _loadState.update { jt -> jt.copy(isLoading = false) }
+        getThemeUseCase()
+            .map {
+                _loadState.update { jt -> jt.copy(isLoading = false) }
 
-            return@map SettingsScreenUiState(theme = it)
-        }.stateIn(
-            scope = viewModelScope,
-            initialValue = SettingsScreenUiState(),
-            started = SharingStarted.WhileSubscribed(5000),
-        )
+                return@map SettingsScreenUiState(theme = it)
+            }.stateIn(
+                scope = viewModelScope,
+                initialValue = SettingsScreenUiState(),
+                started = SharingStarted.WhileSubscribed(5000),
+            )
 
     fun onThemeSelected(theme: ThemeOption) {
         viewModelScope.launch {

@@ -4,7 +4,7 @@ import com.benzo.benzomobile.domain.model.ThemeOption
 import kotlinx.coroutines.flow.Flow
 
 interface ThemeRepository {
-    val theme: Flow<ThemeOption>
+    fun getTheme(): Flow<ThemeOption>
 
     suspend fun setTheme(theme: ThemeOption)
 }

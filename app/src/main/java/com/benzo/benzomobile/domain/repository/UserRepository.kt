@@ -1,13 +1,13 @@
 package com.benzo.benzomobile.domain.repository
 
-import com.benzo.benzomobile.domain.model.Result
+import com.benzo.benzomobile.domain.model.Resource
 import com.benzo.benzomobile.domain.model.User
-import com.benzo.benzomobile.domain.model.UserUpdate
+import com.benzo.benzomobile.domain.model.UserUpdateData
 import kotlinx.coroutines.flow.Flow
 
 interface UserRepository {
-    fun getUser(): Flow<Result<User>>
+    fun getUser(): Flow<Resource<User>>
 
     suspend fun fetchUser()
-    suspend fun updateUser(userUpdate: UserUpdate): Result<Unit>
+    suspend fun updateUser(userUpdateData: UserUpdateData)
 }
