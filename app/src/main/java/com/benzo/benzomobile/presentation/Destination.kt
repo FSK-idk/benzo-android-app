@@ -39,11 +39,14 @@ sealed interface Destination {
         }
 
         @Serializable
-        data object StationsGraphRoot : AppGraph
+        data object GasStationsGraphRoot : AppGraph
 
-        sealed interface StationsGraph {
+        sealed interface GasStationsGraph {
             @Serializable
-            data object StationsScreen : StationsGraph
+            data object GasStationsScreen : GasStationsGraph
+
+            @Serializable
+            data object StationsScreen : GasStationsGraph
         }
 
         @Serializable

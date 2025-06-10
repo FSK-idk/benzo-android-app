@@ -29,7 +29,7 @@ fun NavGraphBuilder.appGraphRoot(
                         }
                     },
                     onNavigateToStationsRoot = { currentDestination ->
-                        navController.navigate(Destination.AppGraph.StationsGraphRoot) {
+                        navController.navigate(Destination.AppGraph.GasStationsGraphRoot) {
                             launchSingleTop = true
                             popUpTo(currentDestination) {
                                 inclusive = true
@@ -60,7 +60,7 @@ fun NavGraphBuilder.appGraphRoot(
                     onNavigateToLoginGraphRoot = onNavigateToLoginGraphRoot,
                 )
 
-                stationsGraphRoot()
+                gasStationsGraphRoot()
 
                 loyaltyCardGraphRoot()
             }

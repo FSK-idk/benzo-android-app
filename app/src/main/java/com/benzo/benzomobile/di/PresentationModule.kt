@@ -8,7 +8,7 @@ import com.benzo.benzomobile.presentation.screen.payment_history.PaymentHistoryV
 import com.benzo.benzomobile.presentation.screen.profile.ProfileScreenViewModel
 import com.benzo.benzomobile.presentation.screen.register.RegisterScreenViewModel
 import com.benzo.benzomobile.presentation.screen.settings.SettingsScreenViewModel
-import com.benzo.benzomobile.presentation.screen.stations.StationsScreenViewModel
+import com.benzo.benzomobile.presentation.screen.gas_stations.GasStationsScreenViewModel
 import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.module
 
@@ -20,6 +20,6 @@ val presentationModule = module {
     viewModelOf(::SettingsScreenViewModel)
     viewModelOf(::EditProfileScreenViewModel)
     viewModelOf(::LoyaltyCardScreenViewModel)
-    viewModelOf(::StationsScreenViewModel)
     viewModelOf(::PaymentHistoryViewModel)
+    viewModelOf(::GasStationsScreenViewModel)
 }

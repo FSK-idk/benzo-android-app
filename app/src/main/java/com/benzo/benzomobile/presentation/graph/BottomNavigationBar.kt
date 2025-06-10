@@ -30,7 +30,7 @@ fun BottomNavigationBar(
             onClick = onNavigateToProfileRoot,
         ),
         NavigationItem(
-            currentDestination = Destination.AppGraph.StationsGraphRoot,
+            currentDestination = Destination.AppGraph.GasStationsGraphRoot,
             title = "АЗС",
             icon = Icons.Default.LocalGasStation,
             onClick = onNavigateToStationsRoot,

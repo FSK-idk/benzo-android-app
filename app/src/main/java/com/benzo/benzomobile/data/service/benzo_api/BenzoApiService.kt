@@ -1,5 +1,6 @@
 package com.benzo.benzomobile.data.service.benzo_api
 
+import com.benzo.benzomobile.data.data_source.dto.GetGasStationsResponse
 import com.benzo.benzomobile.data.data_source.dto.GetLoyaltyCardResponse
 import com.benzo.benzomobile.data.data_source.dto.GetPaymentHistoryResponse
 import com.benzo.benzomobile.data.data_source.dto.RegisterResponse
@@ -50,9 +51,11 @@ interface BenzoApiService {
         @Header("Authorization") token: String,
     ): Response<GetLoyaltyCardResponse>
 
-
     @GET("user/payment-history/")
     suspend fun getPaymentHistory(
         @Header("Authorization") token: String,
     ): Response<GetPaymentHistoryResponse>
+
+    @GET("gas-stations/")
+    suspend fun getGasStations(): Response<List<GetGasStationsResponse>>
 }

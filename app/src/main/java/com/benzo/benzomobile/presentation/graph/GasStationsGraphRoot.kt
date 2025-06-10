@@ -5,17 +5,17 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.benzo.benzomobile.presentation.Destination
-import com.benzo.benzomobile.presentation.screen.stations.stationsScreen
+import com.benzo.benzomobile.presentation.screen.gas_stations.gasStationsScreen
 
-fun NavGraphBuilder.stationsGraphRoot() {
-    composable<Destination.AppGraph.StationsGraphRoot> {
+fun NavGraphBuilder.gasStationsGraphRoot() {
+    composable<Destination.AppGraph.GasStationsGraphRoot> {
         val navController = rememberNavController()
 
         NavHost(
             navController = navController,
-            startDestination = Destination.AppGraph.StationsGraph.StationsScreen,
+            startDestination = Destination.AppGraph.GasStationsGraph.GasStationsScreen,
         ) {
-            stationsScreen()
+            gasStationsScreen()
         }
     }
 }
