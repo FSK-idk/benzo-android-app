@@ -80,7 +80,7 @@ class RegisterScreenViewModel(
         }
 
         viewModelScope.launch {
-            _uiState.update { it.copy(isRegisterAvailable = true) }
+            _uiState.update { it.copy(isRegisterAvailable = false) }
 
             try {
                 registerUseCase(
@@ -97,7 +97,7 @@ class RegisterScreenViewModel(
                 )
             }
 
-            _uiState.update { it.copy(isRegisterAvailable = false) }
+            _uiState.update { it.copy(isRegisterAvailable = true) }
         }
     }
 }
@@ -113,5 +113,5 @@ data class RegisterScreenUiState(
     val passwordError: String? = null,
     val confirmPassword: String = "",
     val confirmPasswordError: String? = null,
-    val isRegisterAvailable: Boolean = false,
+    val isRegisterAvailable: Boolean = true,
 )

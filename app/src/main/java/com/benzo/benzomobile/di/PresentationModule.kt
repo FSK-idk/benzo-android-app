@@ -2,6 +2,7 @@ package com.benzo.benzomobile.di
 
 import com.benzo.benzomobile.presentation.MainActivityViewModel
 import com.benzo.benzomobile.presentation.screen.edit_profile.EditProfileScreenViewModel
+import com.benzo.benzomobile.presentation.screen.gas_station_stations.GasStationStationsScreenViewModel
 import com.benzo.benzomobile.presentation.screen.login.LoginScreenViewModel
 import com.benzo.benzomobile.presentation.screen.loyalty_card.LoyaltyCardScreenViewModel
 import com.benzo.benzomobile.presentation.screen.payment_history.PaymentHistoryViewModel
@@ -22,4 +23,5 @@ val presentationModule = module {
     viewModelOf(::LoyaltyCardScreenViewModel)
     viewModelOf(::PaymentHistoryViewModel)
     viewModelOf(::GasStationsScreenViewModel)
+    viewModelOf(::GasStationStationsScreenViewModel)
 }

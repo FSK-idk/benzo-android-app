@@ -8,6 +8,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -40,7 +42,7 @@ fun GasStationsScreen(
     gasStations: List<GasStation>,
     snackbarHostState: SnackbarHostState,
     onRefresh: () -> Unit,
-    onGasStationClick: (Int) -> Unit,
+    onGasStationClick: (GasStation) -> Unit,
 ) {
     Scaffold(
         modifier = modifier,
@@ -68,22 +70,22 @@ fun GasStationsScreen(
                         .padding(10.dp),
                     verticalArrangement = Arrangement.spacedBy(10.dp),
                 ) {
-                    items(gasStations) { info ->
+                    items(gasStations) { gasStation ->
                         Card(
                             modifier = Modifier.fillMaxWidth(),
-                            onClick = { onGasStationClick(info.id) },
+                            onClick = { onGasStationClick(gasStation) },
                         ) {
                             Column(
                                 modifier = Modifier.padding(20.dp),
                                 verticalArrangement = Arrangement.spacedBy(5.dp),
                             ) {
                                 Text(
-                                    text = "АЗС №${info.id}",
+                                    text = "АЗС №${gasStation.id}",
                                     fontWeight = FontWeight.Bold,
                                 )
 
                                 Text(
-                                    text = info.address,
+                                    text = gasStation.address,
                                     style = MaterialTheme.typography.bodySmall,
                                     minLines = 2,
                                     maxLines = 2,

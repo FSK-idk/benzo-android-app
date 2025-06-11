@@ -1,8 +1,10 @@
 package com.benzo.benzomobile.data.service.benzo_api
 
+import com.benzo.benzomobile.data.data_source.dto.GetStationFuelsResponse
 import com.benzo.benzomobile.data.data_source.dto.GetGasStationsResponse
 import com.benzo.benzomobile.data.data_source.dto.GetLoyaltyCardResponse
 import com.benzo.benzomobile.data.data_source.dto.GetPaymentHistoryResponse
+import com.benzo.benzomobile.data.data_source.dto.GetStationsResponse
 import com.benzo.benzomobile.data.data_source.dto.RegisterResponse
 import com.benzo.benzomobile.data.data_source.dto.GetUserResponse
 import com.benzo.benzomobile.data.data_source.dto.LoginResponse
@@ -12,6 +14,8 @@ import retrofit2.http.FormUrlEncoded
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.POST
+import retrofit2.http.Path
+import retrofit2.http.Query
 
 
 interface BenzoApiService {
@@ -58,4 +62,15 @@ interface BenzoApiService {
 
     @GET("gas-stations/")
     suspend fun getGasStations(): Response<List<GetGasStationsResponse>>
+
+    @GET("gas-station/{id}/stations/")
+    suspend fun getGasStationStations(
+        @Path("id") gasStationId: Int,
+    ): Response<GetStationsResponse>
+
+
+    @GET("station/{id}/fuels/")
+    suspend fun getStationFuels(
+        @Path("id") stationId: Int,
+    ): Response<GetStationFuelsResponse>
 }

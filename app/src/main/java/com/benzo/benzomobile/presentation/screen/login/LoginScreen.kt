@@ -47,7 +47,7 @@ fun LoginScreen(
     onPasswordChange: (String) -> Unit,
     isPasswordShown: Boolean,
     onPasswordVisibilityClick: () -> Unit,
-    isLoading: Boolean,
+    isLoginAvailable: Boolean,
     snackbarHostState: SnackbarHostState,
     onBackClick: () -> Unit,
     onLoginClick: () -> Unit,
@@ -128,9 +128,9 @@ fun LoginScreen(
             Button(
                 modifier = Modifier.width(250.dp),
                 onClick = onLoginClick,
-                enabled = !isLoading,
+                enabled = isLoginAvailable,
             ) {
-                if (isLoading) {
+                if (!isLoginAvailable) {
                     CircularProgressIndicator(modifier = Modifier.size(25.dp))
                 } else {
                     Text(text = "Войти")
@@ -172,7 +172,7 @@ fun LoginScreenPreview() {
             onPasswordChange = {},
             isPasswordShown = false,
             onPasswordVisibilityClick = {},
-            isLoading = false,
+            isLoginAvailable = false,
             snackbarHostState = SnackbarHostState(),
             onBackClick = {},
             onLoginClick = {},

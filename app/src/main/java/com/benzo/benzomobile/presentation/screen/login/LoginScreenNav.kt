@@ -23,7 +23,7 @@ fun NavGraphBuilder.loginScreen(
             onPasswordChange = viewModel::onPasswordChange,
             isPasswordShown = uiState.value.isPasswordShown,
             onPasswordVisibilityClick = viewModel::onPasswordVisibilityClick,
-            isLoading = uiState.value.isLoginAvailable,
+            isLoginAvailable = uiState.value.isLoginAvailable,
             snackbarHostState = loadState.value.snackbarHostState,
             onBackClick = onNavigateBack,
             onLoginClick = { viewModel.onLoginClicked(onNavigateToAppGraphRoot) },

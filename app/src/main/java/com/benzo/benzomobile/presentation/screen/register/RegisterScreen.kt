@@ -47,7 +47,7 @@ fun RegisterScreen(
     confirmPassword: String,
     onConfirmPasswordChange: (String) -> Unit,
     confirmPasswordError: String?,
-    isLoading: Boolean,
+    isRegisterAvailable: Boolean,
     snackbarHostState: SnackbarHostState,
     onBackClick: () -> Unit,
     onRegisterClick: () -> Unit,
@@ -145,9 +145,9 @@ fun RegisterScreen(
             Button(
                 modifier = Modifier.width(250.dp),
                 onClick = onRegisterClick,
-                enabled = !isLoading,
+                enabled = isRegisterAvailable,
             ) {
-                if (isLoading) {
+                if (!isRegisterAvailable) {
                     CircularProgressIndicator(modifier = Modifier.size(25.dp))
                 } else {
                     Text(text = "Регистрация")
@@ -156,7 +156,7 @@ fun RegisterScreen(
 
             Text(
                 text = buildAnnotatedString {
-                    append("Уже имеете аккаунт? ")
+                    append("Уже есть аккаунт? ")
                     withLink(
                         LinkAnnotation.Clickable(
                             tag = "",
@@ -192,7 +192,7 @@ fun RegisterScreenPreview() {
             confirmPassword = "",
             onConfirmPasswordChange = {},
             confirmPasswordError = null,
-            isLoading = false,
+            isRegisterAvailable = true,
             snackbarHostState = SnackbarHostState(),
             onBackClick = {},
             onRegisterClick = {},

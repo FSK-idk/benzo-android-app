@@ -26,7 +26,7 @@ fun NavGraphBuilder.registerScreen(
             confirmPassword = uiState.value.confirmPassword,
             onConfirmPasswordChange = viewModel::onConfirmPasswordChange,
             confirmPasswordError = uiState.value.confirmPasswordError,
-            isLoading = uiState.value.isRegisterAvailable,
+            isRegisterAvailable = uiState.value.isRegisterAvailable,
             snackbarHostState = loadState.value.snackbarHostState,
             onBackClick = onNavigateBack,
             onRegisterClick = { viewModel.onRegisterClicked(onNavigateToAppGraphRoot) },
