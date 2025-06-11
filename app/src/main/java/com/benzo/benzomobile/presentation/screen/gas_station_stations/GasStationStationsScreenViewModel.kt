@@ -1,6 +1,9 @@
 package com.benzo.benzomobile.presentation.screen.gas_station_stations
 
 import android.util.Log
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.SheetState
+import androidx.compose.material3.SheetValue
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHostState
 import androidx.lifecycle.ViewModel
@@ -56,13 +59,16 @@ class GasStationStationsScreenViewModel(
         }
     }
 
-    fun onTakeClick(station: Station) {
-        viewModelScope.launch {
-            _uiState.update { it.copy(isTakeAvailable = false) }
+    fun onTakeClick(station: Station, onNavigateNext: () -> Unit) {
+        onNavigateNext()
 
-
-            _uiState.update { it.copy(isTakeAvailable = true) }
-        }
+//        viewModelScope.launch {
+//            _uiState.update { it.copy(isTakeAvailable = false) }
+//
+//            onNavigateNext()
+//
+////            _uiState.update { it.copy(isTakeAvailable = true) }
+//        }
     }
 }
 
@@ -72,7 +78,7 @@ data class StationsScreenLoadState(
     val snackbarHostState: SnackbarHostState = SnackbarHostState(),
 )
 
-data class StationsScreenUiState(
+data class StationsScreenUiState @OptIn(ExperimentalMaterial3Api::class) constructor(
     val gasStation: GasStation = GasStation(id = 0, address = ""),
     val stations: List<Station> = listOf(),
     val isTakeAvailable: Boolean = true,

@@ -48,6 +48,9 @@ sealed interface Destination {
 
             @Serializable
             data class GasStationStationsScreen(val gasStationId: Int, val gasStationAddress: String) : GasStationsGraph
+
+            @Serializable
+            data object TestScreen: GasStationsGraph
         }
 
         @Serializable

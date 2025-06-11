@@ -1,4 +1,4 @@
-package com.benzo.benzomobile.data.service.benzo_api
+package com.benzo.benzomobile.data.service.bank_api
 
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
@@ -7,7 +7,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.kotlinx.serialization.asConverterFactory
 import java.util.concurrent.TimeUnit
 
-class BenzoApi {
+class BankApi {
     private val json = Json {
         ignoreUnknownKeys = true
         explicitNulls = false
@@ -20,12 +20,12 @@ class BenzoApi {
             .build()
     }
 
-    val retrofitService: BenzoApiService by lazy {
+    val retrofitService: BankApiService by lazy {
         Retrofit.Builder()
-            .baseUrl("http://10.0.2.2:8000/api/")
+            .baseUrl("http://10.0.2.2:8081/api/")
             .addConverterFactory(json.asConverterFactory("application/json".toMediaType()))
             .client(okHttpClient)
             .build()
-            .create(BenzoApiService::class.java)
+            .create(BankApiService::class.java)
     }
 }

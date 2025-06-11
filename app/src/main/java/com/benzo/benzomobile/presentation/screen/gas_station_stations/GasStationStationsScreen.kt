@@ -22,6 +22,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SheetState
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
@@ -205,7 +206,13 @@ fun GasStationStationsScreen(
 
                             Button(
                                 modifier = Modifier.fillMaxWidth(),
-                                onClick = { onTakeClick(selectedStation!!) },
+                                onClick = {
+                                    coroutineScope.launch { sheetState.hide() }.invokeOnCompletion {
+                                        val s = selectedStation!!
+                                        selectedStation = null
+                                        onTakeClick(s)
+                                    }
+                                },
                                 enabled = isTakeAvailable,
                             ) {
                                 if (!isTakeAvailable) {
@@ -255,7 +262,7 @@ fun StationsScreenPreview() {
             gasStation = gasStation,
             stations = stations,
             isTakeAvailable = true,
-            onTakeClick = {},
+            onTakeClick = { },
             snackbarHostState = SnackbarHostState(),
             onRefresh = {},
             onBackClick = {}
