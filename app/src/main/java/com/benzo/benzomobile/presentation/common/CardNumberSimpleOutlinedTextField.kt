@@ -14,37 +14,38 @@ import androidx.compose.ui.text.input.TransformedText
 import androidx.compose.ui.text.input.VisualTransformation
 
 @Composable
-fun PhoneNumberSimpleOutlinedTextField(
+fun CardNumberSimpleOutlinedTextField(
     modifier: Modifier = Modifier,
-    phoneNumber: String,
-    onPhoneNumberChange: (String) -> Unit,
-    phoneNumberError: String? = null,
+    cardNumber: String,
+    onCardNumberChange: (String) -> Unit,
+    cardNumberError: String? = null,
     title: String,
 ) {
     OutlinedTextField(
         modifier = modifier,
-        value = phoneNumber,
+        value = cardNumber,
         onValueChange = {
         val digits = it.filter { char -> char.isDigit() }
-        if (digits.length <= 10) {
-            onPhoneNumberChange(digits)
+        if (digits.length <= 16) {
+            onCardNumberChange(digits)
         }
     },
         label = { Text(text = title) },
         singleLine = true,
         visualTransformation = NumberVisualTransformation(
-            mask = "+7 (###) ###-##-##",
+            mask = "#### #### #### ####",
             maskNumber = '#'
         ),
-        isError = phoneNumberError != null,
+        isError = cardNumberError != null,
         supportingText = {
-            phoneNumberError?.let {
+            cardNumberError?.let {
                 Text(
                     text = it,
                     color = MaterialTheme.colorScheme.error,
                 )
             }
         },
-        keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Phone)
+        keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Decimal)
     )
 }
+

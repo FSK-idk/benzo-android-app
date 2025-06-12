@@ -13,11 +13,11 @@ class FuelSelectionScreenViewModel(
     private val validateFuelAmountUseCase: ValidateFuelAmountUseCase,
     private val validatePaymentAmountUseCase: ValidatePaymentAmountUseCase,
 ) : ViewModel() {
-    private val _fuelSelectionScreenUiState = MutableStateFlow(FuelSelectionScreenUiState())
-    val fuelSelectionScreenUiState = _fuelSelectionScreenUiState.asStateFlow()
+    private val _uiState = MutableStateFlow(FuelSelectionScreenUiState())
+    val uiState = _uiState.asStateFlow()
 
     init {
-        _fuelSelectionScreenUiState.update {
+        _uiState.update {
             it.copy(
                 fuels = listOf(
                     Fuel(FuelType.PETROL_92, 3254),
@@ -26,16 +26,15 @@ class FuelSelectionScreenViewModel(
                 selectedFuelIndex = 0,
             )
         }
-
     }
 
     fun onFuelTypeChange(index: Int) {
-        _fuelSelectionScreenUiState.update { it.copy(selectedFuelIndex = index) }
-        onFuelAmountChange(_fuelSelectionScreenUiState.value.fuelAmount)
+        _uiState.update { it.copy(selectedFuelIndex = index) }
+        onFuelAmountChange(_uiState.value.fuelAmount)
     }
 
     fun onFuelAmountChange(value: String) {
-        _fuelSelectionScreenUiState.update {
+        _uiState.update {
             it.copy(
                 fuelAmount = value,
                 fuelAmountError = null,
@@ -44,20 +43,20 @@ class FuelSelectionScreenViewModel(
         }
 
         if (value.isBlank()) {
-            _fuelSelectionScreenUiState.update { it.copy(paymentAmount = "") }
+            _uiState.update { it.copy(paymentAmount = "") }
             return
         }
 
-        val selectedFuel = _fuelSelectionScreenUiState.value.fuels[
-            _fuelSelectionScreenUiState.value.selectedFuelIndex]
+        val selectedFuel = _uiState.value.fuels[
+            _uiState.value.selectedFuelIndex]
         val fuelAmount = value.toFloat()
         val paymentAmount = fuelAmount * (selectedFuel.price / 100.0f)
 
-        _fuelSelectionScreenUiState.update { it.copy(paymentAmount = "%.2f".format(paymentAmount)) }
+        _uiState.update { it.copy(paymentAmount = "%.2f".format(paymentAmount)) }
     }
 
     fun onPaymentAmountChange(value: String) {
-        _fuelSelectionScreenUiState.update {
+        _uiState.update {
             it.copy(
                 paymentAmount = value,
                 fuelAmountError = null,
@@ -66,30 +65,30 @@ class FuelSelectionScreenViewModel(
         }
 
         if (value.isBlank()) {
-            _fuelSelectionScreenUiState.update { it.copy(fuelAmount = "") }
+            _uiState.update { it.copy(fuelAmount = "") }
             return
         }
 
-        val selectedFuel = _fuelSelectionScreenUiState.value.fuels[
-            _fuelSelectionScreenUiState.value.selectedFuelIndex]
+        val selectedFuel = _uiState.value.fuels[
+            _uiState.value.selectedFuelIndex]
         val paymentAmount = value.toFloat()
         val fuelAmount = paymentAmount / (selectedFuel.price / 100.0f)
 
-        _fuelSelectionScreenUiState.update { it.copy(fuelAmount = "%.2f".format(fuelAmount)) }
+        _uiState.update { it.copy(fuelAmount = "%.2f".format(fuelAmount)) }
     }
 
     fun onContinueClick(onNavigateNext: () -> Unit) {
         val fuelAmountError =
-            validateFuelAmountUseCase(_fuelSelectionScreenUiState.value.fuelAmount)
+            validateFuelAmountUseCase(_uiState.value.fuelAmount)
         val paymentAmountError =
-            validatePaymentAmountUseCase(_fuelSelectionScreenUiState.value.paymentAmount)
+            validatePaymentAmountUseCase(_uiState.value.paymentAmount)
 
         val hasErrors = listOf(
             fuelAmountError,
             paymentAmountError,
         ).any { it != null }
 
-        _fuelSelectionScreenUiState.update {
+        _uiState.update {
             it.copy(
                 fuelAmountError = fuelAmountError,
                 paymentAmountError = paymentAmountError,

@@ -204,7 +204,6 @@ class EditProfileScreenViewModel(
                 _loadState.update { it.copy(isSaveAvailable = true) }
             }
         }
-
     }
 }
 

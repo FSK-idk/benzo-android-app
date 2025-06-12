@@ -12,6 +12,7 @@ import com.benzo.benzomobile.presentation.screen.settings.SettingsScreenViewMode
 import com.benzo.benzomobile.presentation.screen.gas_stations.GasStationsScreenViewModel
 import com.benzo.benzomobile.presentation.screen.service.ServiceViewModel
 import com.benzo.benzomobile.presentation.screen.service.fuel_selection.FuelSelectionScreenViewModel
+import com.benzo.benzomobile.presentation.screen.service.payment_selection.PaymentSelectionScreenViewModel
 import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.module
 
@@ -28,4 +29,5 @@ val presentationModule = module {
     viewModelOf(::GasStationStationsScreenViewModel)
     viewModelOf(::ServiceViewModel)
     viewModelOf(::FuelSelectionScreenViewModel)
+    viewModelOf(::PaymentSelectionScreenViewModel)
 }
