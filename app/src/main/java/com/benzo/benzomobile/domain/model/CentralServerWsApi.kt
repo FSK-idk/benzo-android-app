@@ -4,30 +4,32 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-enum class MessageType {
+enum class MessageType(
+    val value: String
+) {
     @SerialName("mobile_app_connect")
-    MOBILE_APP_CONNECT,
+    MOBILE_APP_CONNECT("mobile_app_connect"),
 
     @SerialName("mobile_app_connected")
-    MOBILE_APP_CONNECTED,
+    MOBILE_APP_CONNECTED("mobile_app_connected"),
 
     @SerialName("mobile_app_cancel_refueling")
-    MOBILE_APP_CANCEL_REFUELING,
+    MOBILE_APP_CANCEL_REFUELING("mobile_app_cancel_refueling"),
 
     @SerialName("mobile_app_save_payment")
-    MOBILE_APP_SAVE_PAYMENT,
+    MOBILE_APP_SAVE_PAYMENT("mobile_app_save_payment"),
 
     @SerialName("use_gas_nozzle_t2")
-    USE_GAS_NOZZLE_T2,
+    USE_GAS_NOZZLE_T2("use_gas_nozzle_t2"),
 
     @SerialName("gas_nozzle_used_t2")
-    GAS_NOZZLE_USED_T2,
+    GAS_NOZZLE_USED_T2("gas_nozzle_used_t2"),
 
     @SerialName("use_mobile_app")
-    USE_MOBILE_APP,
+    USE_MOBILE_APP("use_mobile_app"),
 
     @SerialName("mobile_app_used")
-    MOBILE_APP_USED,
+    MOBILE_APP_USED("mobile_app_used"),
 }
 
 @Serializable

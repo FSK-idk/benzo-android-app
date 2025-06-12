@@ -7,7 +7,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.benzo.benzomobile.app.TAG
+import com.benzo.benzomobile.domain.model.FuelSelectionResult
 import com.benzo.benzomobile.domain.model.PayRequest
+import com.benzo.benzomobile.domain.use_case.FetchLoyaltyCardUseCase
+import com.benzo.benzomobile.domain.use_case.GetLoyaltyCardUseCase
 import com.benzo.benzomobile.domain.use_case.PayUseCase
 import com.benzo.benzomobile.domain.use_case.ValidateCardNumberUseCase
 import com.benzo.benzomobile.domain.use_case.ValidateExpirationDateUseCase
@@ -21,7 +24,10 @@ class PaymentSelectionScreenViewModel(
     private val validateCardNumberUseCase: ValidateCardNumberUseCase,
     private val validateExpirationDateUseCase: ValidateExpirationDateUseCase,
     private val validateHolderNameUseCase: ValidateHolderNameUseCase,
+//    private val fetchLoyaltyCardUseCase: FetchLoyaltyCardUseCase,
+//    private val getLoyaltyCardUseCase: GetLoyaltyCardUseCase,
     private val payUseCase: PayUseCase,
+    private val fuelSelectionResult: FuelSelectionResult,
 ) : ViewModel() {
     private val _loadState = MutableStateFlow(PaymentSelectionScreenLoadState())
     val loadState = _loadState.asStateFlow()
@@ -30,7 +36,17 @@ class PaymentSelectionScreenViewModel(
     val uiState = _uiState.asStateFlow()
 
     init {
-        _uiState.update { it.copy(bonusesAvailable = 102346, paymentAmount = 12342) }
+        viewModelScope.launch {
+
+            _uiState.update {
+                it.copy(
+                    bonusesAvailable = 102346,
+                    paymentAmount = fuelSelectionResult.paymentAmount
+                )
+            }
+
+            _loadState.update { it.copy(isLoading = false) }
+        }
     }
 
     fun onBonusesUsedChange(value: String) {
@@ -121,6 +137,7 @@ class PaymentSelectionScreenViewModel(
 
 
 data class PaymentSelectionScreenLoadState(
+    val isLoading: Boolean = true,
     val snackbarHostState: SnackbarHostState = SnackbarHostState(),
 )
 

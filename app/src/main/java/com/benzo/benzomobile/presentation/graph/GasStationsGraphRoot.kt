@@ -7,7 +7,7 @@ import androidx.navigation.compose.rememberNavController
 import com.benzo.benzomobile.presentation.Destination
 import com.benzo.benzomobile.presentation.screen.gas_station_stations.gasStationStationsScreen
 import com.benzo.benzomobile.presentation.screen.gas_stations.gasStationsScreen
-import com.benzo.benzomobile.presentation.screen.service.testScreen
+import com.benzo.benzomobile.presentation.screen.service.serviceGraphRoot
 
 fun NavGraphBuilder.gasStationsGraphRoot() {
     composable<Destination.AppGraph.GasStationsGraphRoot> {
@@ -33,11 +33,17 @@ fun NavGraphBuilder.gasStationsGraphRoot() {
                     navController.navigateUp()
                 },
                 onNavigateNext = {
-                    navController.navigate(Destination.AppGraph.GasStationsGraph.TestScreen)
+                    navController.navigate(Destination.AppGraph.GasStationsGraph.ServiceGraphRoot)
                 }
             )
 
-            testScreen()
+            serviceGraphRoot(
+                onNavigateToGasStationsScreen = {
+                    navController.navigate(Destination.AppGraph.GasStationsGraph.GasStationsScreen) {
+                        popUpTo(Destination.AppGraph.GasStationsGraph.GasStationsScreen)
+                    }
+                }
+            )
         }
     }
 }

@@ -73,31 +73,10 @@ class GasStationDataSourceImpl(
             throw Exception("Ошибка сети")
         }
 
-        return bodyStations.stations.map { station ->
-            val responseFuels = try {
-                benzoApi.retrofitService.getStationFuels(
-                    stationId = station.id
-                )
-            } catch (e: Exception) {
-                Log.e(TAG, "$e")
-                throw Exception("Ошибка сети")
-            }
-
-            if (!responseFuels.isSuccessful) {
-                Log.e(TAG, "Response is not successful")
-                throw Exception("Ошибка сети")
-            }
-
-            val bodyFuels = responseFuels.body()
-
-            if (bodyFuels == null) {
-                Log.e(TAG, "Body is empty")
-                throw Exception("Ошибка сети")
-            }
-
+        return bodyStations.stations.map {
             Station(
-                id = station.id,
-                status = when (station.status) {
+                id = it.id,
+                status = when (it.status) {
                     "busy_offline" -> StationStatus.BUSY_OFFLINE
                     "busy_online" -> StationStatus.BUSY_ONLINE
                     "not_working" -> StationStatus.NOT_WORKING
@@ -107,21 +86,46 @@ class GasStationDataSourceImpl(
                         throw Exception("Ошибка сети")
                     }
                 },
-                fuels = bodyFuels.fuels.map { fuel ->
-                    Fuel(
-                        type = when (fuel.fuelType) {
-                            "92" -> FuelType.PETROL_92
-                            "95" -> FuelType.PETROL_95
-                            "98" -> FuelType.PETROL_98
-                            "DT" -> FuelType.DIESEL
-                            else -> {
-                                Log.e(TAG, "Fuel type is wrong")
-                                throw Exception("Ошибка сети")
-                            }
-                        },
-                        price = fuel.price,
-                    )
+                fuels = getStationFuels(it.id),
+            )
+        }
+    }
+
+    override suspend fun getStationFuels(stationId: Int): List<Fuel> {
+        val response = try {
+            benzoApi.retrofitService.getStationFuels(
+                stationId = stationId,
+            )
+        } catch (e: Exception) {
+            Log.e(TAG, "$e")
+            throw Exception("Ошибка сети")
+        }
+
+        if (!response.isSuccessful) {
+            Log.e(TAG, "Response is not successful")
+            throw Exception("Ошибка сети")
+        }
+
+        val body = response.body()
+
+        if (body == null) {
+            Log.e(TAG, "Body is empty")
+            throw Exception("Ошибка сети")
+        }
+
+        return body.fuels.map { fuel ->
+            Fuel(
+                type = when (fuel.fuelType) {
+                    "92" -> FuelType.PETROL_92
+                    "95" -> FuelType.PETROL_95
+                    "98" -> FuelType.PETROL_98
+                    "DT" -> FuelType.DIESEL
+                    else -> {
+                        Log.e(TAG, "Fuel type is wrong")
+                        throw Exception("Ошибка сети")
+                    }
                 },
+                price = fuel.price,
             )
         }
     }

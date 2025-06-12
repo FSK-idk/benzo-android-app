@@ -1,6 +1,5 @@
 package com.benzo.benzomobile.presentation
 
-import com.benzo.benzomobile.domain.model.GasStation
 import kotlinx.serialization.Serializable
 
 sealed interface Destination {
@@ -50,7 +49,21 @@ sealed interface Destination {
             data class GasStationStationsScreen(val gasStationId: Int, val gasStationAddress: String) : GasStationsGraph
 
             @Serializable
-            data object TestScreen: GasStationsGraph
+            data object ServiceGraphRoot: GasStationsGraph
+
+            sealed interface ServiceGraph {
+                @Serializable
+                data object LoadingScreen: ServiceGraph
+
+                @Serializable
+                data class FuelSelectionScreen(val stationId: Int): ServiceGraph
+
+                @Serializable
+                data object PaymentSelectionScreen: ServiceGraph
+
+                @Serializable
+                data object FinishScreen: ServiceGraph
+            }
         }
 
         @Serializable

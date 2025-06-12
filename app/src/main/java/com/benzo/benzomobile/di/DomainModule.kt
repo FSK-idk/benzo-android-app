@@ -10,6 +10,7 @@ import com.benzo.benzomobile.domain.use_case.GetUserUseCase
 import com.benzo.benzomobile.domain.use_case.GetIsAuthenticatedUseCase
 import com.benzo.benzomobile.domain.use_case.GetLoyaltyCardUseCase
 import com.benzo.benzomobile.domain.use_case.GetPaymentHistoryCardUseCase
+import com.benzo.benzomobile.domain.use_case.GetStationFuelsUseCase
 import com.benzo.benzomobile.domain.use_case.GetThemeUseCase
 import com.benzo.benzomobile.domain.use_case.LoginUseCase
 import com.benzo.benzomobile.domain.use_case.LogoutUseCase
@@ -69,6 +70,7 @@ val domainModule = module {
     factoryOf(::GetGasStationsUseCase) { bind<GetGasStationsUseCase>() }
     factoryOf(::FetchGasStationsUseCase) { bind<FetchGasStationsUseCase>() }
     factoryOf(::GetGasStationStationsUseCase) { bind<GetGasStationStationsUseCase>() }
+    factoryOf(::GetStationFuelsUseCase) { bind<GetStationFuelsUseCase>() }
 
     factoryOf(::ValidateFuelAmountUseCase) { bind<ValidateFuelAmountUseCase>() }
     factoryOf(::ValidatePaymentAmountUseCase) { bind<ValidatePaymentAmountUseCase>() }

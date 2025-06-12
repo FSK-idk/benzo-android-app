@@ -1,6 +1,7 @@
 package com.benzo.benzomobile.presentation.screen.service.fuel_selection
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -8,13 +9,17 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -30,6 +35,7 @@ import com.benzo.benzomobile.ui.theme.BenzoMobileTheme
 @Composable
 fun FuelSelectionScreen(
     modifier: Modifier = Modifier,
+    isLoading: Boolean,
     fuels: List<Fuel>,
     selectedFuelIndex: Int,
     onFuelTypeChange: (Int) -> Unit,
@@ -39,6 +45,7 @@ fun FuelSelectionScreen(
     paymentAmount: String,
     onPaymentAmountChange: (String) -> Unit,
     paymentAmountError: String?,
+    snackbarHostState: SnackbarHostState,
     onCancelRefuelingClick: () -> Unit,
     onContinueClick: () -> Unit,
 ) {
@@ -53,59 +60,71 @@ fun FuelSelectionScreen(
                 ),
             )
         },
+        snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
     ) { innerPadding ->
-        Column(
-            modifier = Modifier
-                .padding(innerPadding)
-                .fillMaxSize()
-                .padding(10.dp),
-            verticalArrangement = Arrangement.spacedBy(10.dp)
-        ) {
-            FuelTypeSimpleOutlinedTextFiled(
-                modifier = Modifier.fillMaxWidth(),
-                fuelTypes = fuels.map { it.type },
-                selectedFuelTypeIndex = selectedFuelIndex,
-                onFuelTypeChange = onFuelTypeChange,
-                title = "Тип",
-            )
-
-            FuelAmountSimpleOutlinedTextField(
-                modifier = Modifier.fillMaxWidth(),
-                fuelAmount = fuelAmount,
-                onFuelAmountChange = onFuelAmountChange,
-                fuelAmountError = fuelAmountError,
-                title = "Количество",
-            )
-
-            MoneySimpleOutlinedTextField(
-                modifier = Modifier.fillMaxWidth(),
-                money = paymentAmount,
-                onMoneyChange = onPaymentAmountChange,
-                moneyError = paymentAmountError,
-                title = "Сумма",
-            )
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.End,
+        if (isLoading) {
+            Box(
+                modifier = Modifier
+                    .padding(innerPadding)
+                    .fillMaxSize(),
+                contentAlignment = Alignment.Center,
             ) {
-                Text(text = "Цена: ${"%.2f".format(fuels[selectedFuelIndex].price / 100.0f)} руб.")
+                CircularProgressIndicator()
             }
-
-            Spacer(modifier = Modifier.weight(1.0f))
-
-            Button(
-                modifier = Modifier.fillMaxWidth(),
-                onClick = onContinueClick,
+        } else {
+            Column(
+                modifier = Modifier
+                    .padding(innerPadding)
+                    .fillMaxSize()
+                    .padding(10.dp),
+                verticalArrangement = Arrangement.spacedBy(10.dp)
             ) {
-                Text(text = "Продолжить")
-            }
+                FuelTypeSimpleOutlinedTextFiled(
+                    modifier = Modifier.fillMaxWidth(),
+                    fuelTypes = fuels.map { it.type },
+                    selectedFuelTypeIndex = selectedFuelIndex,
+                    onFuelTypeChange = onFuelTypeChange,
+                    title = "Тип",
+                )
 
-            OutlinedButton(
-                modifier = Modifier.fillMaxWidth(),
-                onClick = onCancelRefuelingClick,
-            ) {
-                Text(text = "Отменить заправку")
+                FuelAmountSimpleOutlinedTextField(
+                    modifier = Modifier.fillMaxWidth(),
+                    fuelAmount = fuelAmount,
+                    onFuelAmountChange = onFuelAmountChange,
+                    fuelAmountError = fuelAmountError,
+                    title = "Количество",
+                )
+
+                MoneySimpleOutlinedTextField(
+                    modifier = Modifier.fillMaxWidth(),
+                    money = paymentAmount,
+                    onMoneyChange = onPaymentAmountChange,
+                    moneyError = paymentAmountError,
+                    title = "Сумма",
+                )
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.End,
+                ) {
+                    Text(text = "Цена: ${"%.2f".format(fuels[selectedFuelIndex].price / 100.0f)} руб.")
+                }
+
+                Spacer(modifier = Modifier.weight(1.0f))
+
+                Button(
+                    modifier = Modifier.fillMaxWidth(),
+                    onClick = onContinueClick,
+                ) {
+                    Text(text = "Продолжить")
+                }
+
+                OutlinedButton(
+                    modifier = Modifier.fillMaxWidth(),
+                    onClick = onCancelRefuelingClick,
+                ) {
+                    Text(text = "Отменить заправку")
+                }
             }
         }
     }
@@ -117,6 +136,7 @@ fun FuelSelectionScreen(
 fun FuelSelectionScreenPreview() {
     BenzoMobileTheme {
         FuelSelectionScreen(
+            isLoading = false,
             fuels = listOf(
                 Fuel(FuelType.PETROL_92, 1212),
                 Fuel(FuelType.PETROL_95, 1212),
@@ -129,6 +149,7 @@ fun FuelSelectionScreenPreview() {
             paymentAmount = "23.43",
             onPaymentAmountChange = {},
             paymentAmountError = null,
+            snackbarHostState = SnackbarHostState(),
             onCancelRefuelingClick = {},
             onContinueClick = {},
         )
