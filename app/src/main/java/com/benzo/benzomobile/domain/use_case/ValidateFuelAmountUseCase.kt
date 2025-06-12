@@ -1,9 +1,10 @@
 package com.benzo.benzomobile.domain.use_case
 
-class ValidateBirthDateUseCase {
-    operator fun invoke(birthDate: String): String? =
+class ValidateFuelAmountUseCase {
+    operator fun invoke(fuelAmount: String): String? =
         when {
-            birthDate.isBlank() -> "Select the date of birth"
+            fuelAmount.isBlank() -> "Поле не может быть пустым"
+            fuelAmount.toFloat() == 0.0f -> "Не должно равнятся нулю"
             else -> null
         }
 }

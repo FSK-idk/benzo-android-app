@@ -21,10 +21,12 @@ import com.benzo.benzomobile.domain.use_case.ValidateBirthDateUseCase
 import com.benzo.benzomobile.domain.use_case.ValidateCarNumberUseCase
 import com.benzo.benzomobile.domain.use_case.ValidateConfirmPasswordUseCase
 import com.benzo.benzomobile.domain.use_case.ValidateEmailUseCase
+import com.benzo.benzomobile.domain.use_case.ValidateFuelAmountUseCase
 import com.benzo.benzomobile.domain.use_case.ValidateGenderUseCase
 import com.benzo.benzomobile.domain.use_case.ValidateLoginUseCase
 import com.benzo.benzomobile.domain.use_case.ValidateNameUseCase
 import com.benzo.benzomobile.domain.use_case.ValidatePasswordUseCase
+import com.benzo.benzomobile.domain.use_case.ValidatePaymentAmountUseCase
 import com.benzo.benzomobile.domain.use_case.ValidatePhoneNumberUseCase
 import org.koin.core.module.dsl.bind
 import org.koin.core.module.dsl.factoryOf
@@ -65,5 +67,10 @@ val domainModule = module {
     factoryOf(::FetchGasStationsUseCase) { bind<FetchGasStationsUseCase>() }
     factoryOf(::GetGasStationStationsUseCase) { bind<GetGasStationStationsUseCase>() }
 
+    factoryOf(::ValidateFuelAmountUseCase) { bind<ValidateFuelAmountUseCase>() }
+    factoryOf(::ValidatePaymentAmountUseCase) { bind<ValidatePaymentAmountUseCase>() }
+
     factoryOf(::PayUseCase) { bind<PayUseCase>() }
+
+
 }

@@ -1,7 +1,6 @@
-package com.benzo.benzomobile.presentation.screen.service
+package com.benzo.benzomobile.presentation.screen.service.fuel_selection
 
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import com.benzo.benzomobile.domain.model.Fuel
 import com.benzo.benzomobile.domain.model.FuelType
 import com.benzo.benzomobile.domain.use_case.ValidateFuelAmountUseCase
@@ -9,9 +8,8 @@ import com.benzo.benzomobile.domain.use_case.ValidatePaymentAmountUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
 
-class ServiceViewModel(
+class FuelSelectionScreenViewModel(
     private val validateFuelAmountUseCase: ValidateFuelAmountUseCase,
     private val validatePaymentAmountUseCase: ValidatePaymentAmountUseCase,
 ) : ViewModel() {
@@ -58,7 +56,6 @@ class ServiceViewModel(
         _fuelSelectionScreenUiState.update { it.copy(paymentAmount = "%.2f".format(paymentAmount)) }
     }
 
-
     fun onPaymentAmountChange(value: String) {
         _fuelSelectionScreenUiState.update {
             it.copy(
@@ -81,11 +78,7 @@ class ServiceViewModel(
         _fuelSelectionScreenUiState.update { it.copy(fuelAmount = "%.2f".format(fuelAmount)) }
     }
 
-    fun onCancelRefuelingClick() {
-
-    }
-
-    fun onFuelSelected() {
+    fun onContinueClick(onNavigateNext: () -> Unit) {
         val fuelAmountError =
             validateFuelAmountUseCase(_fuelSelectionScreenUiState.value.fuelAmount)
         val paymentAmountError =
@@ -104,13 +97,10 @@ class ServiceViewModel(
         }
 
         if (!hasErrors) {
-            viewModelScope.launch {
-
-            }
+            onNavigateNext()
         }
     }
 }
-
 
 data class FuelSelectionScreenUiState(
     val fuels: List<Fuel> = listOf(),

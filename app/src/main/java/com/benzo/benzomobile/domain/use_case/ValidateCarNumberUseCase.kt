@@ -10,8 +10,8 @@ class ValidateCarNumberUseCase {
         val regex = Regex(CAR_NUMBER_REGEX)
 
         return when {
-            carNumber.isBlank() -> "The field cannot be empty"
-            !regex.matches(carNumber.uppercase()) -> "Incorrect car number"
+            carNumber.isBlank() -> "Поле не может быть пустым"
+            !regex.matches(carNumber.uppercase()) -> "Неправильный формат"
             else -> null
         }
     }

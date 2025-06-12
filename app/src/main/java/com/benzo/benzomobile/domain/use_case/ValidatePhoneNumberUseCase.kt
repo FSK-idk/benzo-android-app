@@ -6,9 +6,9 @@ class ValidatePhoneNumberUseCase {
         val isValidChars = phoneNumber.all { it.isDigit() || it in "+-() " }
 
         return when {
-            phoneNumber.isBlank() -> "Phone number cannot be blank"
-            !isValidChars -> "Invalid characters"
-            digitsOnly.length < 10 -> "Incorrect number"
+            phoneNumber.isBlank() -> "Поле не должно быть пустым"
+            !isValidChars -> "Неправильный формат"
+            digitsOnly.length < 10 -> "Неправильный формат"
             else -> null
         }
     }

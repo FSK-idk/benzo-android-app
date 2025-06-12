@@ -5,9 +5,9 @@ class ValidateLoginUseCase {
         val regex = Regex("^[a-zA-Z0-9_]+$")
 
         return when {
-            login.isBlank() -> "Login can't be blank"
-            login.count() < 6 -> "Login must contain at least 6 symbols"
-            !regex.matches(login) -> "Only letters, digits and underscores are allowed"
+            login.isBlank() -> "Поле не может быть пустым"
+            login.count() < 6 -> "Логин должен содержать хотя бы 6 символов"
+            !regex.matches(login) -> "Можно использовать только буквы, цифры и нижнее подчёркивание"
             else -> null
         }
     }

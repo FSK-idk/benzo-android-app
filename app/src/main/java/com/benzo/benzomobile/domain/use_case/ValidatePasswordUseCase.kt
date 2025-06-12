@@ -6,9 +6,9 @@ class ValidatePasswordUseCase {
             password.any { it.isDigit() } && password.any { it.isLetter() }
 
         return when {
-            password.isBlank() -> "Password cannot be blank"
-            password.count() < 6 -> "Password must contain at least 6 symbols"
-            !doesContainLettersAndDigits -> "Password must contain at least one letter and one digit"
+            password.isBlank() -> "Поле не может быть пустым"
+            password.count() < 6 -> "Пароль должен содержать хотя бы 6 символов"
+            !doesContainLettersAndDigits -> "Пароль должен сожержать хотя бы одну букву и одну цифру"
             else -> null
         }
     }

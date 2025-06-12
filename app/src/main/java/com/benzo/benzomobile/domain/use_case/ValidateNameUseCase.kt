@@ -5,8 +5,8 @@ class ValidateNameUseCase {
         val regex = Regex("^[a-zA-Zа-яА-ЯёЁ\\-\\s']+$")
 
         return when {
-            name.isBlank() -> "Name cannot be blank"
-            !regex.matches(name) -> "Only letters, spaces, hyphens, and apostrophes are allowed."
+            name.isBlank() -> "Поле не может быть пустым"
+            !regex.matches(name) -> "Можно использовать только буквы, пробелы, тире и апострофы"
             else -> null
         }
     }

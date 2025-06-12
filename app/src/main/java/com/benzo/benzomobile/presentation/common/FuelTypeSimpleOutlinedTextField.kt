@@ -15,19 +15,19 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import com.benzo.benzomobile.domain.model.GenderOption
+import com.benzo.benzomobile.domain.model.FuelType
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun GenderSimpleOutlinedTextFiled(
+fun FuelTypeSimpleOutlinedTextFiled(
     modifier: Modifier = Modifier,
-    gender: GenderOption,
-    onGenderChange: (GenderOption) -> Unit,
-    genderError: String? = null,
+    fuelTypes: List<FuelType>,
+    selectedFuelTypeIndex: Int,
+    onFuelTypeChange: (Int) -> Unit,
+    fuelTypeError: String? = null,
     title: String,
 ) {
     var expanded by remember { mutableStateOf(false) }
-    val genders = listOf(GenderOption.MALE, GenderOption.FEMALE)
 
     ExposedDropdownMenuBox(
         expanded = expanded,
@@ -35,12 +35,12 @@ fun GenderSimpleOutlinedTextFiled(
     ) {
         OutlinedTextField(
             modifier = modifier.menuAnchor(MenuAnchorType.PrimaryEditable, true),
-            value = getGenderName(gender),
+            value = getFuelTypeName(fuelTypes[selectedFuelTypeIndex]),
             onValueChange = {},
             readOnly = true,
-            isError = genderError != null,
+            isError = fuelTypeError != null,
             supportingText = {
-                genderError?.let {
+                fuelTypeError?.let {
                     Text(
                         text = it,
                         color = MaterialTheme.colorScheme.error
@@ -57,16 +57,16 @@ fun GenderSimpleOutlinedTextFiled(
             expanded = expanded,
             onDismissRequest = { expanded = false }
         ) {
-            genders.forEach {
+            fuelTypes.forEachIndexed { index, item ->
                 DropdownMenuItem(
                     text = {
                         Text(
-                            text = getGenderName(it),
-                            color = if (it == gender) MaterialTheme.colorScheme.primary else Color.Unspecified
+                            text = getFuelTypeName(item),
+                            color = if (index == selectedFuelTypeIndex) MaterialTheme.colorScheme.primary else Color.Unspecified
                         )
                     },
                     onClick = {
-                        onGenderChange(it)
+                        onFuelTypeChange(index)
                         expanded = false
                     },
                     contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding
@@ -76,9 +76,10 @@ fun GenderSimpleOutlinedTextFiled(
     }
 }
 
-private fun getGenderName(gender: GenderOption) =
-    when (gender) {
-        GenderOption.NONE -> ""
-        GenderOption.MALE -> "Мужской"
-        GenderOption.FEMALE -> "Женский"
+private fun getFuelTypeName(fuelType: FuelType) =
+    when (fuelType) {
+        FuelType.PETROL_92 -> "92"
+        FuelType.PETROL_95 -> "95"
+        FuelType.PETROL_98 -> "98"
+        FuelType.DIESEL -> "DT"
     }
