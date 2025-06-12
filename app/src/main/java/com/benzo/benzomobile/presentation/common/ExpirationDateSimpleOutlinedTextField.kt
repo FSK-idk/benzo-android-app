@@ -6,45 +6,41 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.AnnotatedString
-import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.OffsetMapping
-import androidx.compose.ui.text.input.TransformedText
-import androidx.compose.ui.text.input.VisualTransformation
 
 @Composable
-fun PhoneNumberSimpleOutlinedTextField(
+fun ExpirationDateSimpleOutlinedTextField(
     modifier: Modifier = Modifier,
-    phoneNumber: String,
-    onPhoneNumberChange: (String) -> Unit,
-    phoneNumberError: String? = null,
+    date: String,
+    onDateChange: (String) -> Unit,
+    dateError: String? = null,
     title: String,
 ) {
     OutlinedTextField(
         modifier = modifier,
-        value = phoneNumber,
+        value = date,
         onValueChange = {
-        val digits = it.filter { char -> char.isDigit() }
-        if (digits.length <= 10) {
-            onPhoneNumberChange(digits)
-        }
-    },
+            val digits = it.filter { char -> char.isDigit() }
+            if (digits.length <= 4) {
+                onDateChange(digits)
+            }
+        },
         label = { Text(text = title) },
         singleLine = true,
         visualTransformation = NumberVisualTransformation(
-            mask = "+7 (###) ###-##-##",
+            mask = "## / ##",
             maskNumber = '#'
         ),
-        isError = phoneNumberError != null,
+        isError = dateError != null,
         supportingText = {
-            phoneNumberError?.let {
+            dateError?.let {
                 Text(
                     text = it,
                     color = MaterialTheme.colorScheme.error,
                 )
             }
         },
-        keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Phone)
+        keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Decimal)
     )
 }
+

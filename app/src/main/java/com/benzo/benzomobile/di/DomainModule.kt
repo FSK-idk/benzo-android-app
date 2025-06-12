@@ -19,10 +19,13 @@ import com.benzo.benzomobile.domain.use_case.SetThemeUseCase
 import com.benzo.benzomobile.domain.use_case.UpdateUserUseCase
 import com.benzo.benzomobile.domain.use_case.ValidateBirthDateUseCase
 import com.benzo.benzomobile.domain.use_case.ValidateCarNumberUseCase
+import com.benzo.benzomobile.domain.use_case.ValidateCardNumberUseCase
 import com.benzo.benzomobile.domain.use_case.ValidateConfirmPasswordUseCase
 import com.benzo.benzomobile.domain.use_case.ValidateEmailUseCase
+import com.benzo.benzomobile.domain.use_case.ValidateExpirationDateUseCase
 import com.benzo.benzomobile.domain.use_case.ValidateFuelAmountUseCase
 import com.benzo.benzomobile.domain.use_case.ValidateGenderUseCase
+import com.benzo.benzomobile.domain.use_case.ValidateHolderNameUseCase
 import com.benzo.benzomobile.domain.use_case.ValidateLoginUseCase
 import com.benzo.benzomobile.domain.use_case.ValidateNameUseCase
 import com.benzo.benzomobile.domain.use_case.ValidatePasswordUseCase
@@ -71,6 +74,10 @@ val domainModule = module {
     factoryOf(::ValidatePaymentAmountUseCase) { bind<ValidatePaymentAmountUseCase>() }
 
     factoryOf(::PayUseCase) { bind<PayUseCase>() }
+
+    factoryOf(::ValidateCardNumberUseCase) { bind<ValidateCardNumberUseCase>() }
+    factoryOf(::ValidateExpirationDateUseCase) { bind<ValidateExpirationDateUseCase>() }
+    factoryOf(::ValidateHolderNameUseCase) { bind<ValidateHolderNameUseCase>() }
 
 
 }

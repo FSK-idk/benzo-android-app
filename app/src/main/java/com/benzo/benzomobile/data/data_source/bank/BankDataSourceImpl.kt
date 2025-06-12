@@ -20,12 +20,7 @@ class BankDataSourceImpl(
 ) : BankDataSource {
     override suspend fun pay(payRequest: PayRequest): PayResponse {
         val response = try {
-            bankApi.retrofitService.pay(
-                depositCardNumber = payRequest.depositCardNumber,
-                depositCardExpirationDate = payRequest.depositCardExpirationDate,
-                depositCardHolderName = payRequest.depositCardHolderName,
-                paymentAmount = payRequest.paymentAmount,
-            )
+            bankApi.retrofitService.pay(payRequest)
         } catch (e: Exception) {
             Log.e(TAG, "$e")
             throw Exception("Ошибка сети")

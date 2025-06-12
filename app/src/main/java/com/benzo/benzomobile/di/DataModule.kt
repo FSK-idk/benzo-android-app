@@ -27,6 +27,7 @@ import com.benzo.benzomobile.data.repository.BankRepositoryImpl
 import com.benzo.benzomobile.data.repository.GasStationRepositoryImpl
 import com.benzo.benzomobile.data.repository.LoyaltyCardRepositoryImpl
 import com.benzo.benzomobile.data.repository.PaymentHistoryRepositoryImpl
+import com.benzo.benzomobile.data.service.bank_api.BankApi
 import com.benzo.benzomobile.domain.repository.AuthenticationRepository
 import com.benzo.benzomobile.domain.repository.BankRepository
 import com.benzo.benzomobile.domain.repository.GasStationRepository
@@ -41,6 +42,7 @@ import org.koin.dsl.module
 
 val dataModule = module {
     singleOf(::BenzoApi) { bind<BenzoApi>() }
+    singleOf(::BankApi) { bind<BankApi>() }
 
     singleOf(::UserPreferencesSerializer) { bind<UserPreferencesSerializer>() }
     single<DataStore<UserPreferences>> {

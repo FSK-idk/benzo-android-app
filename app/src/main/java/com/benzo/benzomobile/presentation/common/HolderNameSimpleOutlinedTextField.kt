@@ -9,27 +9,27 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 
 @Composable
-fun CarNumberSimpleOutlinedTextField(
+fun HolderNameSimpleOutlinedTextField(
     modifier: Modifier = Modifier,
-    carNumber: String,
-    onCarNumberChange: (String) -> Unit,
-    carNumberError: String? = null,
+    holderName: String,
+    onHolderNameChange: (String) -> Unit,
+    holderNameError: String? = null,
     title: String,
 ) {
     OutlinedTextField(
         modifier = modifier,
-        value = carNumber,
+        value = holderName,
         onValueChange = { input ->
             val filtered = input
                 .uppercase()
-                .filter { it.isDigit() || it in 'А'..'Я' }
-            onCarNumberChange(filtered)
+                .filter { it == ' ' || it in 'A'..'Z' }
+            onHolderNameChange(filtered)
         },
         label = { Text(text = title) },
         singleLine = true,
-        isError = carNumberError != null,
+        isError = holderNameError != null,
         supportingText = {
-            carNumberError?.let { Text(it, color = MaterialTheme.colorScheme.error) }
+            holderNameError?.let { Text(it, color = MaterialTheme.colorScheme.error) }
         },
         keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Text)
     )

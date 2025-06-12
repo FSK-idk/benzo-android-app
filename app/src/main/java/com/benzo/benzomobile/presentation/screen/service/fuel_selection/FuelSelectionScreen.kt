@@ -22,7 +22,7 @@ import com.benzo.benzomobile.domain.model.Fuel
 import com.benzo.benzomobile.domain.model.FuelType
 import com.benzo.benzomobile.presentation.common.FuelAmountSimpleOutlinedTextField
 import com.benzo.benzomobile.presentation.common.FuelTypeSimpleOutlinedTextFiled
-import com.benzo.benzomobile.presentation.common.PaymentAmountSimpleOutlinedTextField
+import com.benzo.benzomobile.presentation.common.MoneySimpleOutlinedTextField
 import com.benzo.benzomobile.presentation.common.SimpleTopAppBar
 import com.benzo.benzomobile.ui.theme.BenzoMobileTheme
 
@@ -77,11 +77,11 @@ fun FuelSelectionScreen(
                 title = "Количество",
             )
 
-            PaymentAmountSimpleOutlinedTextField(
+            MoneySimpleOutlinedTextField(
                 modifier = Modifier.fillMaxWidth(),
-                paymentAmount = paymentAmount,
-                onPaymentAmountChange = onPaymentAmountChange,
-                paymentAmountError = paymentAmountError,
+                money = paymentAmount,
+                onMoneyChange = onPaymentAmountChange,
+                moneyError = paymentAmountError,
                 title = "Сумма",
             )
 
@@ -94,18 +94,18 @@ fun FuelSelectionScreen(
 
             Spacer(modifier = Modifier.weight(1.0f))
 
-            OutlinedButton(
-                modifier = Modifier.fillMaxWidth(),
-                onClick = onCancelRefuelingClick,
-            ) {
-                Text(text = "Отменить заправку")
-            }
-
             Button(
                 modifier = Modifier.fillMaxWidth(),
                 onClick = onContinueClick,
             ) {
                 Text(text = "Продолжить")
+            }
+
+            OutlinedButton(
+                modifier = Modifier.fillMaxWidth(),
+                onClick = onCancelRefuelingClick,
+            ) {
+                Text(text = "Отменить заправку")
             }
         }
     }

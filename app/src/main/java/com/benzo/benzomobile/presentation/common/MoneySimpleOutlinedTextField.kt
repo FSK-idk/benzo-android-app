@@ -9,25 +9,25 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 
 @Composable
-fun PaymentAmountSimpleOutlinedTextField(
+fun MoneySimpleOutlinedTextField(
     modifier: Modifier = Modifier,
-    paymentAmount: String,
-    onPaymentAmountChange: (String) -> Unit,
-    paymentAmountError: String? = null,
+    money: String,
+    onMoneyChange: (String) -> Unit,
+    moneyError: String? = null,
     title: String,
 ) {
     val decimalFormatter = DecimalFormatter()
 
     OutlinedTextField(
         modifier = modifier,
-        value = paymentAmount,
+        value = money,
         suffix = { Text(text = "руб.") },
         onValueChange = {
-            onPaymentAmountChange(decimalFormatter.cleanup(it))
+            onMoneyChange(decimalFormatter.cleanup(it))
         },
-        isError = paymentAmountError != null,
+        isError = moneyError != null,
         supportingText = {
-            paymentAmountError?.let {
+            moneyError?.let {
                 Text(
                     text = it,
                     color = MaterialTheme.colorScheme.error
