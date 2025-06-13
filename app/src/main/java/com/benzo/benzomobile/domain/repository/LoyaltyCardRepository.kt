@@ -1,11 +1,7 @@
 package com.benzo.benzomobile.domain.repository
 
 import com.benzo.benzomobile.domain.model.LoyaltyCard
-import com.benzo.benzomobile.domain.model.Resource
-import kotlinx.coroutines.flow.Flow
 
 interface LoyaltyCardRepository {
-    fun getLoyaltyCard(): Flow<Resource<LoyaltyCard>>
-
-    suspend fun fetchLoyaltyCard()
+    suspend fun getLoyaltyCard(): LoyaltyCard
 }

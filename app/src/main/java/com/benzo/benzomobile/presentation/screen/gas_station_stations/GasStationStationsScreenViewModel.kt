@@ -11,7 +11,9 @@ import androidx.lifecycle.viewModelScope
 import com.benzo.benzomobile.app.TAG
 import com.benzo.benzomobile.domain.model.GasStation
 import com.benzo.benzomobile.domain.model.Station
+import com.benzo.benzomobile.domain.model.StationStatus
 import com.benzo.benzomobile.domain.use_case.GetGasStationStationsUseCase
+import com.benzo.benzomobile.domain.use_case.GetUserUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -20,6 +22,7 @@ import kotlinx.coroutines.launch
 class GasStationStationsScreenViewModel(
     private val gasStation: GasStation,
     private val getGasStationStationsUseCase: GetGasStationStationsUseCase,
+    private val getUserUseCase: GetUserUseCase,
 ) : ViewModel() {
     private val _loadState = MutableStateFlow(StationsScreenLoadState())
     val loadState = _loadState.asStateFlow()
@@ -59,16 +62,28 @@ class GasStationStationsScreenViewModel(
         }
     }
 
-    fun onTakeClick(station: Station, onNavigateNext: () -> Unit) {
-        onNavigateNext()
+    fun onTakeClick(station: Station, onNavigateNext: (Int) -> Unit) {
+        viewModelScope.launch {
+            _uiState.update { it.copy(isTakeAvailable = false) }
 
-//        viewModelScope.launch {
-//            _uiState.update { it.copy(isTakeAvailable = false) }
-//
-//            onNavigateNext()
-//
-////            _uiState.update { it.copy(isTakeAvailable = true) }
-//        }
+            if (station.status != StationStatus.FREE) {
+                _loadState.value.snackbarHostState.showSnackbar(
+                    message = "Колонка не доступна в данный момент",
+                    withDismissAction = true,
+                    duration = SnackbarDuration.Short,
+                )
+            } else if (getUserUseCase().carNumber == null) {
+                _loadState.value.snackbarHostState.showSnackbar(
+                    message = "Заполните все данные профиля",
+                    withDismissAction = true,
+                    duration = SnackbarDuration.Short,
+                )
+            } else {
+                onNavigateNext(station.id)
+            }
+
+            _uiState.update { it.copy(isTakeAvailable = true) }
+        }
     }
 }
 

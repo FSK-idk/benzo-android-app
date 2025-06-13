@@ -7,11 +7,8 @@ import com.benzo.benzomobile.domain.repository.UserRepository
 class UserRepositoryImpl(
     private val userDataSource: UserDataSource,
 ) : UserRepository {
-    override fun getUser() =
+    override suspend fun getUser() =
         userDataSource.getUser()
-
-    override suspend fun fetchUser() =
-        userDataSource.fetchUser()
 
     override suspend fun updateUser(userUpdateData: UserUpdateData) =
         userDataSource.updateUser(userUpdateData)

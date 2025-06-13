@@ -9,9 +9,6 @@ import kotlinx.coroutines.flow.map
 class LoyaltyCardRepositoryImpl(
     private val loyaltyCardDataSource: LoyaltyCardDataSource,
 ) : LoyaltyCardRepository {
-    override fun getLoyaltyCard() =
+    override suspend fun getLoyaltyCard() =
         loyaltyCardDataSource.getLoyaltyCard()
-
-    override suspend fun fetchLoyaltyCard() =
-        loyaltyCardDataSource.fetchLoyaltyCard()
 }

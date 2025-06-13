@@ -16,11 +16,7 @@ class UserDataSourceImpl(
     val benzoApi: BenzoApi,
     val userPreferencesDataSource: UserPreferencesDataSource,
 ) : UserDataSource {
-    private val _user = MutableStateFlow<Resource<User>>(Resource.Loading())
-
-    override fun getUser(): Flow<Resource<User>> = _user
-
-    override suspend fun fetchUser() {
+    override suspend fun getUser(): User {
         val token = userPreferencesDataSource.userPreferences.first().token
 
         if (token == null) {
@@ -44,21 +40,19 @@ class UserDataSourceImpl(
 
         val body = response.body()!!
 
-        _user.value = Resource.Loaded(
-            data = User(
-                login = body.login,
-                name = body.name,
-                birthDate = body.birthDate,
-                carNumber = body.carNumber,
-                phoneNumber = body.phoneNumber,
-                email = body.email,
-                gender = when (body.gender) {
-                    "M" -> GenderOption.MALE
-                    "F" -> GenderOption.FEMALE
-                    else -> GenderOption.NONE
-                },
-                penalty = body.penalty,
-            )
+        return User(
+            login = body.login,
+            name = body.name,
+            birthDate = body.birthDate,
+            carNumber = body.carNumber,
+            phoneNumber = body.phoneNumber,
+            email = body.email,
+            gender = when (body.gender) {
+                "M" -> GenderOption.MALE
+                "F" -> GenderOption.FEMALE
+                else -> GenderOption.NONE
+            },
+            penalty = body.penalty,
         )
     }
 

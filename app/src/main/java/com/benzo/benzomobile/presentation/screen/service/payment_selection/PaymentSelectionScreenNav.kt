@@ -1,26 +1,47 @@
 package com.benzo.benzomobile.presentation.screen.service.payment_selection
 
+import androidx.activity.compose.BackHandler
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
 import com.benzo.benzomobile.domain.model.FuelSelectionResult
 import com.benzo.benzomobile.presentation.Destination
+import com.benzo.benzomobile.presentation.screen.service.ServiceGraphViewModel
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
 
 fun NavGraphBuilder.paymentSelectionScreen(
+    viewModel: ServiceGraphViewModel,
     onCancelRefueling: () -> Unit,
     onNavigateBack: () -> Unit,
-    onNavigateNext: (FuelSelectionResult) -> Unit,
+    onNavigateNext: () -> Unit,
 ) {
     composable<Destination.AppGraph.GasStationsGraph.ServiceGraph.PaymentSelectionScreen> {
-        val destination =
-            it.toRoute<Destination.AppGraph.GasStationsGraph.ServiceGraph.PaymentSelectionScreen>()
-
-        val viewModel = koinViewModel<PaymentSelectionScreenViewModel> { parametersOf() }
         val loadState = viewModel.loadState.collectAsStateWithLifecycle()
         val uiState = viewModel.uiState.collectAsStateWithLifecycle()
 
+        BackHandler(onBack = onNavigateBack)
+
+        PaymentSelectionScreen(
+            bonusesUsed = uiState.value.bonusesUsed,
+            onBonusesUsedChange = viewModel::onBonusesUsedChange,
+            bonusesAvailable = uiState.value.bonusesAvailable,
+            cardNumber = uiState.value.cardNumber,
+            onCardNumberChange = viewModel::onCardNumberChange,
+            cardNumberError = uiState.value.cardNumberError,
+            expirationDate = uiState.value.expirationDate,
+            onExpirationDateChange = viewModel::onExpirationDateChange,
+            expirationDateError = uiState.value.expirationDateError,
+            holderName = uiState.value.holderName,
+            onHolderNameChange = viewModel::onHolderNameChange,
+            holderNameError = uiState.value.holderNameError,
+            paymentAmount = uiState.value.paymentAmount,
+            isPayAvailable = uiState.value.isPayAvailable,
+            snackbarHostState = loadState.value.snackbarHostState,
+            onBackClick = onNavigateBack,
+            onCancelRefuelingClick = onCancelRefueling,
+            onPayClick = { viewModel.onPayClick(onNavigateNext = onNavigateNext) },
+        )
     }
 }

@@ -10,7 +10,6 @@ import com.benzo.benzomobile.domain.model.GenderOption
 import com.benzo.benzomobile.domain.model.Resource
 import com.benzo.benzomobile.domain.model.User
 import com.benzo.benzomobile.domain.model.UserUpdateData
-import com.benzo.benzomobile.domain.use_case.FetchUserUseCase
 import com.benzo.benzomobile.domain.use_case.GetUserUseCase
 import com.benzo.benzomobile.domain.use_case.UpdateUserUseCase
 import com.benzo.benzomobile.domain.use_case.ValidateBirthDateUseCase
@@ -37,7 +36,6 @@ class EditProfileScreenViewModel(
     private val validateBirthDateUseCase: ValidateBirthDateUseCase,
     private val validateGenderUseCase: ValidateGenderUseCase,
     private val getUserUseCase: GetUserUseCase,
-    private val fetchUserUseCase: FetchUserUseCase,
     private val updateUserUseCase: UpdateUserUseCase,
 ) : ViewModel() {
     private val _loadState = MutableStateFlow(EditProfileScreenLoadState())
@@ -48,44 +46,29 @@ class EditProfileScreenViewModel(
 
     init {
         viewModelScope.launch {
-            fetchData()
+            try {
+                val user = getUserUseCase()
 
-            _uiState.value = getUserUseCase()
-                .catch { e ->
-                    Log.e(TAG, "$e")
-                    _loadState.value.snackbarHostState.showSnackbar(
-                        message = e.message ?: "Ошибка",
-                        withDismissAction = true,
-                        duration = SnackbarDuration.Short,
+                _uiState.update {
+                    it.copy(
+                        name = user.name ?: "",
+                        birthDate = user.birthDate ?: "",
+                        carNumber = user.carNumber ?: "",
+                        phoneNumber = user.phoneNumber ?: "",
+                        email = user.email ?: "",
+                        gender = user.gender ?: GenderOption.NONE,
                     )
                 }
-                .filterIsInstance<Resource.Loaded<User>>()
-                .map {
-                    _loadState.update { jt -> jt.copy(isLoading = false) }
 
-                    EditProfileScreenUiState(
-                        name = it.data.name ?: "",
-                        birthDate = it.data.birthDate ?: "",
-                        carNumber = it.data.carNumber ?: "",
-                        phoneNumber = it.data.phoneNumber ?: "",
-                        email = it.data.email ?: "",
-                        gender = it.data.gender ?: GenderOption.NONE,
-                    )
-                }
-                .first()
-        }
-    }
-
-    private suspend fun fetchData() {
-        try {
-            fetchUserUseCase()
-        } catch (e: Exception) {
-            Log.e(TAG, "$e")
-            _loadState.value.snackbarHostState.showSnackbar(
-                message = e.message ?: "Ошибка",
-                withDismissAction = true,
-                duration = SnackbarDuration.Short,
-            )
+                _loadState.update { it.copy(isLoading = false) }
+            } catch (e: Exception) {
+                Log.e(TAG, "$e")
+                _loadState.value.snackbarHostState.showSnackbar(
+                    message = e.message ?: "Ошибка",
+                    withDismissAction = true,
+                    duration = SnackbarDuration.Short,
+                )
+            }
         }
     }
 

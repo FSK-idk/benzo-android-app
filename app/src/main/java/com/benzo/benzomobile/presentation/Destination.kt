@@ -49,17 +49,20 @@ sealed interface Destination {
             data class GasStationStationsScreen(val gasStationId: Int, val gasStationAddress: String) : GasStationsGraph
 
             @Serializable
-            data object ServiceGraphRoot: GasStationsGraph
+            data class ServiceGraphRoot(val stationId: Int): GasStationsGraph
 
             sealed interface ServiceGraph {
                 @Serializable
                 data object LoadingScreen: ServiceGraph
 
                 @Serializable
-                data class FuelSelectionScreen(val stationId: Int): ServiceGraph
+                data object FuelSelectionScreen: ServiceGraph
 
                 @Serializable
                 data object PaymentSelectionScreen: ServiceGraph
+
+                @Serializable
+                data object GasNozzleUseScreen: ServiceGraph
 
                 @Serializable
                 data object FinishScreen: ServiceGraph

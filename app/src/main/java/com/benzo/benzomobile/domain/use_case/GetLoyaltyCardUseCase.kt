@@ -6,6 +6,6 @@ import com.benzo.benzomobile.domain.repository.UserRepository
 class GetLoyaltyCardUseCase(
     private val loyaltyCardRepository: LoyaltyCardRepository
 ) {
-    operator fun invoke() =
+    suspend operator fun invoke() =
         loyaltyCardRepository.getLoyaltyCard()
 }

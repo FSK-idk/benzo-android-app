@@ -33,7 +33,7 @@ fun NavGraphBuilder.gasStationsGraphRoot() {
                     navController.navigateUp()
                 },
                 onNavigateNext = {
-                    navController.navigate(Destination.AppGraph.GasStationsGraph.ServiceGraphRoot)
+                    navController.navigate(Destination.AppGraph.GasStationsGraph.ServiceGraphRoot(it))
                 }
             )
 

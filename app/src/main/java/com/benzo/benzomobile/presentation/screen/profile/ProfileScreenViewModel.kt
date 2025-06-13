@@ -8,7 +8,6 @@ import androidx.lifecycle.viewModelScope
 import com.benzo.benzomobile.app.TAG
 import com.benzo.benzomobile.domain.model.Resource
 import com.benzo.benzomobile.domain.model.User
-import com.benzo.benzomobile.domain.use_case.FetchUserUseCase
 import com.benzo.benzomobile.domain.use_case.GetUserUseCase
 import com.benzo.benzomobile.domain.use_case.LogoutUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -25,38 +24,34 @@ import kotlinx.coroutines.launch
 class ProfileScreenViewModel(
     private val logoutUseCase: LogoutUseCase,
     private val getUserUseCase: GetUserUseCase,
-    private val fetchUserUseCase: FetchUserUseCase,
 ) : ViewModel() {
     private val _loadState = MutableStateFlow(ProfileScreenLoadState())
     val loadState = _loadState.asStateFlow()
 
-    val uiState = getUserUseCase()
-        .catch { e ->
-            Log.e(TAG, "$e")
-            _loadState.value.snackbarHostState.showSnackbar(
-                message = e.message ?: "Ошибка",
-                withDismissAction = true,
-                duration = SnackbarDuration.Short,
-            )
-        }
-        .filterIsInstance<Resource.Loaded<User>>()
-        .map {
-            _loadState.update { jt -> jt.copy(isLoading = false) }
-
-            ProfileScreenUiState(
-                login = it.data.login,
-                name = it.data.name ?: "",
-            )
-        }
-        .stateIn(
-            scope = viewModelScope,
-            initialValue = ProfileScreenUiState(),
-            started = SharingStarted.WhileSubscribed(5000),
-        )
+    private val _uiState = MutableStateFlow(ProfileScreenUiState())
+    val uiState = _uiState.asStateFlow()
 
     init {
         viewModelScope.launch {
-            fetchData()
+            try {
+                val user = getUserUseCase()
+
+                _uiState.update {
+                    it.copy(
+                        login = user.login,
+                        name = user.name ?: "",
+                    )
+                }
+
+                _loadState.update { it.copy(isLoading = false) }
+            } catch (e: Exception) {
+                Log.e(TAG, "$e")
+                _loadState.value.snackbarHostState.showSnackbar(
+                    message = e.message ?: "Ошибка",
+                    withDismissAction = true,
+                    duration = SnackbarDuration.Short,
+                )
+            }
         }
     }
 
@@ -64,22 +59,27 @@ class ProfileScreenViewModel(
         if (!_loadState.value.isRefreshing) {
             viewModelScope.launch {
                 _loadState.update { it.copy(isRefreshing = true) }
-                fetchData()
+
+                try {
+                    val user = getUserUseCase()
+
+                    _uiState.update {
+                        it.copy(
+                            login = user.login,
+                            name = user.name ?: "",
+                        )
+                    }
+                } catch (e: Exception) {
+                    Log.e(TAG, "$e")
+                    _loadState.value.snackbarHostState.showSnackbar(
+                        message = e.message ?: "Ошибка",
+                        withDismissAction = true,
+                        duration = SnackbarDuration.Short,
+                    )
+                }
+
                 _loadState.update { it.copy(isRefreshing = false) }
             }
-        }
-    }
-
-    private suspend fun fetchData() {
-        try {
-            fetchUserUseCase()
-        } catch (e: Exception) {
-            Log.e(TAG, "$e")
-            _loadState.value.snackbarHostState.showSnackbar(
-                message = e.message ?: "Ошибка",
-                withDismissAction = true,
-                duration = SnackbarDuration.Short,
-            )
         }
     }
 

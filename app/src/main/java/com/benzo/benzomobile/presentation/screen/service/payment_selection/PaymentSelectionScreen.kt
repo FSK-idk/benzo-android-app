@@ -39,7 +39,6 @@ import kotlin.math.min
 @Composable
 fun PaymentSelectionScreen(
     modifier: Modifier = Modifier,
-    isLoading: Boolean,
     bonusesUsed: String,
     onBonusesUsedChange: (String) -> Unit,
     bonusesAvailable: Int,
@@ -52,7 +51,7 @@ fun PaymentSelectionScreen(
     holderName: String,
     onHolderNameChange: (String) -> Unit,
     holderNameError: String?,
-    paymentAmount: Int,
+    paymentAmount: String,
     isPayAvailable: Boolean,
     snackbarHostState: SnackbarHostState,
     onBackClick: () -> Unit,
@@ -73,110 +72,100 @@ fun PaymentSelectionScreen(
         },
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
     ) { innerPadding ->
-        if (isLoading) {
-            Box(
-                modifier = Modifier
-                    .padding(innerPadding)
-                    .fillMaxSize(),
-                contentAlignment = Alignment.Center,
-            ) {
-                CircularProgressIndicator()
-            }
-        } else {
-            Column(
-                modifier = Modifier
-                    .padding(innerPadding)
-                    .fillMaxSize()
-                    .padding(10.dp)
-                    .verticalScroll(rememberScrollState()),
-                verticalArrangement = Arrangement.spacedBy(10.dp)
-            ) {
-                Text(
-                    text = "Карта лояльности",
-                    style = MaterialTheme.typography.titleMedium
-                )
 
-                MoneySimpleOutlinedTextField(
-                    modifier = modifier.fillMaxWidth(),
-                    money = bonusesUsed,
-                    onMoneyChange = {
-                        if (it.isBlank() || (it.toFloat() * 100.0f).toInt() <= min(
-                                bonusesAvailable,
-                                paymentAmount
-                            )
+        Column(
+            modifier = Modifier
+                .padding(innerPadding)
+                .fillMaxSize()
+                .padding(10.dp)
+                .verticalScroll(rememberScrollState()),
+            verticalArrangement = Arrangement.spacedBy(10.dp)
+        ) {
+            Text(
+                text = "Карта лояльности",
+                style = MaterialTheme.typography.titleMedium
+            )
+
+            MoneySimpleOutlinedTextField(
+                modifier = modifier.fillMaxWidth(),
+                money = bonusesUsed,
+                onMoneyChange = {
+                    if (it.isBlank() || (it.toFloat() * 100.0f).toInt() <= min(
+                            bonusesAvailable,
+                            (paymentAmount.toFloat() * 100.0f).toInt(),
                         )
-                            onBonusesUsedChange(it)
-                    },
-                    title = "Использовать бонусы"
-                )
-
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.End,
-                ) {
-                    Text(text = "Доступно бонусов: ${"%.2f".format(bonusesAvailable / 100.0f)} руб.")
-                }
-
-                Spacer(modifier = Modifier.size(10.dp))
-
-                Text(
-                    text = "Банковская карта",
-                    style = MaterialTheme.typography.titleMedium
-                )
-
-                CardNumberSimpleOutlinedTextField(
-                    modifier = Modifier.fillMaxWidth(),
-                    cardNumber = cardNumber,
-                    onCardNumberChange = onCardNumberChange,
-                    cardNumberError = cardNumberError,
-                    title = "Номер карты"
-                )
-
-                ExpirationDateSimpleOutlinedTextField(
-                    modifier = Modifier.fillMaxWidth(),
-                    date = expirationDate,
-                    onDateChange = onExpirationDateChange,
-                    dateError = expirationDateError,
-                    title = "Срок действия"
-                )
-
-                HolderNameSimpleOutlinedTextField(
-                    modifier = Modifier.fillMaxWidth(),
-                    holderName = holderName,
-                    onHolderNameChange = onHolderNameChange,
-                    holderNameError = holderNameError,
-                    title = "Держатель",
-                )
-
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.End,
-                ) {
-                    Text(
-                        text = "К оплате: ${
-                            "%.2f".format(
-                                paymentAmount / 100.0f - (if (bonusesUsed.isBlank()) 0.0f else bonusesUsed.toFloat())
-                            )
-                        } руб."
                     )
-                }
+                        onBonusesUsedChange(it)
+                },
+                title = "Использовать бонусы"
+            )
 
-                Spacer(modifier = Modifier.weight(1.0f))
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.End,
+            ) {
+                Text(text = "Доступно бонусов: ${"%.2f".format(bonusesAvailable / 100.0f)} руб.")
+            }
 
-                Button(
-                    modifier = Modifier.fillMaxWidth(),
-                    onClick = onPayClick,
-                    enabled = isPayAvailable,
-                ) {
-                    Text(text = "Оплатить")
-                }
+            Spacer(modifier = Modifier.size(10.dp))
 
-                OutlinedButton(
-                    modifier = Modifier.fillMaxWidth(),
-                    onClick = onCancelRefuelingClick,
-                ) {
-                    Text(text = "Отменить заправку")
-                }
+            Text(
+                text = "Банковская карта",
+                style = MaterialTheme.typography.titleMedium
+            )
+
+            CardNumberSimpleOutlinedTextField(
+                modifier = Modifier.fillMaxWidth(),
+                cardNumber = cardNumber,
+                onCardNumberChange = onCardNumberChange,
+                cardNumberError = cardNumberError,
+                title = "Номер карты"
+            )
+
+            ExpirationDateSimpleOutlinedTextField(
+                modifier = Modifier.fillMaxWidth(),
+                date = expirationDate,
+                onDateChange = onExpirationDateChange,
+                dateError = expirationDateError,
+                title = "Срок действия"
+            )
+
+            HolderNameSimpleOutlinedTextField(
+                modifier = Modifier.fillMaxWidth(),
+                holderName = holderName,
+                onHolderNameChange = onHolderNameChange,
+                holderNameError = holderNameError,
+                title = "Держатель",
+            )
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.End,
+            ) {
+                Text(
+                    text = "К оплате: ${
+                        "%.2f".format(
+                            paymentAmount.toFloat() - (if (bonusesUsed.isBlank()) 0.0f else bonusesUsed.toFloat())
+                        )
+                    } руб."
+                )
+            }
+
+            Spacer(modifier = Modifier.weight(1.0f))
+
+            Button(
+                modifier = Modifier.fillMaxWidth(),
+                onClick = onPayClick,
+                enabled = isPayAvailable,
+            ) {
+                Text(text = "Оплатить")
+            }
+
+            OutlinedButton(
+                modifier = Modifier.fillMaxWidth(),
+                onClick = onCancelRefuelingClick,
+            ) {
+                Text(text = "Отменить заправку")
             }
         }
     }
@@ -187,7 +176,6 @@ fun PaymentSelectionScreen(
 fun PaymentSelectionScreenPreview() {
     BenzoMobileTheme {
         PaymentSelectionScreen(
-            isLoading = false,
             bonusesUsed = "10.23",
             onBonusesUsedChange = {},
             bonusesAvailable = 12333,
@@ -200,7 +188,7 @@ fun PaymentSelectionScreenPreview() {
             holderName = "",
             onHolderNameChange = {},
             holderNameError = null,
-            paymentAmount = 35313,
+            paymentAmount = "353.13",
             isPayAvailable = true,
             snackbarHostState = SnackbarHostState(),
             onBackClick = {},

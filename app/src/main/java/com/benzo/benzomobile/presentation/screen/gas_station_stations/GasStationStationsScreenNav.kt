@@ -6,7 +6,6 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
 import com.benzo.benzomobile.domain.model.GasStation
-import com.benzo.benzomobile.domain.model.Station
 import com.benzo.benzomobile.presentation.Destination
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
@@ -14,7 +13,7 @@ import org.koin.core.parameter.parametersOf
 @OptIn(ExperimentalMaterial3Api::class)
 fun NavGraphBuilder.gasStationStationsScreen(
     onNavigateBack: () -> Unit,
-    onNavigateNext: () -> Unit,
+    onNavigateNext: (Int) -> Unit,
 ) {
     composable<Destination.AppGraph.GasStationsGraph.GasStationStationsScreen> {
         val destination =

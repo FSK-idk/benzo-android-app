@@ -5,6 +5,6 @@ import com.benzo.benzomobile.domain.repository.UserRepository
 class GetUserUseCase(
     private val userRepository: UserRepository
 ) {
-    operator fun invoke() =
+    suspend operator fun invoke() =
         userRepository.getUser()
 }

@@ -6,8 +6,7 @@ import com.benzo.benzomobile.domain.model.UserUpdateData
 import kotlinx.coroutines.flow.Flow
 
 interface UserRepository {
-    fun getUser(): Flow<Resource<User>>
+    suspend fun getUser(): User
 
-    suspend fun fetchUser()
     suspend fun updateUser(userUpdateData: UserUpdateData)
 }

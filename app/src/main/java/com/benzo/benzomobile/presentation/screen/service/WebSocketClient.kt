@@ -2,8 +2,10 @@ package com.benzo.benzomobile.presentation.screen.service
 
 import android.util.Log
 import com.benzo.benzomobile.app.TAG
+import com.benzo.benzomobile.domain.model.GasNozzleUsedT2Message
 import com.benzo.benzomobile.domain.model.MessageType
 import com.benzo.benzomobile.domain.model.MobileAppConnectMessage
+import com.benzo.benzomobile.domain.model.MobileAppSavePaymentMessage
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.decodeFromJsonElement
 import kotlinx.serialization.json.jsonObject
@@ -19,6 +21,7 @@ class WebSocketClient(
     stationId: String,
     onServiceStart: () -> Unit,
     onServiceEnd: () -> Unit,
+    onMobileAppUsed: () -> Unit,
 ) {
     private val _json = Json { encodeDefaults = true }
 
@@ -51,6 +54,9 @@ class WebSocketClient(
                 MessageType.MOBILE_APP_CONNECTED.value -> {
                     onServiceStart()
                 }
+                MessageType.MOBILE_APP_USED_T2.value -> {
+                    onMobileAppUsed()
+                }
                 else -> {
                     Log.d(TAG, "UNKNOWN MESSAGE")
                 }
@@ -81,5 +87,14 @@ class WebSocketClient(
 
     fun stop() {
         _webSocket?.close(1000, null)
+    }
+
+    fun savePayment(message: MobileAppSavePaymentMessage) {
+        _webSocket?.send(text = _json.encodeToString(message))
+    }
+
+    fun useGasNozzle() {
+        val message = GasNozzleUsedT2Message()
+        _webSocket?.send(text = _json.encodeToString(message))
     }
 }

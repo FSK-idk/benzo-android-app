@@ -1,28 +1,28 @@
 package com.benzo.benzomobile.presentation.screen.service.fuel_selection
 
+import androidx.activity.compose.BackHandler
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
 import com.benzo.benzomobile.domain.model.FuelSelectionResult
 import com.benzo.benzomobile.presentation.Destination
+import com.benzo.benzomobile.presentation.screen.service.ServiceGraphViewModel
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
 
 fun NavGraphBuilder.fuelSelectionScreen(
+    viewModel: ServiceGraphViewModel,
     onCancelRefueling: () -> Unit,
-    onNavigateNext: (FuelSelectionResult) -> Unit,
+    onNavigateNext: () -> Unit,
 ) {
     composable<Destination.AppGraph.GasStationsGraph.ServiceGraph.FuelSelectionScreen> {
-        val destination =
-            it.toRoute<Destination.AppGraph.GasStationsGraph.ServiceGraph.FuelSelectionScreen>()
-
-        val viewModel = koinViewModel<FuelSelectionScreenViewModel> { parametersOf(destination.stationId) }
         val loadState = viewModel.loadState.collectAsStateWithLifecycle()
         val uiState = viewModel.uiState.collectAsStateWithLifecycle()
 
+        BackHandler(onBack = onCancelRefueling)
+
         FuelSelectionScreen(
-            isLoading = loadState.value.isLoading,
             fuels = uiState.value.fuels,
             selectedFuelIndex = uiState.value.selectedFuelIndex,
             onFuelTypeChange = viewModel::onFuelTypeChange,

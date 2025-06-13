@@ -14,11 +14,7 @@ class LoyaltyCardDataSourceImpl(
     val benzoApi: BenzoApi,
     val userPreferencesDataSource: UserPreferencesDataSource,
 ) : LoyaltyCardDataSource {
-    private val _loyaltyCard = MutableStateFlow<Resource<LoyaltyCard>>(Resource.Loading())
-
-    override fun getLoyaltyCard(): Flow<Resource<LoyaltyCard>> = _loyaltyCard
-
-    override suspend fun fetchLoyaltyCard() {
+    override suspend fun getLoyaltyCard(): LoyaltyCard {
         val token = userPreferencesDataSource.userPreferences.first().token
 
         if (token == null) {
@@ -47,11 +43,9 @@ class LoyaltyCardDataSourceImpl(
             throw Exception("Ошибка сети")
         }
 
-        _loyaltyCard.value = Resource.Loaded(
-            data = LoyaltyCard(
-                number = body.number,
-                balance = body.balance,
-            )
+        return LoyaltyCard(
+            number = body.number,
+            balance = body.balance,
         )
     }
 }
