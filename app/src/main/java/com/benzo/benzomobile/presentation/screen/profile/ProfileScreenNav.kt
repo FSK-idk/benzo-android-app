@@ -1,5 +1,6 @@
 package com.benzo.benzomobile.presentation.screen.profile
 
+import androidx.activity.compose.BackHandler
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
@@ -17,13 +18,17 @@ fun NavGraphBuilder.profileScreen(
         val loadState = viewModel.loadState.collectAsStateWithLifecycle()
         val uiState = viewModel.uiState.collectAsStateWithLifecycle()
 
+        BackHandler(onBack = {})
+
         ProfileScreen(
-            isLoading = loadState.value.isLoading,
+            loadStatus = loadState.value.loadStatus,
+            onRetry = viewModel::onRetry,
+            isRetryAvailable = loadState.value.isRetryAvailable,
+            onRefresh = viewModel::onRefresh,
             isRefreshing = loadState.value.isRefreshing,
+            snackbarHostState = loadState.value.snackbarHostState,
             name = uiState.value.name,
             login = uiState.value.login,
-            snackbarHostState = loadState.value.snackbarHostState,
-            onRefresh = viewModel::onRefresh,
             onHistoryClick = onNavigateToHistoryScreen,
             onEditProfileClick = onNavigateToEditProfileScreen,
             onSettingsClick = onNavigateToSettingsScreen,
@@ -31,4 +36,3 @@ fun NavGraphBuilder.profileScreen(
         )
     }
 }
-

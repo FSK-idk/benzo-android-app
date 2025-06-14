@@ -1,5 +1,6 @@
 package com.benzo.benzomobile.presentation.screen.settings
 
+import androidx.activity.compose.BackHandler
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
@@ -14,8 +15,11 @@ fun NavGraphBuilder.settingsScreen(
         val loadState = viewModel.loadState.collectAsStateWithLifecycle()
         val uiState = viewModel.uiState.collectAsStateWithLifecycle()
 
+        BackHandler(onBack = onNavigateBack)
+
         SettingsScreen(
-            isLoading = loadState.value.isLoading,
+            loadStatus = loadState.value.loadStatus,
+            snackbarHostState = loadState.value.snackbarHostState,
             selectedTheme = uiState.value.theme,
             onThemeClick = viewModel::onThemeSelected,
             onBackClick = onNavigateBack,

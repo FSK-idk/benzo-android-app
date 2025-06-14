@@ -127,7 +127,8 @@ fun NavGraphBuilder.serviceGraphRoot(
             gasNozzleUseScreen()
 
             finishScreen(
-                onNavigateToGasStationsScreen = onNavigateToGasStationsScreen
+                viewModel = viewModel,
+                onNavigateToGasStationsScreen = onNavigateToGasStationsScreen,
             )
         }
     }

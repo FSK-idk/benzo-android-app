@@ -1,8 +1,6 @@
 package com.benzo.benzomobile.presentation.screen.edit_profile
 
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
-import androidx.compose.ui.Modifier
+import androidx.activity.compose.BackHandler
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
@@ -17,8 +15,15 @@ fun NavGraphBuilder.editProfileScreen(
         val loadState = viewModel.loadState.collectAsStateWithLifecycle()
         val uiState = viewModel.uiState.collectAsStateWithLifecycle()
 
+        BackHandler(onBack = onNavigateBack)
+
         EditProfileScreen(
-            isLoading = loadState.value.isLoading,
+            loadStatus = loadState.value.loadStatus,
+            onRetry = viewModel::onRetry,
+            isRetryAvailable = loadState.value.isRetryAvailable,
+            onRefresh = viewModel::onRefresh,
+            isRefreshing = loadState.value.isRefreshing,
+            snackbarHostState = loadState.value.snackbarHostState,
             name = uiState.value.name,
             onNameChange = viewModel::onNameChange,
             nameError = uiState.value.nameError,
@@ -37,12 +42,9 @@ fun NavGraphBuilder.editProfileScreen(
             gender = uiState.value.gender,
             onGenderChange = viewModel::onGenderChange,
             genderError = uiState.value.genderError,
-            showDatePicker = uiState.value.showDatePicker,
-            onShowDatePickerChange = viewModel::setShowDatePicker,
-            snackbarHostState = loadState.value.snackbarHostState,
-            isSaveAvailable = loadState.value.isSaveAvailable,
             onBackClick = onNavigateBack,
             onSaveClick = viewModel::onSaveClick,
+            isSaveAvailable = uiState.value.isSaveAvailable,
         )
     }
 }

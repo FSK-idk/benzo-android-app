@@ -1,6 +1,6 @@
 package com.benzo.benzomobile.presentation.screen.gas_stations
 
-import androidx.compose.material3.Text
+import androidx.activity.compose.BackHandler
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
@@ -12,18 +12,23 @@ fun NavGraphBuilder.gasStationsScreen(
     onNavigateToStationsScreen: (GasStation) -> Unit,
 ) {
     composable<Destination.AppGraph.GasStationsGraph.GasStationsScreen> {
-        Text("HI")
         val viewModel = koinViewModel<GasStationsScreenViewModel>()
         val loadState = viewModel.loadState.collectAsStateWithLifecycle()
         val uiState = viewModel.uiState.collectAsStateWithLifecycle()
 
+        BackHandler(onBack = {})
+
         GasStationsScreen(
-            isLoading = loadState.value.isLoading,
-            isRefreshing = loadState.value.isRefreshing,
-            gasStations = uiState.value.gasStations,
-            snackbarHostState = loadState.value.snackbarHostState,
+            loadStatus = loadState.value.loadStatus,
+            onRetry = viewModel::onRetry,
+            isRetryAvailable = loadState.value.isRetryAvailable,
             onRefresh = viewModel::onRefresh,
+            isRefreshing = loadState.value.isRefreshing,
             onGasStationClick = onNavigateToStationsScreen,
+            snackbarHostState = loadState.value.snackbarHostState,
+            gasStations = uiState.value.gasStations,
+            onSearch = viewModel::onSearch,
+            isSearchAvailable = uiState.value.isSearchAvailable,
         )
     }
 }

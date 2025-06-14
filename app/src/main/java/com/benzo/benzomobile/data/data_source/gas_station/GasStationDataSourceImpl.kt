@@ -2,28 +2,23 @@ package com.benzo.benzomobile.data.data_source.gas_station
 
 import android.util.Log
 import com.benzo.benzomobile.app.TAG
-import com.benzo.benzomobile.domain.model.Resource
 import com.benzo.benzomobile.data.service.benzo_api.BenzoApi
+import com.benzo.benzomobile.domain.model.FilterQuery
 import com.benzo.benzomobile.domain.model.Fuel
 import com.benzo.benzomobile.domain.model.FuelType
 import com.benzo.benzomobile.domain.model.GasStation
 import com.benzo.benzomobile.domain.model.Station
 import com.benzo.benzomobile.domain.model.StationStatus
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
 
 class GasStationDataSourceImpl(
     val benzoApi: BenzoApi,
 ) : GasStationDataSource {
-    private val _gasStations =
-        MutableStateFlow<Resource<List<GasStation>>>(Resource.Loading())
-
-    override fun getGasStations(): Flow<Resource<List<GasStation>>> =
-        _gasStations
-
-    override suspend fun fetchGasStations() {
+    override suspend fun getGasStations(filterQuery: FilterQuery): List<GasStation> {
         val response = try {
-            benzoApi.retrofitService.getGasStations()
+            benzoApi.retrofitService.getGasStations(
+                id = filterQuery.prefixId,
+                address = filterQuery.prefixAddress,
+            )
         } catch (e: Exception) {
             Log.e(TAG, "$e")
             throw Exception("Ошибка сети")
@@ -41,14 +36,12 @@ class GasStationDataSourceImpl(
             throw Exception("Ошибка сети")
         }
 
-        _gasStations.value = Resource.Loaded(
-            data = body.map {
-                GasStation(
-                    id = it.id,
-                    address = it.address,
-                )
-            }
-        )
+        return body.gasStations.map {
+            GasStation(
+                id = it.id,
+                address = it.address,
+            )
+        }
     }
 
     override suspend fun getGasStationStations(gasStationId: Int): List<Station> {

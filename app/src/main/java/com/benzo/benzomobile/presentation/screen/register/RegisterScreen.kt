@@ -1,25 +1,16 @@
 package com.benzo.benzomobile.presentation.screen.register
 
+import android.content.res.Configuration
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material3.Button
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -28,47 +19,38 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextLinkStyles
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.withLink
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.benzo.benzomobile.presentation.common.BzButton
+import com.benzo.benzomobile.presentation.common.BzOutlinedTextField
+import com.benzo.benzomobile.presentation.common.BzTopAppBar
 import com.benzo.benzomobile.ui.theme.BenzoMobileTheme
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RegisterScreen(
     modifier: Modifier = Modifier,
+    snackbarHostState: SnackbarHostState,
     login: String,
     onLoginChange: (String) -> Unit,
     loginError: String?,
     password: String,
     onPasswordChange: (String) -> Unit,
     passwordError: String?,
-    confirmPassword: String,
-    onConfirmPasswordChange: (String) -> Unit,
-    confirmPasswordError: String?,
-    isRegisterAvailable: Boolean,
-    snackbarHostState: SnackbarHostState,
+    repeatPassword: String,
+    onRepeatPasswordChange: (String) -> Unit,
+    repeatPasswordError: String?,
     onBackClick: () -> Unit,
     onRegisterClick: () -> Unit,
+    isRegisterAvailable: Boolean,
     onLoginClick: () -> Unit,
 ) {
     Scaffold(
         modifier = modifier,
         topBar = {
-            TopAppBar(
-                title = { Text(text = "Регистрация") },
-                navigationIcon = {
-                    IconButton(
-                        onClick = onBackClick,
-                    ) {
-                        Icon(
-                            modifier = Modifier.size(25.dp),
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = null,
-                        )
-                    }
-                }
+            BzTopAppBar(
+                title = "Регистрация",
+                onBackClick = onBackClick,
             )
         },
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
@@ -89,70 +71,38 @@ fun RegisterScreen(
                 style = MaterialTheme.typography.displaySmall,
             )
 
-            OutlinedTextField(
+            BzOutlinedTextField(
                 modifier = Modifier.width(250.dp),
+                label = "Логин",
                 value = login,
                 onValueChange = onLoginChange,
-                label = { Text(text = "Логин") },
-                singleLine = true,
-                isError = loginError != null,
-                supportingText = {
-                    loginError?.let {
-                        Text(
-                            text = it,
-                            color = MaterialTheme.colorScheme.error,
-                        )
-                    }
-                },
+                valueError = loginError,
             )
 
-            OutlinedTextField(
+            BzOutlinedTextField(
                 modifier = Modifier.width(250.dp),
+                label = "Пароль",
                 value = password,
                 onValueChange = onPasswordChange,
-                label = { Text(text = "Пароль") },
-                singleLine = true,
-                visualTransformation = PasswordVisualTransformation(),
-                isError = passwordError != null,
-                supportingText = {
-                    passwordError?.let {
-                        Text(
-                            text = it,
-                            color = MaterialTheme.colorScheme.error,
-                        )
-                    }
-                },
+                valueError = passwordError,
+                isPassword = true,
             )
 
-            OutlinedTextField(
+            BzOutlinedTextField(
                 modifier = Modifier.width(250.dp),
-                value = confirmPassword,
-                onValueChange = onConfirmPasswordChange,
-                label = { Text(text = "Повторите пароль") },
-                singleLine = true,
-                visualTransformation = PasswordVisualTransformation(),
-                isError = confirmPasswordError != null,
-                supportingText = {
-                    confirmPasswordError?.let {
-                        Text(
-                            text = it,
-                            color = MaterialTheme.colorScheme.error,
-                        )
-                    }
-                },
+                label = "Повторите пароль",
+                value = repeatPassword,
+                onValueChange = onRepeatPasswordChange,
+                valueError = repeatPasswordError,
+                isPassword = true,
             )
 
-            Button(
+            BzButton(
                 modifier = Modifier.width(250.dp),
                 onClick = onRegisterClick,
-                enabled = isRegisterAvailable,
-            ) {
-                if (!isRegisterAvailable) {
-                    CircularProgressIndicator(modifier = Modifier.size(25.dp))
-                } else {
-                    Text(text = "Регистрация")
-                }
-            }
+                text = "Регистрация",
+                isAvailable = isRegisterAvailable,
+            )
 
             Text(
                 text = buildAnnotatedString {
@@ -163,7 +113,7 @@ fun RegisterScreen(
                             styles = TextLinkStyles(
                                 style = SpanStyle(
                                     fontWeight = FontWeight.Bold,
-                                    color = MaterialTheme.colorScheme.primary,
+                                    color = MaterialTheme.colorScheme.primaryContainer,
                                 )
                             ),
                             linkInteractionListener = { onLoginClick() },
@@ -178,24 +128,24 @@ fun RegisterScreen(
     }
 }
 
+@Preview(uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Composable
-@Preview
-fun RegisterScreenPreview() {
+private fun RegisterScreenPreview() {
     BenzoMobileTheme {
         RegisterScreen(
+            snackbarHostState = SnackbarHostState(),
             login = "",
             onLoginChange = {},
             loginError = null,
             password = "",
             onPasswordChange = {},
             passwordError = null,
-            confirmPassword = "",
-            onConfirmPasswordChange = {},
-            confirmPasswordError = null,
-            isRegisterAvailable = true,
-            snackbarHostState = SnackbarHostState(),
+            repeatPassword = "",
+            onRepeatPasswordChange = {},
+            repeatPasswordError = null,
             onBackClick = {},
             onRegisterClick = {},
+            isRegisterAvailable = true,
             onLoginClick = {},
         )
     }

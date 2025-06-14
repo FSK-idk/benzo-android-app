@@ -7,7 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.benzo.benzomobile.app.TAG
 import com.benzo.benzomobile.domain.use_case.RegisterUseCase
-import com.benzo.benzomobile.domain.use_case.ValidateConfirmPasswordUseCase
+import com.benzo.benzomobile.domain.use_case.ValidateRepeatPasswordUseCase
 import com.benzo.benzomobile.domain.use_case.ValidateLoginUseCase
 import com.benzo.benzomobile.domain.use_case.ValidatePasswordUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -18,7 +18,7 @@ import kotlinx.coroutines.launch
 class RegisterScreenViewModel(
     private val validateLoginUseCase: ValidateLoginUseCase,
     private val validatePasswordUseCase: ValidatePasswordUseCase,
-    private val validateConfirmPasswordUseCase: ValidateConfirmPasswordUseCase,
+    private val validateRepeatPasswordUseCase: ValidateRepeatPasswordUseCase,
     private val registerUseCase: RegisterUseCase,
 ) : ViewModel() {
     private val _loadState = MutableStateFlow(RegisterScreenLoadState())
@@ -27,39 +27,52 @@ class RegisterScreenViewModel(
     private val _uiState = MutableStateFlow(RegisterScreenUiState())
     val uiState = _uiState.asStateFlow()
 
-    fun onLoginChange(value: String) =
+    private fun sendMessage(message: String?) {
+        viewModelScope.launch {
+            _loadState.value.snackbarHostState.showSnackbar(
+                message = message ?: "Ошибка",
+                withDismissAction = true,
+                duration = SnackbarDuration.Short,
+            )
+        }
+    }
+
+    fun onLoginChange(value: String) {
         _uiState.update {
             it.copy(
                 login = value,
                 loginError = validateLoginUseCase(value),
             )
         }
+    }
 
-    fun onPasswordChange(value: String) =
+    fun onPasswordChange(value: String) {
         _uiState.update {
             it.copy(
                 password = value,
                 passwordError = validatePasswordUseCase(value),
             )
         }
+    }
 
-    fun onConfirmPasswordChange(value: String) =
+    fun onConfirmPasswordChange(value: String) {
         _uiState.update {
             it.copy(
-                confirmPassword = value,
-                confirmPasswordError = validateConfirmPasswordUseCase(
+                repeatPassword = value,
+                repeatPasswordError = validateRepeatPasswordUseCase(
                     password = it.password,
-                    confirmPassword = value,
+                    repeatPassword = value,
                 ),
             )
         }
+    }
 
     fun onRegisterClicked(navigateNext: () -> Unit) {
         val loginError = validateLoginUseCase(_uiState.value.login)
         val passwordError = validatePasswordUseCase(_uiState.value.password)
-        val confirmPasswordError = validateConfirmPasswordUseCase(
+        val confirmPasswordError = validateRepeatPasswordUseCase(
             password = _uiState.value.password,
-            confirmPassword = _uiState.value.confirmPassword,
+            repeatPassword = _uiState.value.repeatPassword,
         )
 
         val hasErrors = listOf(
@@ -73,9 +86,10 @@ class RegisterScreenViewModel(
                 it.copy(
                     loginError = loginError,
                     passwordError = passwordError,
-                    confirmPasswordError = confirmPasswordError,
+                    repeatPasswordError = confirmPasswordError,
                 )
             }
+
             return
         }
 
@@ -87,14 +101,11 @@ class RegisterScreenViewModel(
                     login = _uiState.value.login,
                     password = _uiState.value.password,
                 )
+
                 navigateNext()
             } catch (e: Exception) {
                 Log.e(TAG, "$e")
-                _loadState.value.snackbarHostState.showSnackbar(
-                    message = e.message ?: "Ошибка",
-                    withDismissAction = true,
-                    duration = SnackbarDuration.Short,
-                )
+                sendMessage(message = e.message)
             }
 
             _uiState.update { it.copy(isRegisterAvailable = true) }
@@ -111,7 +122,7 @@ data class RegisterScreenUiState(
     val loginError: String? = null,
     val password: String = "",
     val passwordError: String? = null,
-    val confirmPassword: String = "",
-    val confirmPasswordError: String? = null,
+    val repeatPassword: String = "",
+    val repeatPasswordError: String? = null,
     val isRegisterAvailable: Boolean = true,
 )

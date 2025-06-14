@@ -7,7 +7,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.benzo.benzomobile.app.TAG
 import com.benzo.benzomobile.domain.model.Fuel
-import com.benzo.benzomobile.domain.model.FuelSelectionResult
 import com.benzo.benzomobile.domain.model.FuelType
 import com.benzo.benzomobile.domain.model.MobileAppSavePaymentMessage
 import com.benzo.benzomobile.domain.model.PayRequest
@@ -49,6 +48,7 @@ class ServiceGraphViewModel(
         onServiceEnd = this::onServiceEnd,
         onServiceStart = this::onServiceStart,
         onMobileAppUsed = this::onMobileAppUsed,
+        handleFailure = this::handleFailure,
     )
 
     init {
@@ -71,21 +71,38 @@ class ServiceGraphViewModel(
                 _loadState.update { it.copy(isLoading = false) }
             } catch (e: Exception) {
                 Log.e(TAG, "$e")
-                _loadState.value.snackbarHostState.showSnackbar(
-                    message = e.message ?: "Ошибка",
-                    withDismissAction = true,
-                    duration = SnackbarDuration.Short,
-                )
+                sendMessage(message = e.message)
             }
         }
     }
 
     private fun onServiceEnd() {
         Log.d(TAG, "SERVICE ENDED")
+        if (_loadState.value.isLoading) {
+            _uiState.update { it.copy(finishMessage = "Ошибка") }
+        }
+
+        _loadState.update { it.copy(isFinish = true) }
+    }
+
+    private fun handleFailure() {
+        _uiState.update { it.copy(finishMessage = "Ошибка") }
+
+        _loadState.update { it.copy(isFinish = true) }
     }
 
     private fun onMobileAppUsed() {
         _loadState.update { it.copy(isFinish = true) }
+    }
+
+    private fun sendMessage(message: String?) {
+        viewModelScope.launch {
+            _loadState.value.snackbarHostState.showSnackbar(
+                message = message ?: "Ошибка",
+                withDismissAction = true,
+                duration = SnackbarDuration.Short,
+            )
+        }
     }
 
 //    FUEL
@@ -277,6 +294,7 @@ class ServiceGraphViewModel(
 data class ServiceLoadState(
     val isLoading: Boolean = true,
     val isFinish: Boolean = false,
+    val isClose: Boolean = false,
     val snackbarHostState: SnackbarHostState = SnackbarHostState(),
 )
 
@@ -298,4 +316,6 @@ data class ServiceUiState(
     val holderName: String = "",
     val holderNameError: String? = null,
     val isPayAvailable: Boolean = true,
+//    FINISH
+    val finishMessage: String = "Ждём вас снова!",
 )

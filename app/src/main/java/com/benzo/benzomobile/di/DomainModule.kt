@@ -1,7 +1,5 @@
 package com.benzo.benzomobile.di
 
-import com.benzo.benzomobile.domain.use_case.FetchGasStationsUseCase
-import com.benzo.benzomobile.domain.use_case.FetchPaymentHistoryUseCase
 import com.benzo.benzomobile.domain.use_case.GetGasStationStationsUseCase
 import com.benzo.benzomobile.domain.use_case.GetGasStationsUseCase
 import com.benzo.benzomobile.domain.use_case.GetUserUseCase
@@ -19,7 +17,7 @@ import com.benzo.benzomobile.domain.use_case.UpdateUserUseCase
 import com.benzo.benzomobile.domain.use_case.ValidateBirthDateUseCase
 import com.benzo.benzomobile.domain.use_case.ValidateCarNumberUseCase
 import com.benzo.benzomobile.domain.use_case.ValidateCardNumberUseCase
-import com.benzo.benzomobile.domain.use_case.ValidateConfirmPasswordUseCase
+import com.benzo.benzomobile.domain.use_case.ValidateRepeatPasswordUseCase
 import com.benzo.benzomobile.domain.use_case.ValidateEmailUseCase
 import com.benzo.benzomobile.domain.use_case.ValidateExpirationDateUseCase
 import com.benzo.benzomobile.domain.use_case.ValidateFuelAmountUseCase
@@ -42,7 +40,7 @@ val domainModule = module {
 
     factoryOf(::ValidateLoginUseCase) { bind<ValidateLoginUseCase>() }
     factoryOf(::ValidatePasswordUseCase) { bind<ValidatePasswordUseCase>() }
-    factoryOf(::ValidateConfirmPasswordUseCase) { bind<ValidateConfirmPasswordUseCase>() }
+    factoryOf(::ValidateRepeatPasswordUseCase) { bind<ValidateRepeatPasswordUseCase>() }
 
     factoryOf(::ValidateNameUseCase) { bind<ValidateNameUseCase>() }
     factoryOf(::ValidateCarNumberUseCase) { bind<ValidateCarNumberUseCase>() }
@@ -61,10 +59,8 @@ val domainModule = module {
     factoryOf(::GetLoyaltyCardUseCase) { bind<GetLoyaltyCardUseCase>() }
 
     factoryOf(::GetPaymentHistoryCardUseCase) { bind<GetPaymentHistoryCardUseCase>() }
-    factoryOf(::FetchPaymentHistoryUseCase) { bind<FetchPaymentHistoryUseCase>() }
 
     factoryOf(::GetGasStationsUseCase) { bind<GetGasStationsUseCase>() }
-    factoryOf(::FetchGasStationsUseCase) { bind<FetchGasStationsUseCase>() }
     factoryOf(::GetGasStationStationsUseCase) { bind<GetGasStationStationsUseCase>() }
     factoryOf(::GetStationFuelsUseCase) { bind<GetStationFuelsUseCase>() }
 
@@ -76,6 +72,4 @@ val domainModule = module {
     factoryOf(::ValidateCardNumberUseCase) { bind<ValidateCardNumberUseCase>() }
     factoryOf(::ValidateExpirationDateUseCase) { bind<ValidateExpirationDateUseCase>() }
     factoryOf(::ValidateHolderNameUseCase) { bind<ValidateHolderNameUseCase>() }
-
-
 }

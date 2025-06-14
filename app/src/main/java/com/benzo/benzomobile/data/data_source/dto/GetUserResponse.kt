@@ -25,7 +25,4 @@ data class GetUserResponse(
 
     @SerialName("gender")
     val gender: String?,
-
-    @SerialName("penalty")
-    val penalty: Int,
 )

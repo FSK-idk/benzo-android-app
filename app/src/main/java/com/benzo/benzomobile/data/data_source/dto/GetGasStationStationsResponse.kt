@@ -4,7 +4,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class GetStationsResponse(
+data class GetGasStationStationsResponse(
     @SerialName("stations")
     val stations: List<Station>,
 ) {

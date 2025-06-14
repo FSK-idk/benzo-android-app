@@ -1,5 +1,6 @@
 package com.benzo.benzomobile.presentation.screen.login
 
+import androidx.activity.compose.BackHandler
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
@@ -16,17 +17,19 @@ fun NavGraphBuilder.loginScreen(
         val loadState = viewModel.loadState.collectAsStateWithLifecycle()
         val uiState = viewModel.uiState.collectAsStateWithLifecycle()
 
+        BackHandler(onBack = onNavigateBack)
+
         LoginScreen(
+            snackbarHostState = loadState.value.snackbarHostState,
             login = uiState.value.login,
             onLoginChange = viewModel::onLoginChange,
             password = uiState.value.password,
             onPasswordChange = viewModel::onPasswordChange,
             isPasswordShown = uiState.value.isPasswordShown,
             onPasswordVisibilityClick = viewModel::onPasswordVisibilityClick,
-            isLoginAvailable = uiState.value.isLoginAvailable,
-            snackbarHostState = loadState.value.snackbarHostState,
             onBackClick = onNavigateBack,
             onLoginClick = { viewModel.onLoginClicked(onNavigateToAppGraphRoot) },
+            isLoginAvailable = uiState.value.isLoginAvailable,
             onRegisterClick = onNavigateToRegisterScreen,
         )
     }

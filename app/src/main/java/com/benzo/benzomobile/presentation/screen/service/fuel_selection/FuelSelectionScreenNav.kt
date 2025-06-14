@@ -4,12 +4,8 @@ import androidx.activity.compose.BackHandler
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
-import androidx.navigation.toRoute
-import com.benzo.benzomobile.domain.model.FuelSelectionResult
 import com.benzo.benzomobile.presentation.Destination
 import com.benzo.benzomobile.presentation.screen.service.ServiceGraphViewModel
-import org.koin.compose.viewmodel.koinViewModel
-import org.koin.core.parameter.parametersOf
 
 fun NavGraphBuilder.fuelSelectionScreen(
     viewModel: ServiceGraphViewModel,
@@ -24,8 +20,8 @@ fun NavGraphBuilder.fuelSelectionScreen(
 
         FuelSelectionScreen(
             fuels = uiState.value.fuels,
-            selectedFuelIndex = uiState.value.selectedFuelIndex,
-            onFuelTypeChange = viewModel::onFuelTypeChange,
+            fuelIndex = uiState.value.selectedFuelIndex,
+            onFuelIndexChange = viewModel::onFuelTypeChange,
             fuelAmount = uiState.value.fuelAmount,
             onFuelAmountChange = viewModel::onFuelAmountChange,
             fuelAmountError = uiState.value.fuelAmountError,

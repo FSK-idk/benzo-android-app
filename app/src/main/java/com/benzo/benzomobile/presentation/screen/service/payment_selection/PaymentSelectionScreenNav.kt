@@ -4,12 +4,8 @@ import androidx.activity.compose.BackHandler
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
-import androidx.navigation.toRoute
-import com.benzo.benzomobile.domain.model.FuelSelectionResult
 import com.benzo.benzomobile.presentation.Destination
 import com.benzo.benzomobile.presentation.screen.service.ServiceGraphViewModel
-import org.koin.compose.viewmodel.koinViewModel
-import org.koin.core.parameter.parametersOf
 
 fun NavGraphBuilder.paymentSelectionScreen(
     viewModel: ServiceGraphViewModel,

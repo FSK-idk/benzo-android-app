@@ -8,6 +8,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.benzo.benzomobile.presentation.Destination
+import com.benzo.benzomobile.presentation.common.BzNavigationBar
 
 fun NavGraphBuilder.appGraphRoot(
     onNavigateToLoginGraphRoot: () -> Unit,
@@ -17,7 +18,7 @@ fun NavGraphBuilder.appGraphRoot(
 
         Scaffold(
             bottomBar = {
-                BottomNavigationBar(
+                BzNavigationBar(
                     onNavigateToProfileRoot = { currentDestination ->
                         navController.navigate(Destination.AppGraph.ProfileGraphRoot) {
                             launchSingleTop = true

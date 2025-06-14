@@ -4,7 +4,7 @@ import com.benzo.benzomobile.data.data_source.dto.GetStationFuelsResponse
 import com.benzo.benzomobile.data.data_source.dto.GetGasStationsResponse
 import com.benzo.benzomobile.data.data_source.dto.GetLoyaltyCardResponse
 import com.benzo.benzomobile.data.data_source.dto.GetPaymentHistoryResponse
-import com.benzo.benzomobile.data.data_source.dto.GetStationsResponse
+import com.benzo.benzomobile.data.data_source.dto.GetGasStationStationsResponse
 import com.benzo.benzomobile.data.data_source.dto.RegisterResponse
 import com.benzo.benzomobile.data.data_source.dto.GetUserResponse
 import com.benzo.benzomobile.data.data_source.dto.LoginResponse
@@ -60,12 +60,15 @@ interface BenzoApiService {
     ): Response<GetPaymentHistoryResponse>
 
     @GET("gas-stations/")
-    suspend fun getGasStations(): Response<List<GetGasStationsResponse>>
+    suspend fun getGasStations(
+        @Query("id") id: String,
+        @Query("address") address: String,
+    ): Response<GetGasStationsResponse>
 
     @GET("gas-station/{id}/stations/")
     suspend fun getGasStationStations(
         @Path("id") gasStationId: Int,
-    ): Response<GetStationsResponse>
+    ): Response<GetGasStationStationsResponse>
 
 
     @GET("station/{id}/fuels/")

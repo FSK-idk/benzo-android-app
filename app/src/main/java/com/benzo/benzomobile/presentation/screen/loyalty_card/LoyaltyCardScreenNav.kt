@@ -1,5 +1,6 @@
 package com.benzo.benzomobile.presentation.screen.loyalty_card
 
+import androidx.activity.compose.BackHandler
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
@@ -12,13 +13,17 @@ fun NavGraphBuilder.loyaltyCardScreen() {
         val loadState = viewModel.loadState.collectAsStateWithLifecycle()
         val uiState = viewModel.uiState.collectAsStateWithLifecycle()
 
+        BackHandler(onBack = {})
+
         LoyaltyCardScreen(
-            isLoading = loadState.value.isLoading,
+            loadStatus = loadState.value.loadStatus,
+            onRetry = viewModel::onRetry,
+            isRetryAvailable = loadState.value.isRetryAvailable,
+            onRefresh = viewModel::onRefresh,
             isRefreshing = loadState.value.isRefreshing,
+            snackbarHostState = loadState.value.snackbarHostState,
             loyaltyCard = uiState.value.loyaltyCard,
             login = uiState.value.login,
-            snackbarHostState = loadState.value.snackbarHostState,
-            onRefresh = viewModel::onRefresh,
         )
     }
 }

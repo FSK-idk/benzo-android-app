@@ -4,24 +4,12 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Visibility
-import androidx.compose.material.icons.filled.VisibilityOff
-import androidx.compose.material3.Button
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -30,45 +18,35 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextLinkStyles
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.withLink
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.benzo.benzomobile.presentation.common.BzButton
+import com.benzo.benzomobile.presentation.common.BzOutlinedTextField
+import com.benzo.benzomobile.presentation.common.BzTopAppBar
 import com.benzo.benzomobile.ui.theme.BenzoMobileTheme
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LoginScreen(
     modifier: Modifier = Modifier,
+    snackbarHostState: SnackbarHostState,
     login: String,
     onLoginChange: (String) -> Unit,
     password: String,
     onPasswordChange: (String) -> Unit,
     isPasswordShown: Boolean,
     onPasswordVisibilityClick: () -> Unit,
-    isLoginAvailable: Boolean,
-    snackbarHostState: SnackbarHostState,
     onBackClick: () -> Unit,
     onLoginClick: () -> Unit,
+    isLoginAvailable: Boolean,
     onRegisterClick: () -> Unit,
 ) {
     Scaffold(
         modifier = modifier,
         topBar = {
-            TopAppBar(
-                title = { Text(text = "Вход") },
-                navigationIcon = {
-                    IconButton(
-                        onClick = onBackClick,
-                    ) {
-                        Icon(
-                            modifier = Modifier.size(25.dp),
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = null,
-                        )
-                    }
-                }
+            BzTopAppBar(
+                title = "Вход",
+                onBackClick = onBackClick,
             )
         },
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
@@ -89,53 +67,28 @@ fun LoginScreen(
                 style = MaterialTheme.typography.displaySmall,
             )
 
-            OutlinedTextField(
+            BzOutlinedTextField(
                 modifier = Modifier.width(250.dp),
+                label = "Логин",
                 value = login,
                 onValueChange = onLoginChange,
-                label = { Text(text = "Логин") },
-                singleLine = true,
             )
 
-            OutlinedTextField(
+            BzOutlinedTextField(
                 modifier = Modifier.width(250.dp),
+                label = "Пароль",
                 value = password,
                 onValueChange = onPasswordChange,
-                label = { Text(text = "Пароль") },
-                singleLine = true,
-                visualTransformation = if (isPasswordShown) {
-                    VisualTransformation.None
-                } else {
-                    PasswordVisualTransformation()
-                },
-                trailingIcon = {
-                    IconButton(
-                        onClick = onPasswordVisibilityClick,
-                    ) {
-                        Icon(
-                            modifier = Modifier.size(20.dp),
-                            imageVector = if (isPasswordShown) {
-                                Icons.Default.Visibility
-                            } else {
-                                Icons.Default.VisibilityOff
-                            },
-                            contentDescription = null,
-                        )
-                    }
-                },
+                isPassword = !isPasswordShown,
+                onVisibilityClick = onPasswordVisibilityClick,
             )
 
-            Button(
+            BzButton(
                 modifier = Modifier.width(250.dp),
                 onClick = onLoginClick,
-                enabled = isLoginAvailable,
-            ) {
-                if (!isLoginAvailable) {
-                    CircularProgressIndicator(modifier = Modifier.size(25.dp))
-                } else {
-                    Text(text = "Войти")
-                }
-            }
+                text = "Войти",
+                isAvailable = isLoginAvailable,
+            )
 
             Text(
                 text = buildAnnotatedString {
@@ -146,7 +99,7 @@ fun LoginScreen(
                             styles = TextLinkStyles(
                                 style = SpanStyle(
                                     fontWeight = FontWeight.Bold,
-                                    color = MaterialTheme.colorScheme.primary,
+                                    color = MaterialTheme.colorScheme.primaryContainer,
                                 )
                             ),
                             linkInteractionListener = { onRegisterClick() },
@@ -161,21 +114,21 @@ fun LoginScreen(
     }
 }
 
-@Composable
 @Preview
-fun LoginScreenPreview() {
+@Composable
+private fun LoginScreenPreview() {
     BenzoMobileTheme {
         LoginScreen(
+            snackbarHostState = SnackbarHostState(),
             login = "",
             onLoginChange = {},
             password = "",
             onPasswordChange = {},
             isPasswordShown = false,
             onPasswordVisibilityClick = {},
-            isLoginAvailable = false,
-            snackbarHostState = SnackbarHostState(),
             onBackClick = {},
             onLoginClick = {},
+            isLoginAvailable = true,
             onRegisterClick = {},
         )
     }

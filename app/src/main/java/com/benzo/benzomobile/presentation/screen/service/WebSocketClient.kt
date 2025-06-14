@@ -21,18 +21,19 @@ class WebSocketClient(
     stationId: String,
     onServiceStart: () -> Unit,
     onServiceEnd: () -> Unit,
+    handleFailure: ()-> Unit,
     onMobileAppUsed: () -> Unit,
 ) {
     private val _json = Json { encodeDefaults = true }
 
     private val _client: OkHttpClient = OkHttpClient.Builder()
         .readTimeout(0, TimeUnit.MILLISECONDS)
-        .build();
+        .build()
 
     private val _request: Request = Request.Builder()
         .url("ws://10.0.2.2:8000/api/ws/station/$stationId")
         .header("Origin", "http://10.0.2.2:8000")
-        .build();
+        .build()
 
     private val _listener = object : WebSocketListener() {
         override fun onOpen(webSocket: WebSocket, response: Response) {
@@ -69,13 +70,13 @@ class WebSocketClient(
 
         override fun onClosing(webSocket: WebSocket, code: Int, reason: String) {
             Log.d(TAG, "LISTENER onClosing")
-            webSocket.close(1000, null);
+            webSocket.close(1000, null)
             onServiceEnd()
         }
 
         override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) {
             Log.d(TAG, "LISTENER onFailure")
-            onServiceEnd()
+            handleFailure()
         }
     }
 

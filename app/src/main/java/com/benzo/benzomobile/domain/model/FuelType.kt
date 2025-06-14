@@ -8,3 +8,11 @@ enum class FuelType(
     PETROL_98("98"),
     DIESEL("DT"),
 }
+
+fun getFuelTypeName(fuelType: FuelType) =
+    when (fuelType) {
+        FuelType.PETROL_92 -> "АИ-92"
+        FuelType.PETROL_95 -> "АИ-95"
+        FuelType.PETROL_98 -> "АИ-98"
+        FuelType.DIESEL -> "ДТ"
+    }

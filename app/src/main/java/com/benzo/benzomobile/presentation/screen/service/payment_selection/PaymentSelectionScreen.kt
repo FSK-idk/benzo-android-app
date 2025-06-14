@@ -1,7 +1,6 @@
 package com.benzo.benzomobile.presentation.screen.service.payment_selection
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -10,29 +9,28 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Button
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.benzo.benzomobile.presentation.common.CardNumberSimpleOutlinedTextField
-import com.benzo.benzomobile.presentation.common.ExpirationDateSimpleOutlinedTextField
-import com.benzo.benzomobile.presentation.common.HolderNameSimpleOutlinedTextField
-import com.benzo.benzomobile.presentation.common.MoneySimpleOutlinedTextField
-import com.benzo.benzomobile.presentation.common.SimpleTopAppBar
+import com.benzo.benzomobile.presentation.common.BzButton
+import com.benzo.benzomobile.presentation.common.BzCardNumberOutlinedTextField
+import com.benzo.benzomobile.presentation.common.BzExpirationDateOutlinedTextField
+import com.benzo.benzomobile.presentation.common.BzHolderNameOutlinedTextField
+import com.benzo.benzomobile.presentation.common.BzOutlinedButton
+import com.benzo.benzomobile.presentation.common.BzOutlinedTextField
+import com.benzo.benzomobile.presentation.common.BzTopAppBar
+import com.benzo.benzomobile.presentation.common.DecimalFormatter
 import com.benzo.benzomobile.ui.theme.BenzoMobileTheme
-import kotlin.math.max
 import kotlin.math.min
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -58,84 +56,87 @@ fun PaymentSelectionScreen(
     onCancelRefuelingClick: () -> Unit,
     onPayClick: () -> Unit,
 ) {
+    val decimalFormatter = DecimalFormatter()
+
     Scaffold(
         modifier = modifier,
         topBar = {
-            SimpleTopAppBar(
+            BzTopAppBar(
                 title = "Оплата",
                 onBackClick = onBackClick,
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.surfaceVariant,
-                    titleContentColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                ),
             )
         },
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
     ) { innerPadding ->
-
         Column(
             modifier = Modifier
                 .padding(innerPadding)
-                .fillMaxSize()
                 .padding(10.dp)
+                .fillMaxSize()
                 .verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
             Text(
                 text = "Карта лояльности",
-                style = MaterialTheme.typography.titleMedium
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.primaryContainer,
             )
 
-            MoneySimpleOutlinedTextField(
-                modifier = modifier.fillMaxWidth(),
-                money = bonusesUsed,
-                onMoneyChange = {
-                    if (it.isBlank() || (it.toFloat() * 100.0f).toInt() <= min(
-                            bonusesAvailable,
-                            (paymentAmount.toFloat() * 100.0f).toInt(),
+            BzOutlinedTextField(
+                modifier = Modifier.fillMaxWidth(),
+                label = "Использовать бонусы",
+                value = bonusesUsed,
+                onValueChange = {
+                    decimalFormatter.cleanup(it).let {
+                        if (it.isBlank() || (it.toFloat() * 100.0f).toInt() <= min(
+                                bonusesAvailable,
+                                (paymentAmount.toFloat() * 100.0f).toInt(),
+                            )
                         )
-                    )
-                        onBonusesUsedChange(it)
+                            onBonusesUsedChange(it)
+                    }
                 },
-                title = "Использовать бонусы"
+                suffix = "руб.",
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
             )
 
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.End,
             ) {
-                Text(text = "Доступно бонусов: ${"%.2f".format(bonusesAvailable / 100.0f)} руб.")
+                Text(text = "Доступно бонусов: ${"%.2f руб.".format(bonusesAvailable / 100.0f)}")
             }
 
             Spacer(modifier = Modifier.size(10.dp))
 
             Text(
                 text = "Банковская карта",
-                style = MaterialTheme.typography.titleMedium
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.primaryContainer,
             )
 
-            CardNumberSimpleOutlinedTextField(
+            BzCardNumberOutlinedTextField(
                 modifier = Modifier.fillMaxWidth(),
-                cardNumber = cardNumber,
-                onCardNumberChange = onCardNumberChange,
-                cardNumberError = cardNumberError,
-                title = "Номер карты"
+                label = "Номер карты",
+                value = cardNumber,
+                onValueChange = onCardNumberChange,
+                valueError = cardNumberError,
             )
 
-            ExpirationDateSimpleOutlinedTextField(
+            BzExpirationDateOutlinedTextField(
                 modifier = Modifier.fillMaxWidth(),
-                date = expirationDate,
-                onDateChange = onExpirationDateChange,
-                dateError = expirationDateError,
-                title = "Срок действия"
+                label = "Срок действия",
+                value = expirationDate,
+                onValueChange = onExpirationDateChange,
+                valueError = expirationDateError,
             )
 
-            HolderNameSimpleOutlinedTextField(
+            BzHolderNameOutlinedTextField(
                 modifier = Modifier.fillMaxWidth(),
-                holderName = holderName,
-                onHolderNameChange = onHolderNameChange,
-                holderNameError = holderNameError,
-                title = "Держатель",
+                label = "Держатель",
+                value = holderName,
+                onValueChange = onHolderNameChange,
+                valueError = holderNameError,
             )
 
             Row(
@@ -144,29 +145,27 @@ fun PaymentSelectionScreen(
             ) {
                 Text(
                     text = "К оплате: ${
-                        "%.2f".format(
-                            paymentAmount.toFloat() - (if (bonusesUsed.isBlank()) 0.0f else bonusesUsed.toFloat())
+                        "%.2f руб.".format(
+                            paymentAmount.toFloat() - (if (bonusesUsed.isBlank()) 0f else bonusesUsed.toFloat())
                         )
-                    } руб."
+                    }"
                 )
             }
 
-            Spacer(modifier = Modifier.weight(1.0f))
+            Spacer(modifier = Modifier.weight(1f))
 
-            Button(
+            BzButton(
                 modifier = Modifier.fillMaxWidth(),
                 onClick = onPayClick,
-                enabled = isPayAvailable,
-            ) {
-                Text(text = "Оплатить")
-            }
+                text = "Оплатить",
+                isAvailable = isPayAvailable,
+            )
 
-            OutlinedButton(
+            BzOutlinedButton(
                 modifier = Modifier.fillMaxWidth(),
                 onClick = onCancelRefuelingClick,
-            ) {
-                Text(text = "Отменить заправку")
-            }
+                text = "Отменить заправку",
+            )
         }
     }
 }

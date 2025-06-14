@@ -5,3 +5,10 @@ enum class ThemeOption {
     LIGHT,
     DARK,
 }
+
+fun getThemeName(theme: ThemeOption) =
+    when (theme) {
+        ThemeOption.SYSTEM -> "Системная"
+        ThemeOption.LIGHT -> "Светлая"
+        ThemeOption.DARK -> "Тёмная"
+    }

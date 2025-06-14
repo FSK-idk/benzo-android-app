@@ -21,15 +21,27 @@ class LoginScreenViewModel(
     private val _uiState = MutableStateFlow(LoginScreenUiState())
     val uiState = _uiState.asStateFlow()
 
-    fun onLoginChange(value: String) =
+    private fun sendMessage(message: String?) {
+        viewModelScope.launch {
+            _loadState.value.snackbarHostState.showSnackbar(
+                message = message ?: "Ошибка",
+                withDismissAction = true,
+                duration = SnackbarDuration.Short,
+            )
+        }
+    }
+
+    fun onLoginChange(value: String) {
         _uiState.update { it.copy(login = value) }
+    }
 
-
-    fun onPasswordChange(value: String) =
+    fun onPasswordChange(value: String) {
         _uiState.update { it.copy(password = value) }
+    }
 
-    fun onPasswordVisibilityClick() =
+    fun onPasswordVisibilityClick() {
         _uiState.update { it.copy(isPasswordShown = !it.isPasswordShown) }
+    }
 
     fun onLoginClicked(navigateNext: () -> Unit) =
         viewModelScope.launch {
@@ -40,14 +52,11 @@ class LoginScreenViewModel(
                     login = _uiState.value.login,
                     password = _uiState.value.password,
                 )
+
                 navigateNext()
             } catch (e: Exception) {
                 Log.e(TAG, "$e")
-                _loadState.value.snackbarHostState.showSnackbar(
-                    message = e.message ?: "Ошибка",
-                    withDismissAction = true,
-                    duration = SnackbarDuration.Short,
-                )
+                sendMessage(message = e.message)
             }
 
             _uiState.update { it.copy(isLoginAvailable = true) }

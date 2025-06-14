@@ -6,18 +6,11 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.benzo.benzomobile.app.TAG
-import com.benzo.benzomobile.domain.model.Resource
-import com.benzo.benzomobile.domain.model.User
+import com.benzo.benzomobile.domain.model.LoadStatus
 import com.benzo.benzomobile.domain.use_case.GetUserUseCase
 import com.benzo.benzomobile.domain.use_case.LogoutUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.filter
-import kotlinx.coroutines.flow.filterIsInstance
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -34,24 +27,51 @@ class ProfileScreenViewModel(
     init {
         viewModelScope.launch {
             try {
-                val user = getUserUseCase()
+                loadData()
 
-                _uiState.update {
-                    it.copy(
-                        login = user.login,
-                        name = user.name ?: "",
-                    )
-                }
-
-                _loadState.update { it.copy(isLoading = false) }
+                _loadState.update { it.copy(loadStatus = LoadStatus.Loaded) }
             } catch (e: Exception) {
                 Log.e(TAG, "$e")
-                _loadState.value.snackbarHostState.showSnackbar(
-                    message = e.message ?: "Ошибка",
-                    withDismissAction = true,
-                    duration = SnackbarDuration.Short,
-                )
+                _loadState.update { it.copy(loadStatus = LoadStatus.Error(message = e.message)) }
             }
+        }
+    }
+
+    private suspend fun loadData() {
+        val user = getUserUseCase()
+
+        _uiState.update {
+            it.copy(
+                login = user.login,
+                name = user.name ?: "",
+            )
+        }
+    }
+
+    private fun sendMessage(message: String?) {
+        viewModelScope.launch {
+            _loadState.value.snackbarHostState.showSnackbar(
+                message = message ?: "Ошибка",
+                withDismissAction = true,
+                duration = SnackbarDuration.Short,
+            )
+        }
+    }
+
+    fun onRetry() {
+        viewModelScope.launch {
+            _loadState.update { it.copy(isRetryAvailable = false) }
+
+            try {
+                loadData()
+
+                _loadState.update { it.copy(loadStatus = LoadStatus.Loaded) }
+            } catch (e: Exception) {
+                Log.e(TAG, "$e")
+                _loadState.update { it.copy(loadStatus = LoadStatus.Error(message = e.message)) }
+            }
+
+            _loadState.update { it.copy(isRetryAvailable = true) }
         }
     }
 
@@ -61,21 +81,10 @@ class ProfileScreenViewModel(
                 _loadState.update { it.copy(isRefreshing = true) }
 
                 try {
-                    val user = getUserUseCase()
-
-                    _uiState.update {
-                        it.copy(
-                            login = user.login,
-                            name = user.name ?: "",
-                        )
-                    }
+                    loadData()
                 } catch (e: Exception) {
                     Log.e(TAG, "$e")
-                    _loadState.value.snackbarHostState.showSnackbar(
-                        message = e.message ?: "Ошибка",
-                        withDismissAction = true,
-                        duration = SnackbarDuration.Short,
-                    )
+                    sendMessage(message = e.message)
                 }
 
                 _loadState.update { it.copy(isRefreshing = false) }
@@ -83,24 +92,23 @@ class ProfileScreenViewModel(
         }
     }
 
-    fun onExitClick(navigateNext: () -> Unit) =
+    fun onExitClick(navigateNext: () -> Unit) {
         viewModelScope.launch {
             try {
                 logoutUseCase()
+
                 navigateNext()
             } catch (e: Exception) {
                 Log.e(TAG, "$e")
-                _loadState.value.snackbarHostState.showSnackbar(
-                    message = e.message ?: "Ошибка",
-                    withDismissAction = true,
-                    duration = SnackbarDuration.Short,
-                )
+                sendMessage(message = e.message)
             }
         }
+    }
 }
 
 data class ProfileScreenLoadState(
-    val isLoading: Boolean = true,
+    val loadStatus: LoadStatus = LoadStatus.Loading,
+    val isRetryAvailable: Boolean = true,
     val isRefreshing: Boolean = false,
     val snackbarHostState: SnackbarHostState = SnackbarHostState(),
 )

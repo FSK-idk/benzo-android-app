@@ -38,8 +38,8 @@ fun GasNozzleUseScreen(
 }
 
 
-@Composable
 @Preview
+@Composable
 fun GasNozzleUseScreenPreview() {
     BenzoMobileTheme {
         GasNozzleUseScreen()

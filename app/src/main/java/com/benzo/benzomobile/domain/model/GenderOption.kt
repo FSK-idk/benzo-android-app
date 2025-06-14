@@ -5,3 +5,10 @@ enum class GenderOption {
     MALE,
     FEMALE,
 }
+
+fun getGenderName(gender: GenderOption) =
+    when (gender) {
+        GenderOption.NONE -> ""
+        GenderOption.MALE -> "Мужской"
+        GenderOption.FEMALE -> "Женский"
+    }

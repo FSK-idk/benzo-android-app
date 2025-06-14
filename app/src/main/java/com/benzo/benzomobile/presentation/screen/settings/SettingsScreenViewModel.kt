@@ -1,7 +1,12 @@
 package com.benzo.benzomobile.presentation.screen.settings
 
+import android.util.Log
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHostState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.benzo.benzomobile.app.TAG
+import com.benzo.benzomobile.domain.model.LoadStatus
 import com.benzo.benzomobile.domain.model.ThemeOption
 import com.benzo.benzomobile.domain.use_case.GetThemeUseCase
 import com.benzo.benzomobile.domain.use_case.SetThemeUseCase
@@ -23,15 +28,29 @@ class SettingsScreenViewModel(
 
     val uiState =
         getThemeUseCase()
-            .map {
-                _loadState.update { jt -> jt.copy(isLoading = false) }
+            .catch { e ->
+                Log.e(TAG, "$e")
+                sendMessage(message = e.message)
+            }
+            .map { theme ->
+                _loadState.update { it.copy(loadStatus = LoadStatus.Loaded) }
 
-                return@map SettingsScreenUiState(theme = it)
+                return@map SettingsScreenUiState(theme = theme)
             }.stateIn(
                 scope = viewModelScope,
                 initialValue = SettingsScreenUiState(),
                 started = SharingStarted.WhileSubscribed(5000),
             )
+
+    private fun sendMessage(message: String?) {
+        viewModelScope.launch {
+            _loadState.value.snackbarHostState.showSnackbar(
+                message = message ?: "Ошибка",
+                withDismissAction = true,
+                duration = SnackbarDuration.Short,
+            )
+        }
+    }
 
     fun onThemeSelected(theme: ThemeOption) {
         viewModelScope.launch {
@@ -41,7 +60,8 @@ class SettingsScreenViewModel(
 }
 
 data class SettingsScreenLoadState(
-    val isLoading: Boolean = true,
+    val loadStatus: LoadStatus = LoadStatus.Loading,
+    val snackbarHostState: SnackbarHostState = SnackbarHostState(),
 )
 
 data class SettingsScreenUiState(

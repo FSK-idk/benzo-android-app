@@ -2,12 +2,9 @@ package com.benzo.benzomobile.data.data_source.loyalty_card
 
 import android.util.Log
 import com.benzo.benzomobile.app.TAG
-import com.benzo.benzomobile.domain.model.Resource
-import com.benzo.benzomobile.data.service.benzo_api.BenzoApi
 import com.benzo.benzomobile.data.data_source.user_preferences.UserPreferencesDataSource
+import com.benzo.benzomobile.data.service.benzo_api.BenzoApi
 import com.benzo.benzomobile.domain.model.LoyaltyCard
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.first
 
 class LoyaltyCardDataSourceImpl(

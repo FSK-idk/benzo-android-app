@@ -11,74 +11,66 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import com.benzo.benzomobile.domain.model.GenderOption
+import com.benzo.benzomobile.domain.model.getGenderName
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun GenderSimpleOutlinedTextFiled(
+fun BzGenderOutlinedTextField(
     modifier: Modifier = Modifier,
-    gender: GenderOption,
-    onGenderChange: (GenderOption) -> Unit,
-    genderError: String? = null,
-    title: String,
+    label: String,
+    value: GenderOption,
+    onValueChange: (GenderOption) -> Unit,
+    valueError: String? = null,
 ) {
-    var expanded by remember { mutableStateOf(false) }
-    val genders = listOf(GenderOption.MALE, GenderOption.FEMALE)
+    var expanded by rememberSaveable { mutableStateOf(false) }
+    val genders = listOf(
+        GenderOption.MALE,
+        GenderOption.FEMALE,
+    )
 
     ExposedDropdownMenuBox(
         expanded = expanded,
-        onExpandedChange = { expanded = !expanded }
+        onExpandedChange = { expanded = !expanded },
     ) {
         OutlinedTextField(
             modifier = modifier.menuAnchor(MenuAnchorType.PrimaryEditable, true),
-            value = getGenderName(gender),
+            label = { Text(text = label) },
+            value = getGenderName(value),
             onValueChange = {},
+            singleLine = true,
             readOnly = true,
-            isError = genderError != null,
-            supportingText = {
-                genderError?.let {
-                    Text(
-                        text = it,
-                        color = MaterialTheme.colorScheme.error
-                    )
-                }
-            },
-            label = { Text(text = title) },
-            trailingIcon = {
-                ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
-            },
+            isError = valueError != null,
+            supportingText = { valueError?.let { Text(text = it) } },
+            trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
         )
 
         ExposedDropdownMenu(
             expanded = expanded,
-            onDismissRequest = { expanded = false }
+            onDismissRequest = { expanded = false },
+            containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
         ) {
             genders.forEach {
                 DropdownMenuItem(
                     text = {
                         Text(
                             text = getGenderName(it),
-                            color = if (it == gender) MaterialTheme.colorScheme.primary else Color.Unspecified
+                            color =
+                                if (it == value) MaterialTheme.colorScheme.primary
+                                else Color.Unspecified,
                         )
                     },
                     onClick = {
-                        onGenderChange(it)
                         expanded = false
+                        onValueChange(it)
                     },
-                    contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding
+                    contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
                 )
             }
         }
     }
 }
-
-private fun getGenderName(gender: GenderOption) =
-    when (gender) {
-        GenderOption.NONE -> ""
-        GenderOption.MALE -> "Мужской"
-        GenderOption.FEMALE -> "Женский"
-    }

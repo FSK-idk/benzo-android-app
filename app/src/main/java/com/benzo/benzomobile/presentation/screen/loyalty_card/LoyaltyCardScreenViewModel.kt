@@ -6,20 +6,12 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.benzo.benzomobile.app.TAG
-import com.benzo.benzomobile.domain.model.Resource
+import com.benzo.benzomobile.domain.model.LoadStatus
 import com.benzo.benzomobile.domain.model.LoyaltyCard
-import com.benzo.benzomobile.domain.model.User
 import com.benzo.benzomobile.domain.use_case.GetLoyaltyCardUseCase
 import com.benzo.benzomobile.domain.use_case.GetUserUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.filter
-import kotlinx.coroutines.flow.filterIsInstance
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -36,17 +28,9 @@ class LoyaltyCardScreenViewModel(
     init {
         viewModelScope.launch {
             try {
-                val user = getUserUseCase()
-                val loyaltyCard = getLoyaltyCardUseCase()
+                loadData()
 
-                _uiState.update {
-                    it.copy(
-                        loyaltyCard = loyaltyCard,
-                        login = user.login,
-                    )
-                }
-
-                _loadState.update { it.copy(isLoading = false) }
+                _loadState.update { it.copy(loadStatus = LoadStatus.Loaded) }
             } catch (e: Exception) {
                 Log.e(TAG, "$e")
                 _loadState.value.snackbarHostState.showSnackbar(
@@ -58,28 +42,55 @@ class LoyaltyCardScreenViewModel(
         }
     }
 
+    private suspend fun loadData() {
+        val user = getUserUseCase()
+        val loyaltyCard = getLoyaltyCardUseCase()
+
+        _uiState.update {
+            it.copy(
+                loyaltyCard = loyaltyCard,
+                login = user.login,
+            )
+        }
+    }
+
+    private fun sendMessage(message: String?) {
+        viewModelScope.launch {
+            _loadState.value.snackbarHostState.showSnackbar(
+                message = message ?: "Ошибка",
+                withDismissAction = true,
+                duration = SnackbarDuration.Short,
+            )
+        }
+    }
+
+    fun onRetry() {
+        viewModelScope.launch {
+            _loadState.update { it.copy(isRetryAvailable = false) }
+
+            try {
+                loadData()
+
+                _loadState.update { it.copy(loadStatus = LoadStatus.Loaded) }
+            } catch (e: Exception) {
+                Log.e(TAG, "$e")
+                _loadState.update { it.copy(loadStatus = LoadStatus.Error(message = e.message)) }
+            }
+
+            _loadState.update { it.copy(isRetryAvailable = true) }
+        }
+    }
+
     fun onRefresh() {
         if (!_loadState.value.isRefreshing) {
             viewModelScope.launch {
                 _loadState.update { it.copy(isRefreshing = true) }
 
                 try {
-                    val user = getUserUseCase()
-                    val loyaltyCard = getLoyaltyCardUseCase()
-
-                    _uiState.update {
-                        it.copy(
-                            loyaltyCard = loyaltyCard,
-                            login = user.login,
-                        )
-                    }
+                    loadData()
                 } catch (e: Exception) {
                     Log.e(TAG, "$e")
-                    _loadState.value.snackbarHostState.showSnackbar(
-                        message = e.message ?: "Ошибка",
-                        withDismissAction = true,
-                        duration = SnackbarDuration.Short,
-                    )
+                    sendMessage(message = e.message)
                 }
 
                 _loadState.update { it.copy(isRefreshing = false) }
@@ -89,7 +100,8 @@ class LoyaltyCardScreenViewModel(
 }
 
 data class LoyaltyCardScreenLoadState(
-    val isLoading: Boolean = true,
+    val loadStatus: LoadStatus = LoadStatus.Loading,
+    val isRetryAvailable: Boolean = true,
     val isRefreshing: Boolean = false,
     val snackbarHostState: SnackbarHostState = SnackbarHostState(),
 )

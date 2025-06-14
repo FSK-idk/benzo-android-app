@@ -2,14 +2,13 @@ package com.benzo.benzomobile.presentation.screen.gas_station_stations
 
 import android.util.Log
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.SheetState
-import androidx.compose.material3.SheetValue
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHostState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.benzo.benzomobile.app.TAG
 import com.benzo.benzomobile.domain.model.GasStation
+import com.benzo.benzomobile.domain.model.LoadStatus
 import com.benzo.benzomobile.domain.model.Station
 import com.benzo.benzomobile.domain.model.StationStatus
 import com.benzo.benzomobile.domain.use_case.GetGasStationStationsUseCase
@@ -33,22 +32,47 @@ class GasStationStationsScreenViewModel(
     init {
         _uiState.update { it.copy(gasStation = gasStation) }
         viewModelScope.launch {
-            _loadState.update { it.copy(isLoading = true) }
-            fetchData()
-            _loadState.update { it.copy(isLoading = false) }
+            try {
+                loadData()
+
+                _loadState.update { it.copy(loadStatus = LoadStatus.Loaded) }
+            } catch (e: Exception) {
+                Log.e(TAG, "$e")
+                _loadState.update { it.copy(loadStatus = LoadStatus.Error(message = e.message)) }
+            }
         }
     }
 
-    private suspend fun fetchData() {
-        try {
-            _uiState.update { it.copy(stations = getGasStationStationsUseCase(gasStation.id)) }
-        } catch (e: Exception) {
-            Log.e(TAG, "$e")
+    private suspend fun loadData() {
+        val stations = getGasStationStationsUseCase(gasStation.id)
+
+        _uiState.update { it.copy(stations = stations) }
+    }
+
+    private fun sendMessage(message: String?) {
+        viewModelScope.launch {
             _loadState.value.snackbarHostState.showSnackbar(
-                message = e.message ?: "Ошибка",
+                message = message ?: "Ошибка",
                 withDismissAction = true,
                 duration = SnackbarDuration.Short,
             )
+        }
+    }
+
+    fun onRetry() {
+        viewModelScope.launch {
+            _loadState.update { it.copy(isRetryAvailable = false) }
+
+            try {
+                loadData()
+
+                _loadState.update { it.copy(loadStatus = LoadStatus.Loaded) }
+            } catch (e: Exception) {
+                Log.e(TAG, "$e")
+                _loadState.update { it.copy(loadStatus = LoadStatus.Error(message = e.message)) }
+            }
+
+            _loadState.update { it.copy(isRetryAvailable = true) }
         }
     }
 
@@ -56,7 +80,14 @@ class GasStationStationsScreenViewModel(
         if (!_loadState.value.isRefreshing) {
             viewModelScope.launch {
                 _loadState.update { it.copy(isRefreshing = true) }
-                fetchData()
+
+                try {
+                    loadData()
+                } catch (e: Exception) {
+                    Log.e(TAG, "$e")
+                    sendMessage(message = e.message)
+                }
+
                 _loadState.update { it.copy(isRefreshing = false) }
             }
         }
@@ -88,7 +119,8 @@ class GasStationStationsScreenViewModel(
 }
 
 data class StationsScreenLoadState(
-    val isLoading: Boolean = true,
+    val loadStatus: LoadStatus = LoadStatus.Loading,
+    val isRetryAvailable: Boolean = true,
     val isRefreshing: Boolean = false,
     val snackbarHostState: SnackbarHostState = SnackbarHostState(),
 )

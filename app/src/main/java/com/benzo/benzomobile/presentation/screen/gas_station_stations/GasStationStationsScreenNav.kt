@@ -1,5 +1,6 @@
 package com.benzo.benzomobile.presentation.screen.gas_station_stations
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavGraphBuilder
@@ -18,6 +19,7 @@ fun NavGraphBuilder.gasStationStationsScreen(
     composable<Destination.AppGraph.GasStationsGraph.GasStationStationsScreen> {
         val destination =
             it.toRoute<Destination.AppGraph.GasStationsGraph.GasStationStationsScreen>()
+
         val viewModel = koinViewModel<GasStationStationsScreenViewModel> {
             parametersOf(
                 GasStation(
@@ -29,15 +31,19 @@ fun NavGraphBuilder.gasStationStationsScreen(
         val loadState = viewModel.loadState.collectAsStateWithLifecycle()
         val uiState = viewModel.uiState.collectAsStateWithLifecycle()
 
+        BackHandler(onBack = onNavigateBack)
+
         GasStationStationsScreen(
-            isLoading = loadState.value.isLoading,
+            loadStatus = loadState.value.loadStatus,
+            onRetry = viewModel::onRetry,
+            isRetryAvailable = loadState.value.isRetryAvailable,
+            onRefresh = viewModel::onRefresh,
             isRefreshing = loadState.value.isRefreshing,
+            snackbarHostState = loadState.value.snackbarHostState,
             gasStation = uiState.value.gasStation,
             stations = uiState.value.stations,
-            isTakeAvailable = uiState.value.isTakeAvailable,
             onTakeClick = { viewModel.onTakeClick(it, onNavigateNext) },
-            snackbarHostState = loadState.value.snackbarHostState,
-            onRefresh = viewModel::onRefresh,
+            isTakeAvailable = uiState.value.isTakeAvailable,
             onBackClick = onNavigateBack,
         )
     }

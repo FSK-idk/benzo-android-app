@@ -5,9 +5,16 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class GetGasStationsResponse(
-    @SerialName("id")
-    val id: Int,
+    @SerialName("gas_stations")
+    val gasStations: List<GasStation>
+) {
+    @Serializable
+    data class GasStation(
 
-    @SerialName("address")
-    val address: String,
-)
+        @SerialName("id")
+        val id: Int,
+
+        @SerialName("address")
+        val address: String,
+    )
+}

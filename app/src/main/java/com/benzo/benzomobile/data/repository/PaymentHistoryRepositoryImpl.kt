@@ -6,9 +6,6 @@ import com.benzo.benzomobile.domain.repository.PaymentHistoryRepository
 class PaymentHistoryRepositoryImpl(
     private val paymentHistoryDataSource: PaymentHistoryDataSource,
 ) : PaymentHistoryRepository {
-    override fun getPaymentHistory() =
+    override suspend fun getPaymentHistory() =
         paymentHistoryDataSource.getPaymentHistory()
-
-    override suspend fun fetchPaymentHistory() =
-        paymentHistoryDataSource.fetchPaymentHistory()
 }

@@ -2,15 +2,15 @@ package com.benzo.benzomobile.data.data_source.user
 
 import android.util.Log
 import com.benzo.benzomobile.app.TAG
-import com.benzo.benzomobile.domain.model.Resource
-import com.benzo.benzomobile.data.service.benzo_api.BenzoApi
 import com.benzo.benzomobile.data.data_source.user_preferences.UserPreferencesDataSource
+import com.benzo.benzomobile.data.service.benzo_api.BenzoApi
 import com.benzo.benzomobile.domain.model.GenderOption
 import com.benzo.benzomobile.domain.model.User
 import com.benzo.benzomobile.domain.model.UserUpdateData
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.first
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.format
+import kotlinx.datetime.format.char
 
 class UserDataSourceImpl(
     val benzoApi: BenzoApi,
@@ -43,7 +43,15 @@ class UserDataSourceImpl(
         return User(
             login = body.login,
             name = body.name,
-            birthDate = body.birthDate,
+            birthDate = body.birthDate?.let {
+                LocalDate.parse(it, LocalDate.Format {
+                    year()
+                    char('-')
+                    monthNumber()
+                    char('-')
+                    dayOfMonth()
+                })
+            },
             carNumber = body.carNumber,
             phoneNumber = body.phoneNumber,
             email = body.email,
@@ -52,7 +60,6 @@ class UserDataSourceImpl(
                 "F" -> GenderOption.FEMALE
                 else -> GenderOption.NONE
             },
-            penalty = body.penalty,
         )
     }
 
@@ -68,7 +75,15 @@ class UserDataSourceImpl(
             benzoApi.retrofitService.updateUser(
                 token = token,
                 name = userUpdateData.name,
-                birthDate = userUpdateData.birthDate,
+                birthDate = userUpdateData.birthDate.format(
+                    LocalDate.Format {
+                        year()
+                        char('-')
+                        monthNumber()
+                        char('-')
+                        dayOfMonth()
+                    }
+                ),
                 carNumber = userUpdateData.carNumber,
                 phoneNumber = userUpdateData.phoneNumber,
                 email = userUpdateData.email,
