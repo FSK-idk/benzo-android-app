@@ -33,11 +33,7 @@ class LoyaltyCardScreenViewModel(
                 _loadState.update { it.copy(loadStatus = LoadStatus.Loaded) }
             } catch (e: Exception) {
                 Log.e(TAG, "$e")
-                _loadState.value.snackbarHostState.showSnackbar(
-                    message = e.message ?: "Ошибка",
-                    withDismissAction = true,
-                    duration = SnackbarDuration.Short,
-                )
+                _loadState.update { it.copy(loadStatus = LoadStatus.Error(message = e.message)) }
             }
         }
     }
