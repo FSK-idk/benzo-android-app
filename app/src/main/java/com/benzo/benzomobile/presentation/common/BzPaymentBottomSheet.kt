@@ -27,8 +27,12 @@ import com.benzo.benzomobile.domain.model.GasStation
 import com.benzo.benzomobile.domain.model.Payment
 import com.benzo.benzomobile.domain.model.getFuelTypeName
 import com.benzo.benzomobile.ui.theme.BenzoMobileTheme
-import java.time.ZonedDateTime
-import java.time.format.DateTimeFormatter
+import kotlinx.datetime.Instant
+import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.format
+import kotlinx.datetime.format.char
+import kotlinx.datetime.toLocalDateTime
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -71,8 +75,21 @@ fun BzPaymentBottomSheet(
                     Text(text = "Адрес: ${payment.gasStation.address}")
                     Text(
                         text = "Дата и время: ${
-                            DateTimeFormatter.ofPattern("dd.MM.yyyy hh:mm:ss")
-                                .format(payment.dateTime)
+                            payment.dateTime
+                                .toLocalDateTime(TimeZone.currentSystemDefault())
+                                .format(LocalDateTime.Format {
+                                    dayOfMonth()
+                                    char('.')
+                                    monthNumber()
+                                    char('.')
+                                    year()
+                                    char(' ')
+                                    hour()
+                                    char(':')
+                                    minute()
+                                    char(':')
+                                    second()
+                                })
                         }"
                     )
                 }
@@ -116,7 +133,7 @@ private fun BzPaymentBottomSheetPreview() {
                 modifier = Modifier,
                 sheetState = rememberStandardBottomSheetState(initialValue = SheetValue.Expanded),
                 payment = Payment(
-                    dateTime = ZonedDateTime.parse("2025-06-09T07:48:25.262574+10:00"),
+                    dateTime = Instant.parse("2025-06-09T07:48:25.262574+10:00"),
                     gasStation = GasStation(
                         id = 4,
                         address = "dom 123"

@@ -75,15 +75,14 @@ class UserDataSourceImpl(
             benzoApi.retrofitService.updateUser(
                 token = token,
                 name = userUpdateData.name,
-                birthDate = userUpdateData.birthDate.format(
-                    LocalDate.Format {
+                birthDate = userUpdateData.birthDate
+                    .format(LocalDate.Format {
                         year()
                         char('-')
                         monthNumber()
                         char('-')
                         dayOfMonth()
-                    }
-                ),
+                    }),
                 carNumber = userUpdateData.carNumber,
                 phoneNumber = userUpdateData.phoneNumber,
                 email = userUpdateData.email,

@@ -23,8 +23,12 @@ import com.benzo.benzomobile.domain.model.GasStation
 import com.benzo.benzomobile.domain.model.Payment
 import com.benzo.benzomobile.domain.model.getFuelTypeName
 import com.benzo.benzomobile.ui.theme.BenzoMobileTheme
-import java.time.ZonedDateTime
-import java.time.format.DateTimeFormatter
+import kotlinx.datetime.Instant
+import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.format
+import kotlinx.datetime.format.char
+import kotlinx.datetime.toLocalDateTime
 
 @Composable
 fun BzPaymentCard(
@@ -55,8 +59,15 @@ fun BzPaymentCard(
                 verticalArrangement = Arrangement.spacedBy(5.dp)
             ) {
                 Text(
-                    text = DateTimeFormatter.ofPattern("dd.MM.yyyy")
-                        .format(payment.dateTime),
+                    text = payment.dateTime
+                        .toLocalDateTime(TimeZone.currentSystemDefault())
+                        .format(LocalDateTime.Format {
+                            dayOfMonth()
+                            char('.')
+                            monthNumber()
+                            char('.')
+                            year()
+                        }),
                     style = MaterialTheme.typography.bodyMedium,
                 )
                 Text(
@@ -81,7 +92,7 @@ private fun BzPaymentCardPreview() {
             BzPaymentCard(
                 modifier = Modifier.fillMaxWidth(),
                 payment = Payment(
-                    dateTime = ZonedDateTime.parse("2025-06-09T07:48:25.262574+10:00"),
+                    dateTime = Instant.parse("2025-06-09T07:48:25.262574+10:00"),
                     gasStation = GasStation(
                         id = 4,
                         address = "dom 123"

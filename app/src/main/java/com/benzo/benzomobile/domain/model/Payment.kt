@@ -1,9 +1,9 @@
 package com.benzo.benzomobile.domain.model
 
-import java.time.ZonedDateTime
+import kotlinx.datetime.Instant
 
 data class Payment(
-    val dateTime: ZonedDateTime,
+    val dateTime: Instant,
     val gasStation: GasStation,
     val stationId: Int,
     val fuelType: FuelType,

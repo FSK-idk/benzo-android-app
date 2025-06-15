@@ -33,7 +33,7 @@ import com.benzo.benzomobile.presentation.common.BzPaymentCard
 import com.benzo.benzomobile.presentation.common.BzPullToRefreshBox
 import com.benzo.benzomobile.presentation.common.BzTopAppBar
 import com.benzo.benzomobile.ui.theme.BenzoMobileTheme
-import java.time.ZonedDateTime
+import kotlinx.datetime.Instant
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -132,7 +132,7 @@ fun PaymentHistoryScreen(
 fun PaymentHistoryScreenPreview() {
     val samplePayments = listOf(
         Payment(
-            dateTime = ZonedDateTime.parse("2025-06-09T07:48:25.262574+10:00"),
+            dateTime = Instant.parse("2025-06-09T07:48:25.262574+10:00"),
             gasStation = GasStation(
                 id = 4,
                 address = "dom 123"
@@ -146,7 +146,7 @@ fun PaymentHistoryScreenPreview() {
             paymentKey = "nfr8792hbc97g287h3bc7168",
         ),
         Payment(
-            dateTime = ZonedDateTime.parse("2025-06-09T07:48:25.262574+10:00"),
+            dateTime = Instant.parse("2025-06-09T07:48:25.262574+10:00"),
             gasStation = GasStation(
                 id = 4,
                 address = "dom 123"

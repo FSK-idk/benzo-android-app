@@ -8,7 +8,7 @@ import com.benzo.benzomobile.domain.model.FuelType
 import com.benzo.benzomobile.domain.model.GasStation
 import com.benzo.benzomobile.domain.model.Payment
 import kotlinx.coroutines.flow.first
-import java.time.ZonedDateTime
+import kotlinx.datetime.Instant
 
 class PaymentHistoryDataSourceImpl(
     val benzoApi: BenzoApi,
@@ -45,7 +45,7 @@ class PaymentHistoryDataSourceImpl(
 
         return body.history.map {
             Payment(
-                dateTime = ZonedDateTime.parse(it.dateTime),
+                dateTime = Instant.parse(it.dateTime),
                 gasStation = GasStation(
                     id = it.gasStationId,
                     address = it.gasStationAddress,
