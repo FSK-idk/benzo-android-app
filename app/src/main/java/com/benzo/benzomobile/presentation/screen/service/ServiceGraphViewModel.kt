@@ -23,6 +23,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.text.NumberFormat
+import java.util.Locale
 
 class ServiceGraphViewModel(
     private val stationIdInt: Int,
@@ -128,7 +130,7 @@ class ServiceGraphViewModel(
 
         val selectedFuel = _uiState.value.fuels[
             _uiState.value.selectedFuelIndex]
-        val fuelAmount = value.toFloat()
+        val fuelAmount = NumberFormat.getInstance().parse(value)!!.toFloat()
         val paymentAmount = fuelAmount * (selectedFuel.price / 100.0f)
 
         _uiState.update { it.copy(paymentAmount = "%.2f".format(paymentAmount)) }
@@ -150,7 +152,7 @@ class ServiceGraphViewModel(
 
         val selectedFuel = _uiState.value.fuels[
             _uiState.value.selectedFuelIndex]
-        val paymentAmount = value.toFloat()
+        val paymentAmount = NumberFormat.getInstance().parse(value)!!.toFloat()
         val fuelAmount = paymentAmount / (selectedFuel.price / 100.0f)
 
         _uiState.update { it.copy(fuelAmount = "%.2f".format(fuelAmount)) }
@@ -242,9 +244,16 @@ class ServiceGraphViewModel(
                     "20" + it.substring(2, 4) + "-" + it.substring(0, 2) + "-01"
                 },
                 depositCardHolderName = _uiState.value.holderName,
-                paymentAmount = (_uiState.value.paymentAmount.toFloat() * 100.0f).toInt() - (
+
+
+                paymentAmount = (
+                        NumberFormat.getInstance()
+                            .parse(_uiState.value.paymentAmount)!!
+                            .toFloat() * 100.0f).toInt() - (
                         if (_uiState.value.bonusesUsed.isBlank()) 0
-                        else (_uiState.value.bonusesUsed.toFloat() * 100.0f).toInt())
+                        else (NumberFormat.getInstance()
+                            .parse(_uiState.value.bonusesUsed)!!
+                            .toFloat() * 100.0f).toInt())
             )
 
             viewModelScope.launch {
@@ -262,14 +271,24 @@ class ServiceGraphViewModel(
                                 FuelType.PETROL_98 -> "98"
                                 FuelType.DIESEL -> "DT"
                             },
-                            fuelAmount = (_uiState.value.fuelAmount.toFloat() * 100.0f).toInt(),
+                            fuelAmount = (
+                                    NumberFormat.getInstance()
+                                        .parse(_uiState.value.fuelAmount)!!
+                                        .toFloat() * 100.0f).toInt(),
                             carNumber = getUserUseCase().carNumber!!,
-                            paymentAmount = (_uiState.value.paymentAmount.toFloat() * 100.0f).toInt() - (
+                            paymentAmount = (
+                                    NumberFormat.getInstance()
+                                        .parse(_uiState.value.paymentAmount)!!
+                                        .toFloat() * 100.0f).toInt() - (
                                     if (_uiState.value.bonusesUsed.isBlank()) 0
-                                    else (_uiState.value.bonusesUsed.toFloat() * 100.0f).toInt()),
+                                    else (NumberFormat.getInstance()
+                                        .parse(_uiState.value.bonusesUsed)!!
+                                        .toFloat() * 100.0f).toInt()),
                             paymentKey = response.paymentKey,
                             usedBonuses = if (_uiState.value.bonusesUsed.isBlank()) 0
-                            else (_uiState.value.bonusesUsed.toFloat() * 100.0f).toInt(),
+                            else (NumberFormat.getInstance()
+                                .parse(_uiState.value.bonusesUsed)!!
+                                .toFloat() * 100.0f).toInt(),
                         )
                     )
 

@@ -31,6 +31,7 @@ import com.benzo.benzomobile.presentation.common.BzOutlinedTextField
 import com.benzo.benzomobile.presentation.common.BzTopAppBar
 import com.benzo.benzomobile.presentation.common.DecimalFormatter
 import com.benzo.benzomobile.ui.theme.BenzoMobileTheme
+import java.text.NumberFormat
 import kotlin.math.min
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -88,9 +89,14 @@ fun PaymentSelectionScreen(
                 value = bonusesUsed,
                 onValueChange = {
                     decimalFormatter.cleanup(it).let {
-                        if (it.isBlank() || (it.toFloat() * 100.0f).toInt() <= min(
+                        if (it.isBlank() || (
+                                    NumberFormat.getInstance()
+                                        .parse(it)!!
+                                        .toFloat() * 100.0f).toInt() <= min(
                                 bonusesAvailable,
-                                (paymentAmount.toFloat() * 100.0f).toInt(),
+                                (NumberFormat.getInstance()
+                                    .parse(paymentAmount)!!
+                                    .toFloat() * 100.0f).toInt(),
                             )
                         )
                             onBonusesUsedChange(it)
@@ -146,7 +152,11 @@ fun PaymentSelectionScreen(
                 Text(
                     text = "К оплате: ${
                         "%.2f руб.".format(
-                            paymentAmount.toFloat() - (if (bonusesUsed.isBlank()) 0f else bonusesUsed.toFloat())
+                            NumberFormat.getInstance().parse(paymentAmount)!!.toFloat()
+                                    - (
+                                    if (bonusesUsed.isBlank()) 0f
+                                    else NumberFormat.getInstance()
+                                        .parse(bonusesUsed)!!.toFloat())
                         )
                     }"
                 )

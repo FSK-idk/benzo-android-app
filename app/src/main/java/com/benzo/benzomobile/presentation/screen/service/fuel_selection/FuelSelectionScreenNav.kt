@@ -16,7 +16,7 @@ fun NavGraphBuilder.fuelSelectionScreen(
         val loadState = viewModel.loadState.collectAsStateWithLifecycle()
         val uiState = viewModel.uiState.collectAsStateWithLifecycle()
 
-        BackHandler(onBack = onCancelRefueling)
+        BackHandler(onBack = {})
 
         FuelSelectionScreen(
             fuels = uiState.value.fuels,
